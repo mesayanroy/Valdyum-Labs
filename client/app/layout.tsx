@@ -8,6 +8,9 @@ export const metadata: Metadata = {
   title: "Valdyum — AI Agent Marketplace on Solana",
   description:
     "Build, monetize, and deploy AI agents on the Solana blockchain. Pay per request with 0x402 protocol.",
+  icons: {
+    icon: '/brand/valdyumlogofevicon.png',
+  },
 };
 
 export default function RootLayout({

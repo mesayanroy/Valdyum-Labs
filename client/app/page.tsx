@@ -648,11 +648,11 @@ export default function HomePage() {
 
               {/* Left Column (Visually): Bento Grid */}
               <div className="lg:w-[65%] h-full w-full relative lg:pt-4 flex-1 min-h-0 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] lg:pr-8">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 xl:gap-6 w-full pb-24" style={{ gridAutoRows: 'minmax(230px, 1fr)' }}>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 xl:gap-5 w-full pb-8" style={{ gridAutoRows: 'minmax(180px, 1fr)' }}>
                   {AGENT_TEMPLATES.map((tmpl, i) => {
-                    let bentoClass = "col-span-1 row-span-1 flex-col justify-between p-6";
+                    let bentoClass = "col-span-1 row-span-1 flex-col justify-between p-5 md:p-6";
                     if (i === 0) {
-                      bentoClass = "col-span-1 md:col-span-2 md:row-span-2 flex-col justify-between p-8";
+                      bentoClass = "col-span-1 md:col-span-2 md:row-span-2 flex-col justify-between p-6 md:p-8";
                     }
 
                     return (
@@ -670,8 +670,8 @@ export default function HomePage() {
                             src={tmpl.image} 
                             alt={tmpl.title} 
                             className={`w-full h-full mix-blend-multiply ${
-                              i === 0 ? 'object-contain object-right-bottom scale-[1.25] translate-x-[10%] translate-y-[10%] opacity-[0.65]' : 
-                              i === 1 ? 'object-contain object-right-bottom scale-[1.3] translate-x-[15%] translate-y-[15%] opacity-[0.65]' : 
+                              i === 0 ? 'object-contain object-right-bottom scale-[1.25] translate-x-[2%] translate-y-[10%] opacity-[0.65]' : 
+                              i === 1 ? 'object-contain object-right-bottom scale-[1.3] translate-x-[5%] translate-y-[15%] opacity-[0.65]' : 
                               'object-contain object-bottom opacity-[0.85]'
                             }`}
                           />
@@ -683,26 +683,26 @@ export default function HomePage() {
                               <div className="w-2.5 h-2.5 bg-[#111111] group-hover:bg-[#799ee0] transition-colors duration-500 rounded-[1px]" />
                               <span className="font-mono text-xl font-medium text-black/20 tracking-wider">01</span>
                             </div>
-                            <div className="mt-auto relative z-10 max-w-[65%]">
-                              <span className="font-sans text-[11px] font-semibold text-black/40 tracking-wider uppercase mb-3 block">{tmpl.tag}</span>
-                              <h3 className="font-sans text-4xl font-medium text-[#111111] group-hover:text-[#799ee0] transition-colors duration-500 mb-4 tracking-tight">{tmpl.title}</h3>
-                              <p className="font-sans text-base text-black/60 leading-relaxed max-w-sm">{tmpl.desc}</p>
+                            <div className="mt-auto relative z-10 max-w-[70%]">
+                              <span className="font-sans text-[10px] md:text-[11px] font-semibold text-black/40 tracking-wider uppercase mb-2 block">{tmpl.tag}</span>
+                              <h3 className="font-sans text-3xl md:text-4xl font-medium text-[#111111] group-hover:text-[#799ee0] transition-colors duration-500 mb-3 tracking-tight">{tmpl.title}</h3>
+                              <p className="font-sans text-sm md:text-base text-black/60 leading-relaxed max-w-sm">{tmpl.desc}</p>
 
-                              <div className="mt-8 pt-6 border-t border-black/5 flex items-center gap-2">
-                                <span className="font-sans text-xs font-semibold tracking-wide uppercase text-black/30 group-hover:text-[#799ee0] transition-colors duration-500">Deploy Template</span>
+                              <div className="mt-6 pt-5 border-t border-black/5 flex items-center gap-2">
+                                <span className="font-sans text-[10px] md:text-xs font-semibold tracking-wide uppercase text-black/30 group-hover:text-[#799ee0] transition-colors duration-500">Deploy Template</span>
                                 <span className="text-black/30 group-hover:text-[#799ee0] transition-colors transform group-hover:translate-x-1 duration-500">→</span>
                               </div>
                             </div>
                           </>
                         ) : (
                           <>
-                            <div className="flex items-center justify-between w-full mb-6 relative z-10">
+                            <div className="flex items-center justify-between w-full mb-4 relative z-10">
                               <div className="w-1.5 h-1.5 bg-[#111111]/30 group-hover:bg-[#799ee0] transition-colors duration-500 rounded-[1px]" />
-                              <span className="font-mono text-xs font-medium text-black/20 tracking-wider">0{i + 1}</span>
+                              <span className="font-mono text-[10px] font-medium text-black/20 tracking-wider">0{i + 1}</span>
                             </div>
-                            <div className="mt-auto relative z-10 max-w-[85%]">
-                              <h3 className="font-sans text-lg font-medium text-[#111111] mb-1 group-hover:text-[#799ee0] transition-colors duration-500 tracking-tight">{tmpl.title}</h3>
-                              <p className="font-sans text-[13px] text-black/50 leading-relaxed">{tmpl.desc}</p>
+                            <div className="mt-auto relative z-10 max-w-[90%]">
+                              <h3 className="font-sans text-base md:text-lg font-medium text-[#111111] mb-1 group-hover:text-[#799ee0] transition-colors duration-500 tracking-tight">{tmpl.title}</h3>
+                              <p className="font-sans text-xs md:text-[13px] text-black/50 leading-relaxed line-clamp-3">{tmpl.desc}</p>
                             </div>
                           </>
                         )}

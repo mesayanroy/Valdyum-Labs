@@ -129,20 +129,7 @@ export default function HeroSection() {
             </span>
           </h1>
 
-          <div className="flex flex-wrap items-center justify-end gap-5 mt-4">
-            <Link
-              href="/build"
-              className="rounded-full bg-white px-8 py-3.5 text-sm font-semibold text-black transition-all hover:bg-white/90"
-            >
-              Enter Forge
-            </Link>
-            <Link
-              href="/agents"
-              className="rounded-full border border-white/20 bg-black/20 backdrop-blur px-8 py-3.5 text-sm font-medium text-white transition-all hover:bg-white/10"
-            >
-              Browse Legion
-            </Link>
-          </div>
+
         </div>
 
         {/* Bottom Stats Anchor (Matched to PRISM style, Right Aligned) */}
