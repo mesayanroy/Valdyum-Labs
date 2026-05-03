@@ -848,7 +848,8 @@ export default function HomePage() {
 
               <div className="flex flex-wrap items-center justify-center gap-4">
                 <Link
-                  href="/build"
+                  href="#"
+                  onClick={(e) => e.preventDefault()}
                   className="group relative px-10 py-4 font-sans text-xs font-semibold tracking-wide uppercase rounded-full overflow-hidden text-white bg-[#111111] hover:bg-[#799ee0] transition-colors duration-500"
                 >
                   <span className="relative flex items-center gap-2">
@@ -857,7 +858,8 @@ export default function HomePage() {
                   </span>
                 </Link>
                 <Link
-                  href="/agents"
+                  href="#"
+                  onClick={(e) => e.preventDefault()}
                   className="group flex items-center gap-2 px-10 py-4 font-sans text-xs font-semibold tracking-wide uppercase border border-black/10 text-[#111111] rounded-full hover:border-[#111111] hover:bg-black/5 transition-all duration-500"
                 >
                   Browse Agents
