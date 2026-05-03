@@ -10,14 +10,14 @@ export default function PaymentWorkflowDiagram() {
 
         <rect x="40" y="60" width="210" height="90" rx="14" fill="#0f172a" stroke="#00FFE5" />
         <text x="145" y="95" fill="#fff" textAnchor="middle" fontSize="17" fontWeight="700">Client App</text>
-        <text x="145" y="120" fill="#9ca3af" textAnchor="middle" fontSize="12">Freighter signs tx</text>
+        <text x="145" y="120" fill="#9ca3af" textAnchor="middle" fontSize="12">Phantom signs tx</text>
 
         <rect x="330" y="50" width="250" height="110" rx="14" fill="#10121c" stroke="#3b82f6" />
         <text x="455" y="90" fill="#fff" textAnchor="middle" fontSize="17" fontWeight="700">0x402 Agent API</text>
         <text x="455" y="114" fill="#9ca3af" textAnchor="middle" fontSize="12">Returns 402 challenge</text>
 
         <rect x="670" y="40" width="250" height="130" rx="14" fill="#111827" stroke="#f59e0b" />
-        <text x="795" y="80" fill="#fff" textAnchor="middle" fontSize="17" fontWeight="700">Stellar Horizon</text>
+        <text x="795" y="80" fill="#fff" textAnchor="middle" fontSize="17" fontWeight="700">Solana RPC</text>
         <text x="795" y="105" fill="#9ca3af" textAnchor="middle" fontSize="12">tx hash + signature</text>
         <text x="795" y="125" fill="#9ca3af" textAnchor="middle" fontSize="12">memo + amount verify</text>
 

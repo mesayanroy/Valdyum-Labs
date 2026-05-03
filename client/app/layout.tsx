@@ -5,9 +5,9 @@ import AppShell from "@/components/AppShell";
 import AblyNotifications from "@/components/AblyNotifications";
 
 export const metadata: Metadata = {
-  title: "Valdyum — AI Agent Marketplace on Stellar",
+  title: "Valdyum — AI Agent Marketplace on Solana",
   description:
-    "Build, monetize, and deploy AI agents on the Stellar blockchain. Pay per request with 0x402 protocol.",
+    "Build, monetize, and deploy AI agents on the Solana blockchain. Pay per request with 0x402 protocol.",
 };
 
 export default function RootLayout({
@@ -24,7 +24,7 @@ export default function RootLayout({
       </head>
       <body className="font-sans antialiased bg-[var(--color-bg)] text-[#111111]" suppressHydrationWarning>
         <Navbar />
-        <main className="pt-20">
+        <main>
           <AppShell>{children}</AppShell>
         </main>
         <AblyNotifications />

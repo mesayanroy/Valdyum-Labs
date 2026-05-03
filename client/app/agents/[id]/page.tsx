@@ -283,7 +283,7 @@ const data = await res.json();`;
             </div>
             <div className="text-right space-y-2">
               <div>
-                <div className="text-[#FFB800] font-syne font-bold text-2xl md:text-3xl">{agent.price_xlm} XLM</div>
+                <div className="text-[#FFB800] font-syne font-bold text-2xl md:text-3xl">{agent.price_xlm} SOL</div>
                 <div className="font-mono text-xs text-white/50">per request</div>
               </div>
               {viewerWallet && viewerWallet === agent.owner_wallet && (
@@ -404,7 +404,7 @@ const data = await res.json();`;
                 disabled={running || !input}
                 className="border border-white/20 rounded-2xl px-5 py-3 bg-[#00FFE5] text-black hover:bg-[#0ef2dc] font-bold text-sm disabled:opacity-50"
               >
-                {running ? 'Running...' : `Run (${agent.price_xlm} XLM)`}
+                {running ? 'Running...' : `Run (${agent.price_xlm} SOL)`}
               </button>
             </div>
 
@@ -431,12 +431,12 @@ const data = await res.json();`;
               <div className="space-y-2 text-sm text-white/85">
                 <div><strong>API Key:</strong> {runtimeInfo?.api_key || agent.api_key || 'N/A'}</div>
                 <div><strong>User Wallet:</strong> {lastSignerWallet || 'N/A'}</div>
-                <div><strong>Price:</strong> {agent.price_xlm} XLM</div>
-                <div><strong>Billed Last Run:</strong> {lastBilledXlm} XLM</div>
+                <div><strong>Price:</strong> {agent.price_xlm} SOL</div>
+                <div><strong>Billed Last Run:</strong> {lastBilledXlm} SOL</div>
                 <div><strong>Forked:</strong> {forkCount} times</div>
                 <div><strong>URL Endpoint:</strong> {runtimeInfo?.api_endpoint || agent.api_endpoint || 'N/A'}</div>
                 <div><strong>Total Requests:</strong> {totalRequests.toLocaleString()}</div>
-                <div><strong>Total Earned:</strong> {totalEarnedXlm} XLM</div>
+                <div><strong>Total Earned:</strong> {totalEarnedXlm} SOL</div>
               </div>
             </div>
 
@@ -468,7 +468,7 @@ const data = await res.json();`;
               <div className="text-[11px] text-white/55">Total Requests</div>
             </div>
             <div className="rounded-xl border border-white/15 bg-white/[0.03] p-3 text-center">
-              <div className="font-mono text-[#4ade80]">{totalEarnedXlm} XLM</div>
+              <div className="font-mono text-[#4ade80]">{totalEarnedXlm} SOL</div>
               <div className="text-[11px] text-white/55">Total Earned</div>
             </div>
             <div className="rounded-xl border border-white/15 bg-white/[0.03] p-3 text-center">

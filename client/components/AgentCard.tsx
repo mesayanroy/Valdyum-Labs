@@ -88,7 +88,7 @@ export default function AgentCard({ agent, onFork }: AgentCardProps) {
         </div>
         <div className="flex items-center gap-3">
           <span>{totalRequests.toLocaleString()} reqs</span>
-          <span className="text-[#FFB800]">{priceXlm} XLM/req</span>
+          <span className="text-[#FFB800]">{priceXlm} SOL/req</span>
         </div>
       </div>
 

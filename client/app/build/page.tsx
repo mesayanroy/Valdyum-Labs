@@ -13,7 +13,7 @@ export default function BuildPage() {
         >
           <h1 className="font-syne text-4xl font-bold text-white mb-2">Build an Agent</h1>
           <p className="text-gray-400 font-mono text-sm mb-10">
-            Deploy your AI agent on Stellar. 3 steps — configure, prompt, deploy.
+            Deploy your AI agent on Solana. 3 steps — configure, prompt, deploy.
           </p>
           <AgentBuilder />
         </motion.div>

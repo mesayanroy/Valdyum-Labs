@@ -84,7 +84,7 @@ export default function AgentsPage() {
         >
           <h1 className="font-syne text-4xl font-bold text-white mb-2">Agent Marketplace</h1>
           <p className="text-gray-400 font-mono text-sm mb-8">
-            Browse and use deployed AI agents. Pay per request with XLM.
+            Browse and use deployed AI agents. Pay per request with SOL.
           </p>
 
           {/* Filters */}

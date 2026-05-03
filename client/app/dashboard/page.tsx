@@ -161,7 +161,7 @@ export default function DashboardPage() {
     if (!addr) return;
     setWalletAddress(addr);
 
-    // Fetch XLM price for USD conversion
+    // Fetch SOL price for USD conversion
     const fetchXlmPrice = async () => {
       try {
         const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=stellar&vs_currencies=usd');
@@ -231,7 +231,7 @@ export default function DashboardPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h2 className="font-syne text-2xl font-bold text-white mb-3">Connect Your Wallet</h2>
-          <p className="text-gray-400 font-mono text-sm">Please connect your Freighter wallet to view your dashboard.</p>
+          <p className="text-gray-400 font-mono text-sm">Please connect your Phantom wallet to view your dashboard.</p>
         </div>
       </div>
     );
@@ -316,7 +316,7 @@ export default function DashboardPage() {
     {
       label: 'Total Earned',
       value: totalEarned.toFixed(2),
-      unit: 'XLM',
+      unit: 'SOL',
       sub: totalEarnedUsd ? `≈ $${totalEarnedUsd.toFixed(2)}` : undefined,
       color: 'text-[#FFB800]',
     },
@@ -443,7 +443,7 @@ export default function DashboardPage() {
                     <Tooltip
                       formatter={(value: unknown) => {
                         const n = typeof value === 'number' ? value : Number(value || 0);
-                        return `${n.toFixed(2)} XLM`;
+                        return `${n.toFixed(2)} SOL`;
                       }}
                       contentStyle={{ background: '#0a0a10', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 10, color: '#fff' }} />
                     <Bar dataKey="earnedXlm" fill="#FFB800" radius={[6, 6, 0, 0]} />
@@ -458,7 +458,7 @@ export default function DashboardPage() {
             {/* Cumulative PnL */}
             <div className="p-5 rounded-2xl border border-[rgba(74,222,128,0.1)] bg-[rgba(74,222,128,0.02)]">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="font-syne text-lg font-bold text-white">Cumulative PnL (XLM)</h3>
+                <h3 className="font-syne text-lg font-bold text-white">Cumulative PnL (SOL)</h3>
                 <span className="font-mono text-[10px] text-gray-500">agents + trading outcomes</span>
               </div>
               <div className="h-64">
@@ -482,7 +482,7 @@ export default function DashboardPage() {
                         formatter={(value: unknown, name: unknown) => {
                           const raw = Array.isArray(value) ? value[0] : value;
                           const n = typeof raw === 'number' ? raw : Number(raw || 0);
-                          return [`${n.toFixed(4)} XLM`, name === 'cumulative' ? 'Total PnL' : 'Daily Earned'];
+                          return [`${n.toFixed(4)} SOL`, name === 'cumulative' ? 'Total PnL' : 'Daily Earned'];
                         }}
                         contentStyle={{ background: '#0a0a10', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 10, color: '#fff' }} />
                       <Area type="monotone" dataKey="cumulative" stroke="#4ade80" fill="url(#pnlFill)" strokeWidth={2} name="cumulative" />
@@ -600,7 +600,7 @@ export default function DashboardPage() {
                 <div className={`font-syne text-xl font-bold ${tradingPnlTotal >= 0 ? 'text-[#4ade80]' : 'text-red-400'}`}>
                   {tradingPnlTotal >= 0 ? '+' : ''}{tradingPnlTotal.toFixed(4)}
                 </div>
-                <div className="font-mono text-[10px] text-gray-500 mt-0.5">Trading PnL (XLM)</div>
+                <div className="font-mono text-[10px] text-gray-500 mt-0.5">Trading PnL (SOL)</div>
               </div>
               <div className="rounded-xl border border-[rgba(255,255,255,0.06)] bg-[rgba(255,255,255,0.02)] p-3 text-center">
                 <div className="font-syne text-xl font-bold text-[#FFB800]">{totalClosedTrades}</div>
@@ -617,7 +617,7 @@ export default function DashboardPage() {
               <table className="w-full min-w-[680px]">
                 <thead>
                   <tr className="border-b border-white/[0.06]">
-                    {['#', 'Agent / Strategy', 'Model', 'P&L (XLM)', 'Tx', 'Time'].map((h) => (
+                    {['#', 'Agent / Strategy', 'Model', 'P&L (SOL)', 'Tx', 'Time'].map((h) => (
                       <th key={h} className="py-2 pr-4 text-left font-mono text-[10px] text-gray-500 uppercase">{h}</th>
                     ))}
                   </tr>
@@ -704,7 +704,7 @@ export default function DashboardPage() {
                         <span className="w-1.5 h-1.5 rounded-full bg-[#00FFE5] animate-pulse shrink-0" />
                         <span className="font-mono text-xs text-white/70">{ev.agentName}</span>
                       </div>
-                      <span className="font-mono text-xs text-[#4ade80]">+{(ev.priceXlm ?? 0).toFixed(4)} XLM</span>
+                      <span className="font-mono text-xs text-[#4ade80]">+{(ev.priceXlm ?? 0).toFixed(4)} SOL</span>
                     </div>
                   ))}
                 </div>
@@ -733,7 +733,7 @@ export default function DashboardPage() {
                       <td className="py-2 pr-3 font-mono text-xs text-white/80">{row.invoiceId}</td>
                       <td className="py-2 pr-3 font-mono text-xs text-white/80">{row.agentName}</td>
                       <td className="py-2 pr-3 font-mono text-xs text-[#00FFE5]">{modelName(row.model)}</td>
-                      <td className="py-2 pr-3 font-mono text-xs text-[#4ade80]">{row.amountXlm.toFixed(4)} XLM</td>
+                      <td className="py-2 pr-3 font-mono text-xs text-[#4ade80]">{row.amountXlm.toFixed(4)} SOL</td>
                       <td className="py-2 pr-3 font-mono text-xs">
                         <a href={row.txExplorerUrl} target="_blank" rel="noreferrer" className="text-[#FFB800] hover:underline">
                           {shortHash(row.txHash)}
@@ -785,7 +785,7 @@ export default function DashboardPage() {
                     </div>
                     <div className="flex items-center gap-3 shrink-0">
                       {typeof ev.priceXlm === 'number' && ev.priceXlm > 0 && (
-                        <span className="font-mono text-xs text-[#4ade80]">+{ev.priceXlm.toFixed(4)} XLM</span>
+                        <span className="font-mono text-xs text-[#4ade80]">+{ev.priceXlm.toFixed(4)} SOL</span>
                       )}
                       {ev.txHash && (
                         <a href={ev.txExplorerUrl} target="_blank" rel="noreferrer" className="font-mono text-[9px] text-[#FFB800] hover:underline">
@@ -827,14 +827,14 @@ export default function DashboardPage() {
                       )}
                     </Link>
                     <div className="font-mono text-xs text-gray-500 mt-0.5">
-                      {agent.model === 'openai-gpt4o-mini' ? 'GPT-4o Mini' : 'Claude Haiku'} · {agent.price_xlm} XLM/req · {agent.visibility}
+                      {agent.model === 'openai-gpt4o-mini' ? 'GPT-4o Mini' : 'Claude Haiku'} · {agent.price_xlm} SOL/req · {agent.visibility}
                     </div>
                     {agent.forked_from && (
                       <div className="font-mono text-[10px] text-purple-400 mt-0.5">Forked · ID: {agent.forked_from.slice(0, 8)}…</div>
                     )}
                   </div>
                   <div className="text-right">
-                    <div className="font-mono text-sm text-[#FFB800]">{(agent.total_earned_xlm ?? 0).toFixed(4)} XLM</div>
+                    <div className="font-mono text-sm text-[#FFB800]">{(agent.total_earned_xlm ?? 0).toFixed(4)} SOL</div>
                     {xlmPrice && <div className="font-mono text-xs text-gray-500">≈ ${((agent.total_earned_xlm ?? 0) * xlmPrice).toFixed(2)}</div>}
                     <div className="font-mono text-xs text-gray-500">{(agent.total_requests ?? 0).toLocaleString()} requests</div>
                     <button

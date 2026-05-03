@@ -93,7 +93,7 @@ const PHASE_LABELS: Record<DeployPhase, string> = {
   idle: '🚀 Deploy Agent',
   building_tx: 'Building transaction…',
   awaiting_validation_sig: '🔏 Sign validation in wallet…',
-  submitting_validation: 'Submitting to Stellar…',
+  submitting_validation: 'Submitting to Solana…',
   awaiting_confirm_sig: '🔏 Sign confirmation in wallet…',
   submitting_confirm: 'Confirming on-chain…',
   saving: 'Saving to database…',
@@ -469,7 +469,7 @@ export default function AgentBuilder() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-mono text-gray-400 mb-1.5">Price (XLM/request)</label>
+                <label className="block text-xs font-mono text-gray-400 mb-1.5">Price (SOL/request)</label>
                 <input
                   type="number"
                   value={form.priceXlm}
@@ -510,7 +510,7 @@ export default function AgentBuilder() {
               <div>
                 <div className="text-xs font-mono text-white">List in Marketplace for monetization</div>
                 <div className="text-[10px] font-mono text-gray-500 mt-0.5">
-                  Your agent will appear in the public marketplace. Earn {form.priceXlm || '0.01'} XLM per request via 0x402 protocol.
+                  Your agent will appear in the public marketplace. Earn {form.priceXlm || '0.01'} SOL per request via 0x402 protocol.
                 </div>
               </div>
             </div>
@@ -524,7 +524,7 @@ export default function AgentBuilder() {
                 className="w-full px-3 py-2.5 bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.08)] rounded-lg text-white text-sm font-mono placeholder-gray-600 focus:outline-none focus:border-[rgba(0,255,229,0.4)]"
               />
               {form.agentWallet && !/^G[A-Z2-7]{55}$/.test(form.agentWallet) && (
-                <p className="text-[10px] font-mono text-red-400 mt-1">Invalid Stellar address format.</p>
+                <p className="text-[10px] font-mono text-red-400 mt-1">Invalid Solana address format.</p>
               )}
               <p className="text-[10px] font-mono text-gray-500 mt-1">
                 Build this agent for a different wallet. Enables multi-agent architecture.
@@ -615,7 +615,7 @@ export default function AgentBuilder() {
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Price</span>
-                <span className="text-[#FFB800]">{form.priceXlm} XLM/req</span>
+                <span className="text-[#FFB800]">{form.priceXlm} SOL/req</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Visibility</span>

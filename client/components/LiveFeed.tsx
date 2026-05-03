@@ -41,7 +41,7 @@ export default function LiveFeed() {
           <span className="font-sans font-medium text-sm text-[#111111]">Live Activity</span>
           <span className="font-mono text-[10px] text-black/30 ml-2 hidden sm:inline">ably://marketplace</span>
         </div>
-        <span className="font-mono text-[10px] text-black/40 uppercase tracking-wider">{isConnected ? 'connected' : 'connecting'} · 0x402 · Stellar</span>
+        <span className="font-mono text-[10px] text-black/40 uppercase tracking-wider">{isConnected ? 'connected' : 'connecting'} · 0x402 · Solana</span>
       </div>
 
       {/* Feed rows */}
@@ -72,7 +72,7 @@ export default function LiveFeed() {
                   </span>
                   {typeof ev.priceXlm === 'number' && ev.priceXlm > 0 && (
                     <span className="font-mono text-[11px] font-medium text-[#799ee0]">
-                      +{ev.priceXlm.toFixed(2)} XLM
+                      +{ev.priceXlm.toFixed(2)} SOL
                     </span>
                   )}
                 </div>

@@ -383,7 +383,7 @@ function PaymentExecutorSection({ walletAddress }: { walletAddress: string }) {
         </div>
         <div>
           <h2 className="font-syne text-xl font-bold text-white">0x402 Payment Executor</h2>
-          <p className="font-mono text-xs text-gray-500">Select an agent, enter a task, pay &amp; execute via Stellar.</p>
+          <p className="font-mono text-xs text-gray-500">Select an agent, enter a task, pay &amp; execute via Solana.</p>
         </div>
       </div>
 
@@ -430,7 +430,7 @@ function PaymentExecutorSection({ walletAddress }: { walletAddress: string }) {
                   <span className={`font-syne text-sm font-semibold ${selectedAgent?.id === agent.id ? 'text-[#00FFE5]' : 'text-white'}`}>
                     {agent.name}
                   </span>
-                  <span className="font-mono text-xs text-[#FFB800] shrink-0">{agent.priceXlm} XLM</span>
+                  <span className="font-mono text-xs text-[#FFB800] shrink-0">{agent.priceXlm} SOL</span>
                 </div>
                 {agent.description && (
                   <p className="font-mono text-[10px] text-gray-500 mt-1 truncate">{agent.description}</p>
@@ -462,12 +462,12 @@ function PaymentExecutorSection({ walletAddress }: { walletAddress: string }) {
               </div>
               <div className="flex justify-between font-mono text-xs">
                 <span className="text-gray-500">Price</span>
-                <span className="text-[#FFB800] font-bold">{selectedAgent.priceXlm} XLM</span>
+                <span className="text-[#FFB800] font-bold">{selectedAgent.priceXlm} SOL</span>
               </div>
               <div className="flex justify-between font-mono text-xs">
                 <span className="text-gray-500">Network</span>
                 <span className={isMainnet ? 'text-[#4ade80]' : 'text-[#00FFE5]'}>
-                  Stellar {isMainnet ? 'Mainnet' : 'Testnet'}
+                  Solana {isMainnet ? 'Mainnet' : 'Testnet'}
                 </span>
               </div>
             </div>
@@ -509,7 +509,7 @@ function PaymentExecutorSection({ walletAddress }: { walletAddress: string }) {
               {EXECUTOR_STEP_LABELS[step]}
             </button>
             <p className="font-mono text-[10px] text-[#FFB800] text-center">
-              ⚠ Transaction requires wallet signature. Your XLM balance will be deducted.
+              ⚠ Transaction requires wallet signature. Your SOL balance will be deducted.
             </p>
           </div>
         </div>
@@ -556,12 +556,12 @@ function PaymentExecutorSection({ walletAddress }: { walletAddress: string }) {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-500">Price</span>
-                  <span className="text-[#FFB800] font-bold">{selectedAgent.priceXlm} XLM</span>
+                  <span className="text-[#FFB800] font-bold">{selectedAgent.priceXlm} SOL</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-500">Network</span>
                   <span className={isMainnet ? 'text-[#4ade80]' : 'text-[#00FFE5]'}>
-                    Stellar {isMainnet ? 'Mainnet' : 'Testnet'}
+                    Solana {isMainnet ? 'Mainnet' : 'Testnet'}
                   </span>
                 </div>
               </div>
@@ -629,7 +629,7 @@ function PaymentExecutorSection({ walletAddress }: { walletAddress: string }) {
               </div>
               <div className="border-t border-[rgba(255,255,255,0.06)] pt-3 flex justify-between">
                 <span className="text-gray-500">Amount Paid</span>
-                <span className="text-[#FFB800] font-bold text-base">{invoice.priceXlm} XLM</span>
+                <span className="text-[#FFB800] font-bold text-base">{invoice.priceXlm} SOL</span>
               </div>
               <div className="flex justify-between gap-3">
                 <span className="text-gray-500 shrink-0">TX Hash</span>
@@ -654,14 +654,14 @@ function PaymentExecutorSection({ walletAddress }: { walletAddress: string }) {
 
             {/* Invoice footer */}
             <div className="px-6 py-4 border-t border-[rgba(0,255,229,0.1)] flex items-center justify-between gap-3">
-              <p className="font-mono text-[10px] text-gray-600">Protocol: 0x402 · Stellar {isMainnet ? 'Mainnet' : 'Testnet'}</p>
+              <p className="font-mono text-[10px] text-gray-600">Protocol: 0x402 · Solana {isMainnet ? 'Mainnet' : 'Testnet'}</p>
               <a
                 href={invoice.explorerUrl}
                 target="_blank"
                 rel="noreferrer"
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[rgba(0,255,229,0.2)] text-[#00FFE5] font-mono text-xs hover:bg-[rgba(0,255,229,0.08)] transition-colors"
               >
-                View on Stellar Explorer
+                View on Solana Explorer
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
               </a>
             </div>
@@ -1073,7 +1073,7 @@ export default function WorkflowPage() {
         <textarea
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
-          placeholder={`Write your trading strategy or agent plan here...\n\nTip: Lines starting with "- [ ]" will be imported as tasks:\n- [ ] Analyze XLM/USDC liquidity\n- [ ] Run MEV bot scan\n- [ ] Execute arbitrage if profit > 0.5%`}
+          placeholder={`Write your trading strategy or agent plan here...\n\nTip: Lines starting with "- [ ]" will be imported as tasks:\n- [ ] Analyze SOL/USDC liquidity\n- [ ] Run MEV bot scan\n- [ ] Execute arbitrage if profit > 0.5%`}
           rows={10}
           className="w-full bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.07)] rounded-xl px-4 py-3 font-mono text-sm text-white placeholder-gray-600 focus:outline-none focus:border-[rgba(255,184,0,0.3)] resize-y transition-colors"
         />

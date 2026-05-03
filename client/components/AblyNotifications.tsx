@@ -70,9 +70,9 @@ export default function AblyNotifications() {
               : `New Agent Deployed`,
           body:
             ev.eventType === 'payment_received'
-              ? `+${(ev.priceXlm || 0).toFixed(4)} XLM · ${ev.agentName || ev.agentId}`
+              ? `+${(ev.priceXlm || 0).toFixed(4)} SOL · ${ev.agentName || ev.agentId}`
               : ev.eventType === 'agent_run'
-              ? `Request completed${ev.priceXlm ? ` · ${ev.priceXlm} XLM` : ' · free'}`
+              ? `Request completed${ev.priceXlm ? ` · ${ev.priceXlm} SOL` : ' · free'}`
               : `${ev.agentName || ev.agentId} is now live`,
           timestamp: ev.timestamp,
           txHash: ev.txHash,

@@ -31,7 +31,7 @@ const STEPS: FlowStep[] = [
   {
     id:    2,
     label: '0x402 Protocol',
-    sub:   'HTTP 402 → Stellar TX',
+    sub:   'HTTP 402 → Solana TX',
     color: 'text-[#f59e0b]',
     border:'border-[rgba(245,158,11,0.3)]',
     icon:  '💳',
@@ -39,7 +39,7 @@ const STEPS: FlowStep[] = [
   {
     id:    3,
     label: 'Platform API',
-    sub:   'Next.js · Soroban verify',
+    sub:   'Next.js · Anchor verify',
     color: 'text-[#7b61ff]',
     border:'border-[rgba(123,97,255,0.3)]',
     icon:  '🔗',
@@ -62,7 +62,7 @@ const STEPS: FlowStep[] = [
   },
 ];
 
-const ARROW_LABELS = ['HTTP 402', 'XLM tx', 'verify', 'events'];
+const ARROW_LABELS = ['HTTP 402', 'SOL tx', 'verify', 'events'];
 
 export default function ProtocolFlow() {
   return (
