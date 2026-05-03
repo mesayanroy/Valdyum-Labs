@@ -455,7 +455,7 @@ export default function HomePage() {
             <div className="relative w-full max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-8 lg:gap-24 items-center h-full pt-24 pb-8 z-10">
 
               {/* Left Column: Headline */}
-              <div className="lg:w-1/2 flex flex-col justify-center h-full pt-8 lg:pt-0 pl-4 lg:pl-12">
+              <div className="lg:w-1/2 flex flex-col justify-center h-auto lg:h-full pt-8 lg:pt-0 pl-4 lg:pl-12 shrink-0">
                 <div className="flex items-center gap-4 mb-8">
                   <span className="h-[1px] w-8 bg-white/30" />
                   <span className="font-sans text-xs font-semibold tracking-widest text-white/50 uppercase">The Problem</span>
@@ -473,7 +473,7 @@ export default function HomePage() {
               </div>
 
               {/* Right Column: 3 Items */}
-              <div className="lg:w-1/2 flex flex-col justify-center gap-6 md:gap-8 pr-4 lg:pr-12 h-full overflow-y-auto min-h-0 py-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+              <div className="lg:w-1/2 flex flex-col justify-center gap-6 md:gap-8 pr-4 lg:pr-12 flex-1 min-h-0 overflow-y-auto py-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                 {[
                   {
                     num: 'I',
@@ -624,7 +624,7 @@ export default function HomePage() {
             <div className="w-full max-w-[1400px] mx-auto flex flex-col lg:flex-row-reverse gap-8 lg:gap-16 items-center h-full pt-24 pb-8 relative z-10">
 
               {/* Right Column (Visually): Headline */}
-              <div className="lg:w-[35%] flex flex-col justify-center h-full pt-8 lg:pt-0 lg:pl-8 relative">
+              <div className="lg:w-[35%] flex flex-col justify-center h-auto lg:h-full pt-8 lg:pt-0 lg:pl-8 relative shrink-0">
                 {/* Ultra-soft white circular glow to ensure text readability without hard edges */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-[130%] bg-white/50 rounded-full blur-[100px] pointer-events-none z-0" />
 
@@ -647,7 +647,7 @@ export default function HomePage() {
               </div>
 
               {/* Left Column (Visually): Bento Grid */}
-              <div className="lg:w-[65%] h-full w-full relative lg:pt-4 flex-1 min-h-0 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] lg:pr-8">
+              <div className="lg:w-[65%] w-full relative lg:pt-4 flex-1 min-h-0 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] lg:pr-8">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3 xl:gap-5 w-full pb-8" style={{ gridAutoRows: 'minmax(180px, 1fr)' }}>
                   {AGENT_TEMPLATES.map((tmpl, i) => {
                     let bentoClass = "col-span-1 row-span-1 flex-col justify-between p-5 md:p-6";
