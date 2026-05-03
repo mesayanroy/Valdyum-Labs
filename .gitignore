@@ -6,7 +6,6 @@ node_modules/
 
 # testing
 /coverage
-GSAP skills
 # next.js (now inside client/)
 client/.next/
 client/out/
