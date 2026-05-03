@@ -5,25 +5,105 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { HoverBorderGradient } from '@/components/ui/hover-border-gradient';
+import gsap from 'gsap';
 
-const BRAND_LOGO_SRC = '/brand/Screenshot 2026-04-22 220049.png';
+const BRAND_LOGO_SRC = '/brand/Valdyumlogo.png';
 
-const navLinks = [
-  { href: '/', label: 'The Forum' },
-  { href: '/agents', label: 'The Legion' },
-  { href: '/devs', label: 'The Forge' },
-  { href: '/faucet', label: 'The Treasury' },
-  { href: '/about', label: 'Architecture' },
+const navMenus = [
+  {
+    id: 'docs',
+    label: 'Docs',
+    grid: true,
+    items: ['CLI', 'GPU', '0x402', 'CRUD']
+  },
+  {
+    id: 'dev',
+    label: 'Dev',
+    grid: true,
+    items: ['CLI', 'Tooling', 'Template', 'Agents']
+  },
+  {
+    id: 'org',
+    label: 'Org',
+    grid: false,
+    items: ['Recruit', 'Security']
+  },
+  {
+    id: 'faucet',
+    label: 'Faucet',
+    grid: true,
+    items: ['RPC', 'Sol', 'URL']
+  }
 ];
+
+function NavDropdown({ menu, isOpen, isDarkHeroContext }: { menu: any, isOpen: boolean, isDarkHeroContext: boolean }) {
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (dropdownRef.current) {
+      if (isOpen) {
+        gsap.to(dropdownRef.current, {
+          y: 0,
+          autoAlpha: 1,
+          scale: 1,
+          duration: 0.4,
+          ease: 'power3.out',
+          overwrite: true,
+          transformOrigin: 'top center'
+        });
+      } else {
+        gsap.to(dropdownRef.current, {
+          y: -10,
+          autoAlpha: 0,
+          scale: 0.96,
+          duration: 0.3,
+          ease: 'power2.inOut',
+          overwrite: true
+        });
+      }
+    }
+  }, [isOpen]);
+
+  return (
+    <div
+      ref={dropdownRef}
+      className="absolute top-full left-1/2 -translate-x-1/2 mt-2 bg-white rounded-[20px] shadow-[0_15px_40px_rgba(0,0,0,0.1)] border border-black/5 overflow-hidden p-2 invisible z-50"
+      style={{ opacity: 0, transform: 'translateY(-10px) scale(0.96)', width: menu.grid ? '360px' : '220px' }}
+    >
+      <div className={menu.grid ? 'grid grid-cols-2 gap-1' : 'flex flex-col gap-1'}>
+        {menu.items.map((item: string) => (
+          <Link href="#" key={item} className="flex flex-col justify-center p-3 rounded-xl hover:bg-[#fafafa] transition-colors group">
+            <div className="flex items-center justify-between w-full">
+              <span className="font-sans text-[14px] font-medium text-[#111111] capitalize">{item}</span>
+              {/* Coming soon badge */}
+              <span className="bg-[#799ee0]/15 text-[#799ee0] text-[9px] font-medium px-2 py-0.5 rounded-full whitespace-nowrap ml-2 opacity-80 group-hover:opacity-100 transition-opacity">
+                Coming soon
+              </span>
+            </div>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function Navbar() {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const isDarkHeroContext = pathname === '/' && !isScrolled;
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const [indicatorStyle, setIndicatorStyle] = useState<{ left: number; width: number } | null>(null);
-  const linkRefs = useRef<(HTMLAnchorElement | null)[]>([]);
-  const navContainerRef = useRef<HTMLDivElement | null>(null);
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
+  const hoverTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  const handleMouseEnterMenu = (id: string) => {
+    if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
+    setOpenDropdownId(id);
+  };
+
+  const handleMouseLeaveMenu = () => {
+    hoverTimeout.current = setTimeout(() => {
+      setOpenDropdownId(null);
+    }, 150);
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,39 +112,6 @@ export default function Navbar() {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  // Sliding indicator
-  // Recalculate indicator position
-  const updateIndicator = () => {
-    const targetIndex = hoveredIndex !== null ? hoveredIndex : navLinks.findIndex(l => l.href === pathname);
-    const el = linkRefs.current[targetIndex];
-    const container = navContainerRef.current;
-    if (el && container) {
-      const containerRect = container.getBoundingClientRect();
-      const elRect = el.getBoundingClientRect();
-      setIndicatorStyle({
-        left: elRect.left - containerRect.left,
-        width: elRect.width,
-      });
-    } else {
-      setIndicatorStyle(null);
-    }
-  };
-
-  // Run on hover change, pathname change, and scroll state change
-  useEffect(() => {
-    updateIndicator();
-  }, [hoveredIndex, pathname, isScrolled]);
-
-  // Recalculate on resize and after initial mount paint
-  useEffect(() => {
-    const timer = setTimeout(updateIndicator, 100);
-    window.addEventListener('resize', updateIndicator);
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener('resize', updateIndicator);
-    };
-  }, [pathname]);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 pointer-events-none">
@@ -77,100 +124,95 @@ export default function Navbar() {
       >
         {/* Inner bar — morphs from flat full-width to floating card */}
         <div
-          className="pointer-events-auto w-full transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+          className="pointer-events-auto w-full relative transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
           style={{
             maxWidth: isScrolled ? '1100px' : '100%',
             padding: isScrolled ? '12px 28px' : '18px 40px',
             borderRadius: isScrolled ? '16px' : '0px',
-            background: isScrolled ? 'rgba(255, 255, 255, 0.88)' : 'transparent',
-            backdropFilter: isScrolled ? 'blur(24px) saturate(180%)' : 'none',
-            WebkitBackdropFilter: isScrolled ? 'blur(24px) saturate(180%)' : 'none',
             border: isScrolled ? '1px solid rgba(0, 0, 0, 0.07)' : '1px solid transparent',
             boxShadow: isScrolled
               ? '0 8px 32px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03)'
               : 'none',
           }}
         >
-          <div className="flex items-center justify-between w-full">
+          {/* Sibling Background layer for the blur */}
+          <div
+            className="absolute inset-0 transition-all duration-700 pointer-events-none -z-10"
+            style={{
+              borderRadius: isScrolled ? '16px' : '0px',
+              background: isScrolled ? 'rgba(255, 255, 255, 0.88)' : 'transparent',
+              backdropFilter: isScrolled ? 'blur(24px) saturate(180%)' : 'none',
+              WebkitBackdropFilter: isScrolled ? 'blur(24px) saturate(180%)' : 'none',
+            }}
+          />
+
+          <div className="flex items-center w-full relative z-10">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-3 group shrink-0">
-              <span className={`relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl border transition-all duration-300 ${isDarkHeroContext ? 'border-white/20 bg-white/5 group-hover:bg-white/10' : 'border-black/10 bg-black/[0.03] group-hover:bg-black/[0.07]'}`}>
+            <div className="flex-1 flex justify-start">
+              <Link href="/" className="flex items-center group shrink-0 relative h-12 w-56">
                 <Image
                   src={BRAND_LOGO_SRC}
                   alt="Valdyum logo"
                   fill
-                  sizes="36px"
-                  className={`object-contain p-1.5 transition-all duration-300 ${isDarkHeroContext ? 'brightness-0 invert' : 'invert mix-blend-multiply'}`}
+                  sizes="224px"
+                  className={`object-contain object-left scale-[2] origin-left transition-all duration-300 ${isDarkHeroContext ? 'brightness-0 invert' : ''}`}
                   priority
                 />
-              </span>
-              <div className="hidden sm:flex flex-col">
-                <span className={`text-[15px] font-sans font-semibold tracking-tight leading-tight transition-colors duration-300 ${isDarkHeroContext ? 'text-white' : 'text-[#111111]'}`}>
-                  Valdyum
-                </span>
-                <span className={`text-[9px] font-mono tracking-[0.15em] uppercase leading-tight transition-colors duration-300 ${isDarkHeroContext ? 'text-white/60' : 'text-black/30'}`}>
-                  Protocol
-                </span>
-              </div>
-            </Link>
+              </Link>
+            </div>
 
-            {/* Center Nav Links */}
+            {/* Center Nav Links (Mega Menu) */}
             <div
-              ref={navContainerRef}
-              className="hidden lg:flex items-center relative"
-              onMouseLeave={() => setHoveredIndex(null)}
+              className="hidden lg:flex items-center justify-center gap-2 relative"
+              onMouseLeave={handleMouseLeaveMenu}
             >
-              {/* Sliding underline indicator */}
-              <div
-                className="absolute bottom-0 h-[2px] rounded-full transition-all duration-300 ease-out"
-                style={{
-                  left: indicatorStyle ? indicatorStyle.left + indicatorStyle.width * 0.15 : 0,
-                  width: indicatorStyle ? indicatorStyle.width * 0.7 : 0,
-                  background: indicatorStyle ? '#799ee0' : 'transparent',
-                  opacity: indicatorStyle ? 1 : 0,
-                }}
-              />
-
-              {navLinks.map((link, i) => {
-                const isActive = pathname === link.href;
-                let linkColor = '';
-                if (isDarkHeroContext) {
-                  linkColor = isActive ? 'text-white font-medium' : 'text-white/60 hover:text-white';
-                } else {
-                  linkColor = isActive ? 'text-[#111111] font-medium' : 'text-black/40 hover:text-[#111111]';
-                }
+              {navMenus.map((menu) => {
+                const isOpen = openDropdownId === menu.id;
+                let linkColor = isDarkHeroContext
+                  ? (isOpen ? 'text-white font-medium bg-white/10' : 'text-white/60 hover:text-white hover:bg-white/5')
+                  : (isOpen ? 'text-[#111111] font-medium bg-black/5' : 'text-black/70 hover:text-[#111111] hover:bg-black/5');
 
                 return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    ref={(el) => { linkRefs.current[i] = el; }}
-                    onMouseEnter={() => setHoveredIndex(i)}
-                    className={`relative z-10 px-5 py-2 text-[14px] font-sans transition-colors duration-300 whitespace-nowrap ${linkColor}`}
+                  <div
+                    key={menu.id}
+                    className="relative"
+                    onMouseEnter={() => handleMouseEnterMenu(menu.id)}
                   >
-                    {link.label}
-                  </Link>
+                    <button
+                      className={`relative z-10 px-4 py-2 rounded-full text-[14px] font-sans transition-all duration-300 whitespace-nowrap flex items-center gap-1.5 ${linkColor}`}
+                    >
+                      <span className="capitalize">{menu.label}</span>
+                      <svg
+                        width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"
+                        className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
+                      >
+                        <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </button>
+
+                    <NavDropdown menu={menu} isOpen={isOpen} isDarkHeroContext={isDarkHeroContext} />
+                  </div>
                 );
               })}
             </div>
 
             {/* Right Actions */}
-            <div className="flex items-center gap-3 shrink-0">
-              <Link
-                href="/docs"
-                className={`hidden md:block px-4 py-2 text-[14px] font-sans transition-colors duration-300 whitespace-nowrap ${isDarkHeroContext ? 'text-white/60 hover:text-white' : 'text-black/40 hover:text-[#111111]'}`}
+            <div className="flex-1 flex justify-end items-center gap-3 shrink-0">
+              <button 
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById('waitlist')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                aria-label="Early Access"
               >
-                View docs
-              </Link>
-              <Link href="/build">
                 <HoverBorderGradient
                   as="span"
                   containerClassName="cursor-pointer"
                   className={`whitespace-nowrap transition-colors duration-300 ${isDarkHeroContext ? 'bg-white text-black' : 'bg-[#111111] text-white'}`}
                 >
-                  Enter Forge
+                  Early Access
                 </HoverBorderGradient>
-              </Link>
+              </button>
             </div>
           </div>
         </div>

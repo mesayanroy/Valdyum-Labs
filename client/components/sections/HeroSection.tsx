@@ -89,7 +89,7 @@ export default function HeroSection() {
       </video>
 
       {/* Smooth white fade at the bottom to merge seamlessly with the next section */}
-      <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#f2fbff] to-transparent pointer-events-none" />
+      <div className="absolute bottom-0 left-0 right-0 h-0 bg-gradient-to-t from-[#f2fbff] to-transparent pointer-events-none" />
 
       {/* Content Container */}
       <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-[1400px] flex-col justify-center px-6 pt-24 pb-28 lg:px-12">
@@ -100,7 +100,7 @@ export default function HeroSection() {
           <div className="mb-6 flex items-center justify-end gap-4">
             <span className="h-[1px] w-8 bg-white/30" />
             <span className="font-sans text-sm font-medium text-white/70 tracking-wide uppercase">
-              Stellar-native agent infrastructure
+              Solana-native agent infrastructure
             </span>
           </div>
 
