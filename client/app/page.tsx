@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
@@ -648,7 +648,7 @@ export default function HomePage() {
 
               {/* Left Column (Visually): Bento Grid */}
               <div className="lg:w-[65%] h-full w-full relative lg:pt-4 flex-1 min-h-0 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] lg:pr-8">
-                <div className="grid grid-cols-1 md:grid-cols-3 auto-rows-fr gap-4 xl:gap-6 w-full pb-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 xl:gap-6 w-full pb-24" style={{ gridAutoRows: 'minmax(230px, 1fr)' }}>
                   {AGENT_TEMPLATES.map((tmpl, i) => {
                     let bentoClass = "col-span-1 row-span-1 flex-col justify-between p-6";
                     if (i === 0) {
