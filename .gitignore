@@ -6,11 +6,10 @@ node_modules/
 
 # testing
 /coverage
-
+client/gsap-skills 
 # next.js (now inside client/)
 client/.next/
 client/out/
-
 # production
 /build
 client/build

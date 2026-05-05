@@ -1,0 +1,37 @@
+Colosseum Crowdedness Score
+
+Project: Valdyum
+
+Query used:
+Valdyum agentic commerce infrastructure builder marketplace verifiable payment execution layer Web3 agents wallet-gated execution 0x402 payment negotiation on-chain registry deployment proof monetized forks optimized local GPU execution dashboard transaction evidence Solana
+
+Primary Crowdedness Score:
+202
+
+Primary Cluster / Category:
+Stablecoin Payment Rails and Infrastructure
+
+Cluster Stats:
+The closest top matches under the agentic commerce/payment-execution positioning are in this cluster with crowdedness 202.
+
+Broader Adjacent Cluster:
+Solana AI Agent Infrastructure (v1-c14), crowdedness 325, 325 total projects, 14 winners
+
+Secondary Adjacent Cluster:
+AI-Powered Solana DeFi Assistants (v1-c22), crowdedness 270
+
+Similar Solana Hackathon Projects:
+- Stableyard: Programmable infrastructure layer for stablecoin-based payments. Cluster: Stablecoin Payment Rails and Infrastructure. Crowdedness: 202.
+- Latinum Agentic Commerce: Payment middleware and MCP-compatible wallet enabling AI agents to autonomously pay for services and tools. Cluster: Stablecoin Payment Rails and Infrastructure. Crowdedness: 202. Prize: 1st Place - AI.
+- Zen7 Labs: Decentralized payment infrastructure for AI agents to autonomously and securely transact across multiple blockchains. Cluster: Solana AI Agent Infrastructure. Crowdedness: 325.
+- Agent-Cred: Payment infrastructure for AI agents on Solana using secure autonomous transaction architecture. Cluster: Solana AI Agent Infrastructure. Crowdedness: 325.
+- Agentic web3: Decentralized AI agent platform for on-chain assistants and web3 task automation. Cluster: AI-Powered Solana DeFi Assistants. Crowdedness: 270.
+- ForgexAI: No-code visual studio for blockchain AI agent automation and governance. Cluster: Solana AI Agent Infrastructure. Crowdedness: 325.
+- SolAIBot: Toolset for AI agents to access paid services through Solana payments and agent-to-agent commerce. Cluster: Solana AI Agent Infrastructure. Crowdedness: 325.
+- AgentRunner: Agentic orchestration platform for automated DeFi execution with micropayments and auditability. Cluster: AI-Powered Solana DeFi Assistants. Crowdedness: 270.
+
+Differentiation Angle:
+Valdyum should position itself less as another AI assistant and more as agentic commerce infrastructure: a builder plus marketplace plus verifiable payment/execution layer for Web3 agents. The strongest wedge is the combination of wallet-gated execution, 0x402-style payment negotiation, on-chain registry/deployment proof, monetized forks, optimized local GPU execution, and dashboard-level transaction evidence. That separates it from generic Solana AI assistants and from narrower agent payment SDKs.
+
+Grant-Ready Text:
+Colosseum Copilot maps Valdyum's sharper agentic-commerce positioning to a primary crowdedness score of 202, with closest matches including Stableyard and Latinum Agentic Commerce in Stablecoin Payment Rails and Infrastructure. Valdyum also overlaps with the broader Solana AI Agent Infrastructure cluster at crowdedness 325. The differentiation is that Valdyum combines an agent builder, marketplace/fork economy, wallet-gated 0x402-style paid execution, on-chain registry/deployment proof, optimized local GPU execution, and realtime transaction evidence instead of only providing an AI assistant or a standalone agent wallet/payment SDK.

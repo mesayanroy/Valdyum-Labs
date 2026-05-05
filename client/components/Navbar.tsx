@@ -9,12 +9,28 @@ import gsap from 'gsap';
 
 const BRAND_LOGO_SRC = '/brand/Valdyumlogo.png';
 
-const navMenus = [
+interface NavMenu {
+  id: string;
+  label: string;
+  grid: boolean;
+  items: string[];
+  docsLinks?: Record<string, string>;
+  isLink?: boolean;
+  href?: string;
+}
+
+const navMenus: NavMenu[] = [
   {
     id: 'docs',
     label: 'Docs',
     grid: true,
-    items: ['CLI', 'GPU', '0x402', 'CRUD']
+    items: ['Quick Start', 'Architecture', 'Python SDK', 'CLI Reference'],
+    docsLinks: {
+      'Quick Start': '/docs#quickstart',
+      'Architecture': '/docs#architecture',
+      'Python SDK': '/docs#python-sdk',
+      'CLI Reference': '/docs#cli',
+    }
   },
   {
     id: 'dev',
@@ -36,7 +52,7 @@ const navMenus = [
   }
 ];
 
-function NavDropdown({ menu, isOpen, isDarkHeroContext }: { menu: { grid: boolean; items: string[] }, isOpen: boolean, isDarkHeroContext: boolean }) {
+function NavDropdown({ menu, isOpen, isDarkHeroContext }: { menu: { grid: boolean; items: string[]; docsLinks?: Record<string, string> }, isOpen: boolean, isDarkHeroContext: boolean }) {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -71,17 +87,29 @@ function NavDropdown({ menu, isOpen, isDarkHeroContext }: { menu: { grid: boolea
       style={{ opacity: 0, transform: 'translateY(-10px) scale(0.96)', width: menu.grid ? '360px' : '220px' }}
     >
       <div className={menu.grid ? 'grid grid-cols-2 gap-1' : 'flex flex-col gap-1'}>
-        {menu.items.map((item: string) => (
-          <Link href="#" key={item} className="flex flex-col justify-center p-3 rounded-xl hover:bg-[#fafafa] transition-colors group">
-            <div className="flex items-center justify-between w-full">
-              <span className="font-sans text-[14px] font-medium text-[#111111] capitalize">{item}</span>
-              {/* Coming soon badge */}
-              <span className="bg-[#799ee0]/15 text-[#799ee0] text-[9px] font-medium px-2 py-0.5 rounded-full whitespace-nowrap ml-2 opacity-80 group-hover:opacity-100 transition-opacity">
-                Coming soon
-              </span>
-            </div>
-          </Link>
-        ))}
+        {menu.items.map((item: string) => {
+          const docHref = menu.docsLinks?.[item];
+          return (
+            <Link
+              href={docHref || '#'}
+              key={item}
+              target={docHref ? '_blank' : undefined}
+              rel={docHref ? 'noopener noreferrer' : undefined}
+              className="flex flex-col justify-center p-3 rounded-xl hover:bg-[#fafafa] transition-colors group"
+            >
+              <div className="flex items-center justify-between w-full">
+                <span className="font-sans text-[14px] font-medium text-[#111111] capitalize">{item}</span>
+                {docHref ? (
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" className="ml-2 opacity-40 group-hover:opacity-70 transition-opacity text-[#111]"><path d="M14 3h7v7h-2V6.41l-8.29 8.3-1.42-1.42L17.59 5H14V3zm-9 3h6V4H5c-1.11 0-2 .9-2 2v13c0 1.1.89 2 2 2h13c1.1 0 2-.9 2-2v-6h-2v6H5V6z"/></svg>
+                ) : (
+                  <span className="bg-[#799ee0]/15 text-[#799ee0] text-[9px] font-medium px-2 py-0.5 rounded-full whitespace-nowrap ml-2 opacity-80 group-hover:opacity-100 transition-opacity">
+                    Coming soon
+                  </span>
+                )}
+              </div>
+            </Link>
+          );
+        })}
       </div>
     </div>
   );
@@ -112,6 +140,8 @@ export default function Navbar() {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  if (pathname?.startsWith('/docs')) return null;
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 pointer-events-none">
@@ -178,19 +208,32 @@ export default function Navbar() {
                     className="relative"
                     onMouseEnter={() => handleMouseEnterMenu(menu.id)}
                   >
-                    <button
-                      className={`relative z-10 px-4 py-2 rounded-full text-[14px] font-sans transition-all duration-300 whitespace-nowrap flex items-center gap-1.5 ${linkColor}`}
-                    >
-                      <span className="capitalize">{menu.label}</span>
-                      <svg
-                        width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"
-                        className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
+                    {menu.isLink ? (
+                      <Link
+                        href={menu.href || '#'}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`relative z-10 px-4 py-2 rounded-full text-[14px] font-sans transition-all duration-300 whitespace-nowrap flex items-center gap-1.5 ${linkColor}`}
                       >
-                        <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    </button>
-
-                    <NavDropdown menu={menu} isOpen={isOpen} isDarkHeroContext={isDarkHeroContext} />
+                        <span className="capitalize">{menu.label}</span>
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" className="ml-0.5 opacity-60"><path d="M14 3h7v7h-2V6.41l-8.29 8.3-1.42-1.42L17.59 5H14V3zm-9 3h6V4H5c-1.11 0-2 .9-2 2v13c0 1.1.89 2 2 2h13c1.1 0 2-.9 2-2v-6h-2v6H5V6z"/></svg>
+                      </Link>
+                    ) : (
+                      <>
+                        <button
+                          className={`relative z-10 px-4 py-2 rounded-full text-[14px] font-sans transition-all duration-300 whitespace-nowrap flex items-center gap-1.5 ${linkColor}`}
+                        >
+                          <span className="capitalize">{menu.label}</span>
+                          <svg
+                            width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"
+                            className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
+                          >
+                            <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        </button>
+                        <NavDropdown menu={menu} isOpen={isOpen} isDarkHeroContext={isDarkHeroContext} />
+                      </>
+                    )}
                   </div>
                 );
               })}
