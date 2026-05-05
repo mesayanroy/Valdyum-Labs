@@ -5,7 +5,6 @@ Where user can Ideate , build , own , monitize web3 agents via deploying agent O
 
 Valdyum is solving Automation On-chain. An Agentic AI Infrastructure where user can ideate, build, own , monitize via deploying agent Onchain . Become the Righter owner of your agents credibility & ownership , Monetization . Along with Developers toolkit to build and use thier agents in thier own dapp/project with better deployment environment locally with CLI and executing AI agents with verifiable payment rails on Stellar.
 
-https://www.loom.com/share/f4e989d847ca4beb9b104e4a5d4c8ae4
 
 <img width="1497" height="1006" alt="Screenshot 2026-04-23 044825" src="https://github.com/user-attachments/assets/37f932cb-8fc0-4b77-887c-81311416ccbf" />
 
