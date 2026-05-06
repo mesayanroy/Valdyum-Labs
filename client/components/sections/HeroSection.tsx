@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import gsap from 'gsap';
+import BrandEcosystemStrip from './BrandEcosystemStrip';
 
 const dynamicWords = ['conquer', 'yield', 'scale', 'trade'];
 
@@ -132,38 +133,7 @@ export default function HeroSection() {
 
         </div>
 
-        {/* Bottom Stats Anchor (Matched to PRISM style, Right Aligned) */}
-        <div className="flex flex-col md:flex-row justify-end gap-12 md:gap-24 pt-8 mt-auto w-full">
-          {/* Stat 1 */}
-          <div className="text-right">
-            <div className="font-sans text-3xl md:text-4xl font-medium tracking-tight text-white">
-              III
-            </div>
-            <div className="mt-2 font-sans text-xs font-medium text-white/60">
-              Core / Alpha / Prime legions
-            </div>
-          </div>
-          
-          {/* Stat 2 */}
-          <div className="text-right">
-            <div className="font-sans text-3xl md:text-4xl font-medium tracking-tight text-white">
-              $50k+
-            </div>
-            <div className="mt-2 font-sans text-xs font-medium text-white/60">
-              Treasury flow
-            </div>
-          </div>
-
-          {/* Stat 3 */}
-          <div className="text-right">
-            <div className="font-sans text-3xl md:text-4xl font-medium tracking-tight text-white">
-              0x402
-            </div>
-            <div className="mt-2 font-sans text-xs font-medium text-white/60">
-              Live revenue protocol
-            </div>
-          </div>
-        </div>
+        <BrandEcosystemStrip />
 
       </div>
     </section>
