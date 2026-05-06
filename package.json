@@ -12,6 +12,7 @@
     "build": "pnpm --parallel --filter @valdyum/client --filter @valdyum/server build",
     "lint": "pnpm -r lint",
     "workers": "pnpm --filter @valdyum/server workers",
-    "cli": "pnpm --filter @valdyum/server cli"
+    "cli": "pnpm --filter @valdyum/server cli",
+    "valdyum": "pnpm --filter @valdyum/server cli"
   }
 }

@@ -2,6 +2,9 @@
   "name": "@valdyum/server",
   "version": "0.1.0",
   "private": true,
+  "bin": {
+    "valdyum": "src/cli/index.ts"
+  },
   "scripts": {
     "dev": "npx tsx watch src/index.ts",
     "build": "tsc",

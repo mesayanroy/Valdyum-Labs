@@ -4,6 +4,9 @@ import chalk from 'chalk';
 import ora from 'ora';
 import { Connection, Keypair, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
 import bs58 from 'bs58';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 
 const program = new Command();
 const apiBaseDefault = process.env.VALDYUM_API_URL || 'http://localhost:3000';
@@ -21,6 +24,54 @@ function parseSecret(secret: string): Keypair {
     return Keypair.fromSecretKey(Uint8Array.from(JSON.parse(secret) as number[]));
   }
   return Keypair.fromSecretKey(bs58.decode(secret.trim()));
+}
+
+function isLikelyValidSecret(secret?: string | null): secret is string {
+  if (!secret) return false;
+
+  try {
+    if (secret.trim().startsWith('[')) {
+      const parsed = JSON.parse(secret) as unknown;
+      return Array.isArray(parsed) && parsed.every((value) => Number.isInteger(value) && value >= 0 && value <= 255);
+    }
+
+    bs58.decode(secret.trim());
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function loadLocalSolanaSecret(): string | null {
+  const localSecretPath = path.join(os.homedir(), '.config', 'solana', 'id.json');
+  if (!fs.existsSync(localSecretPath)) {
+    return null;
+  }
+
+  try {
+    const contents = fs.readFileSync(localSecretPath, 'utf8');
+    const parsed = JSON.parse(contents) as number[];
+    return JSON.stringify(parsed);
+  } catch {
+    return null;
+  }
+}
+
+function resolveAgentSecret(secret?: string): string {
+  const candidates = [
+    secret,
+    process.env.SOLANA_AGENT_SECRET,
+    process.env.AGENT_SECRET,
+    loadLocalSolanaSecret(),
+  ];
+
+  for (const candidate of candidates) {
+    if (isLikelyValidSecret(candidate)) {
+      return candidate;
+    }
+  }
+
+  throw new Error('No valid Solana secret found. Set SOLANA_AGENT_SECRET or keep ~/.config/solana/id.json available.');
 }
 
 async function paySol(secret: string, destination: string, amountSol: number) {
@@ -41,15 +92,19 @@ async function paySol(secret: string, destination: string, amountSol: number) {
 }
 
 async function listAgents(apiBase: string) {
-  const res = await fetch(`${apiBase}/api/agents/list`);
-  const data = await res.json() as any;
-  const agents = Array.isArray(data?.agents) ? data.agents : [];
-  if (!agents.length) {
-    console.log(chalk.yellow('No agents found.'));
-    return;
-  }
-  for (const a of agents) {
-    console.log(`${chalk.cyan(a.id)}  ${chalk.white(a.name)}  ${chalk.yellow(`${a.price_xlm} SOL`)}  ${chalk.gray(a.wallet_address || '')}`);
+  try {
+    const res = await fetch(`${apiBase}/api/agents/list`);
+    const data = await res.json() as any;
+    const agents = Array.isArray(data?.agents) ? data.agents : [];
+    if (!agents.length) {
+      console.log(chalk.yellow('No agents found.'));
+      return;
+    }
+    for (const a of agents) {
+      console.log(`${chalk.cyan(a.id)}  ${chalk.white(a.name)}  ${chalk.yellow(`${a.price_xlm} SOL`)}  ${chalk.gray(a.wallet_address || '')}`);
+    }
+  } catch (err) {
+    throw new Error(`Unable to fetch agents from ${apiBase}. Start the server or pass --api. (${String(err).slice(0, 120)})`);
   }
 }
 
@@ -72,22 +127,30 @@ async function sandboxAgent(apiBase: string, agentId: string, input: string) {
 }
 
 async function runAgent(apiBase: string, agentId: string, input: string, secret?: string) {
-  let res = await fetch(`${apiBase}/api/agents/${agentId}/run`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ input }),
-  });
+  let res: Response;
+
+  try {
+    res = await fetch(`${apiBase}/api/agents/${agentId}/run`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ input }),
+    });
+  } catch (err) {
+    throw new Error(`Unable to reach agent API at ${apiBase}. (${String(err).slice(0, 120)})`);
+  }
 
   if (res.status === 402) {
     const details = await res.json() as any;
     const pd = details?.payment_details;
     if (!pd) throw new Error('Payment required but payment_details missing');
-    if (!secret) throw new Error('SOLANA_AGENT_SECRET or --secret is required for paid requests');
+    const resolvedSecret = resolveAgentSecret(secret);
 
     const spinner = ora(`Paying ${pd.amount_xlm} SOL to ${pd.address}`).start();
-    const sig = await paySol(secret, pd.address, Number(pd.amount_xlm || 0));
+    const sig = await paySol(resolvedSecret, pd.address, Number(pd.amount_xlm || 0));
     spinner.succeed(`Payment confirmed: ${sig}`);
     console.log(chalk.gray(explorerUrl(sig)));
+
+    const payer = parseSecret(resolvedSecret);
 
     res = await fetch(`${apiBase}/api/agents/${agentId}/run`, {
       method: 'POST',
@@ -95,8 +158,8 @@ async function runAgent(apiBase: string, agentId: string, input: string, secret?
         'Content-Type': 'application/json',
         'X-Payment-Tx-Hash': sig,
         'X-Solana-Payment-Signature': sig,
-        'X-Payment-Wallet': parseSecret(secret).publicKey.toBase58(),
-        'X-Solana-Payment-Wallet': parseSecret(secret).publicKey.toBase58(),
+        'X-Payment-Wallet': payer.publicKey.toBase58(),
+        'X-Solana-Payment-Wallet': payer.publicKey.toBase58(),
       },
       body: JSON.stringify({ input }),
     });
