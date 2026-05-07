@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { HoverBorderGradient } from '@/components/ui/hover-border-gradient';
+import WalletConnect from '@/components/WalletConnect';
 import gsap from 'gsap';
 
 const BRAND_LOGO_SRC = '/brand/Valdyumlogo.png';
@@ -241,21 +242,16 @@ export default function Navbar() {
 
             {/* Right Actions */}
             <div className="flex-1 flex justify-end items-center gap-3 shrink-0">
-              <button 
-                onClick={(e) => {
-                  e.preventDefault();
-                  document.getElementById('waitlist')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                aria-label="Early Access"
-              >
+              <Link href="/build" aria-label="Start Building">
                 <HoverBorderGradient
                   as="span"
                   containerClassName="cursor-pointer"
                   className={`whitespace-nowrap transition-colors duration-300 ${isDarkHeroContext ? 'bg-white text-black' : 'bg-[#111111] text-white'}`}
                 >
-                  Early Access
+                  Start Building
                 </HoverBorderGradient>
-              </button>
+              </Link>
+              <WalletConnect />
             </div>
           </div>
         </div>
