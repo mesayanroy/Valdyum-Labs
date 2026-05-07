@@ -20,6 +20,8 @@ import {
 import { Agent } from '@/types';
 import { useMarketplaceFeed } from '@/hooks/useMarketplaceFeed';
 import { truncateAddress } from '@/lib/stellar';
+import { fetchSolBalance, solanaClusterLabel } from '@/lib/solana';
+import { tokenConfig } from '@/lib/token';
 
 type AnalyticsResponse = {
   byModel: Array<{ model: string; requests: number; paidRequests: number; earnedXlm: number; avgLatencyMs: number }>;
@@ -95,6 +97,24 @@ type LocalRuntimeRow = {
   createdAt: string;
 };
 
+type CliEventRow = {
+  id: string;
+  type: string;
+  message: string;
+  status: 'success' | 'error' | 'info';
+  agentId?: string;
+  pipelineId?: string;
+  createdAt: string;
+};
+
+type PipelineRunRow = {
+  id: string;
+  pipelineName: string;
+  status: 'running' | 'success' | 'error';
+  executedAt: string;
+  durationMs?: number;
+};
+
 export default function DashboardPage() {
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [myAgents, setMyAgents] = useState<Agent[]>([]);
@@ -105,6 +125,9 @@ export default function DashboardPage() {
   const [deletingAgentId, setDeletingAgentId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [xlmPrice, setXlmPrice] = useState<number | null>(null);
+  const [cliEvents, setCliEvents] = useState<CliEventRow[]>([]);
+  const [pipelineRuns, setPipelineRuns] = useState<PipelineRunRow[]>([]);
+  const [walletBalance, setWalletBalance] = useState<number | null>(null);
 
   // Real-time live feed of 0x402 activity for MY agents
   const { events: liveEvents, isConnected: feedConnected } = useMarketplaceFeed({ maxEvents: 20 });
@@ -126,6 +149,24 @@ export default function DashboardPage() {
       setLocalRuntimeRows(Array.isArray(rows) ? rows.slice(0, 100) : []);
     } catch {
       setLocalRuntimeRows([]);
+    }
+  };
+
+  const hydrateCliEvents = () => {
+    try {
+      const rows = JSON.parse(localStorage.getItem('cli_event_history') || '[]') as CliEventRow[];
+      setCliEvents(Array.isArray(rows) ? rows.slice(0, 50) : []);
+    } catch {
+      setCliEvents([]);
+    }
+  };
+
+  const hydratePipelineRuns = () => {
+    try {
+      const rows = JSON.parse(localStorage.getItem('pipeline_run_history') || '[]') as PipelineRunRow[];
+      setPipelineRuns(Array.isArray(rows) ? rows.slice(0, 20) : []);
+    } catch {
+      setPipelineRuns([]);
     }
   };
 
@@ -172,10 +213,48 @@ export default function DashboardPage() {
       } catch { /* ignore */ }
     };
 
+    const fetchCli = async () => {
+      try {
+        const res = await fetch(`/api/telemetry/cli?wallet=${encodeURIComponent(addr)}`);
+        if (res.ok) {
+          const data = await res.json();
+          setCliEvents(Array.isArray(data.events) ? data.events : []);
+        }
+      } catch {
+        hydrateCliEvents();
+      }
+    };
+
+    const fetchPipelines = async () => {
+      try {
+        const res = await fetch(`/api/telemetry/pipelines?wallet=${encodeURIComponent(addr)}`);
+        if (res.ok) {
+          const data = await res.json();
+          setPipelineRuns(Array.isArray(data.executions) ? data.executions : []);
+        }
+      } catch {
+        hydratePipelineRuns();
+      }
+    };
+
+    const fetchBalance = async () => {
+      try {
+        const balance = await fetchSolBalance(addr);
+        setWalletBalance(balance);
+      } catch {
+        setWalletBalance(null);
+      }
+    };
+
     void fetchAll(addr);
     void fetchXlmPrice();
+    void fetchCli();
+    void fetchPipelines();
+    void fetchBalance();
     hydrateLocalTrading();
     hydrateLocalRuns();
+    hydrateCliEvents();
+    hydratePipelineRuns();
 
     const onTradingPnl = () => hydrateLocalTrading();
     const onAgentRun = () => {
@@ -185,13 +264,20 @@ export default function DashboardPage() {
     const onStorage = (event: StorageEvent) => {
       if (event.key === 'trading_pnl_history') hydrateLocalTrading();
       if (event.key === 'agent_runtime_history') hydrateLocalRuns();
+      if (event.key === 'cli_event_history') hydrateCliEvents();
+      if (event.key === 'pipeline_run_history') hydratePipelineRuns();
     };
 
     window.addEventListener('trading_pnl_update', onTradingPnl as EventListener);
     window.addEventListener('agent_run_success', onAgentRun as EventListener);
     window.addEventListener('storage', onStorage);
 
-    const interval = setInterval(() => void fetchAll(addr), 10_000);
+    const interval = setInterval(() => {
+      void fetchAll(addr);
+      void fetchCli();
+      void fetchPipelines();
+      void fetchBalance();
+    }, 10_000);
     return () => {
       clearInterval(interval);
       window.removeEventListener('trading_pnl_update', onTradingPnl as EventListener);
@@ -314,9 +400,16 @@ export default function DashboardPage() {
   const statCards = [
     { label: 'My Agents', value: String(myAgents.length), unit: '', color: 'text-[#00FFE5]' },
     {
+      label: 'Wallet Balance',
+      value: walletBalance != null ? walletBalance.toFixed(3) : '--',
+      unit: tokenConfig.symbol,
+      sub: `cluster: ${solanaClusterLabel()}`,
+      color: 'text-[#4ade80]',
+    },
+    {
       label: 'Total Earned',
       value: totalEarned.toFixed(2),
-      unit: 'SOL',
+      unit: tokenConfig.symbol,
       sub: totalEarnedUsd ? `≈ $${totalEarnedUsd.toFixed(2)}` : undefined,
       color: 'text-[#FFB800]',
     },
@@ -337,7 +430,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Stat Cards */}
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
             {statCards.map((stat) => (
               <div key={stat.label} className="p-5 rounded-xl border border-[rgba(0,255,229,0.1)] bg-[rgba(255,255,255,0.02)]">
                 <div className={`font-syne text-2xl font-bold ${stat.color}`}>
@@ -402,6 +495,62 @@ export default function DashboardPage() {
             </div>
           </div>
 
+          {/* CLI Runtime + Pipeline Status */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            <div className="p-5 rounded-2xl border border-[rgba(0,255,229,0.1)] bg-[rgba(0,255,229,0.03)]">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-syne text-lg font-bold text-white">CLI Runtime Activity</h3>
+                <span className="font-mono text-[10px] text-gray-500">valdyum cli stream</span>
+              </div>
+              <div className="space-y-2">
+                {cliEvents.length === 0 ? (
+                  <div className="font-mono text-xs text-gray-500">No CLI events yet. Run `valdyum agents:run` to populate.</div>
+                ) : (
+                  cliEvents.slice(0, 8).map((event) => (
+                    <div key={event.id} className="flex items-center justify-between rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2">
+                      <div>
+                        <div className="font-mono text-xs text-white">{event.type}</div>
+                        <div className="font-mono text-[10px] text-gray-500">{event.message}</div>
+                      </div>
+                      <div className="text-right">
+                        <div className={`font-mono text-[10px] ${event.status === 'error' ? 'text-red-400' : event.status === 'success' ? 'text-[#4ade80]' : 'text-[#00FFE5]'}`}>
+                          {event.status}
+                        </div>
+                        <div className="font-mono text-[9px] text-gray-500">
+                          {new Date(event.createdAt).toLocaleTimeString([], { hour12: false })}
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+
+            <div className="p-5 rounded-2xl border border-[rgba(123,97,255,0.15)] bg-[rgba(123,97,255,0.03)]">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-syne text-lg font-bold text-white">Pipeline Execution Status</h3>
+                <span className="font-mono text-[10px] text-purple-300">n8n-style pipelines</span>
+              </div>
+              <div className="space-y-2">
+                {pipelineRuns.length === 0 ? (
+                  <div className="font-mono text-xs text-gray-500">No pipeline runs yet.</div>
+                ) : (
+                  pipelineRuns.slice(0, 6).map((run) => (
+                    <div key={run.id} className="flex items-center justify-between rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2">
+                      <div>
+                        <div className="font-mono text-xs text-white">{run.pipelineName}</div>
+                        <div className="font-mono text-[10px] text-gray-500">{run.durationMs ? `${run.durationMs} ms` : '—'} · {new Date(run.executedAt).toLocaleTimeString([], { hour12: false })}</div>
+                      </div>
+                      <span className={`font-mono text-[10px] ${run.status === 'error' ? 'text-red-400' : run.status === 'success' ? 'text-[#4ade80]' : 'text-[#FFB800]'}`}>
+                        {run.status}
+                      </span>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+
           {/* Charts Row 1: Request Rate + Billing by Model */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             <div className="p-5 rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.02)]">
@@ -443,7 +592,7 @@ export default function DashboardPage() {
                     <Tooltip
                       formatter={(value: unknown) => {
                         const n = typeof value === 'number' ? value : Number(value || 0);
-                        return `${n.toFixed(2)} SOL`;
+                        return `${n.toFixed(2)} ${tokenConfig.symbol}`;
                       }}
                       contentStyle={{ background: '#0a0a10', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 10, color: '#fff' }} />
                     <Bar dataKey="earnedXlm" fill="#FFB800" radius={[6, 6, 0, 0]} />
@@ -458,7 +607,7 @@ export default function DashboardPage() {
             {/* Cumulative PnL */}
             <div className="p-5 rounded-2xl border border-[rgba(74,222,128,0.1)] bg-[rgba(74,222,128,0.02)]">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="font-syne text-lg font-bold text-white">Cumulative PnL (SOL)</h3>
+                <h3 className="font-syne text-lg font-bold text-white">Cumulative PnL ({tokenConfig.symbol})</h3>
                 <span className="font-mono text-[10px] text-gray-500">agents + trading outcomes</span>
               </div>
               <div className="h-64">
@@ -482,7 +631,7 @@ export default function DashboardPage() {
                         formatter={(value: unknown, name: unknown) => {
                           const raw = Array.isArray(value) ? value[0] : value;
                           const n = typeof raw === 'number' ? raw : Number(raw || 0);
-                          return [`${n.toFixed(4)} SOL`, name === 'cumulative' ? 'Total PnL' : 'Daily Earned'];
+                          return [`${n.toFixed(4)} ${tokenConfig.symbol}`, name === 'cumulative' ? 'Total PnL' : 'Daily Earned'];
                         }}
                         contentStyle={{ background: '#0a0a10', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 10, color: '#fff' }} />
                       <Area type="monotone" dataKey="cumulative" stroke="#4ade80" fill="url(#pnlFill)" strokeWidth={2} name="cumulative" />
@@ -600,7 +749,7 @@ export default function DashboardPage() {
                 <div className={`font-syne text-xl font-bold ${tradingPnlTotal >= 0 ? 'text-[#4ade80]' : 'text-red-400'}`}>
                   {tradingPnlTotal >= 0 ? '+' : ''}{tradingPnlTotal.toFixed(4)}
                 </div>
-                <div className="font-mono text-[10px] text-gray-500 mt-0.5">Trading PnL (SOL)</div>
+                <div className="font-mono text-[10px] text-gray-500 mt-0.5">Trading PnL ({tokenConfig.symbol})</div>
               </div>
               <div className="rounded-xl border border-[rgba(255,255,255,0.06)] bg-[rgba(255,255,255,0.02)] p-3 text-center">
                 <div className="font-syne text-xl font-bold text-[#FFB800]">{totalClosedTrades}</div>
@@ -617,7 +766,7 @@ export default function DashboardPage() {
               <table className="w-full min-w-[680px]">
                 <thead>
                   <tr className="border-b border-white/[0.06]">
-                    {['#', 'Agent / Strategy', 'Model', 'P&L (SOL)', 'Tx', 'Time'].map((h) => (
+                    {['#', 'Agent / Strategy', 'Model', `P&L (${tokenConfig.symbol})`, 'Tx', 'Time'].map((h) => (
                       <th key={h} className="py-2 pr-4 text-left font-mono text-[10px] text-gray-500 uppercase">{h}</th>
                     ))}
                   </tr>
@@ -704,7 +853,7 @@ export default function DashboardPage() {
                         <span className="w-1.5 h-1.5 rounded-full bg-[#00FFE5] animate-pulse shrink-0" />
                         <span className="font-mono text-xs text-white/70">{ev.agentName}</span>
                       </div>
-                      <span className="font-mono text-xs text-[#4ade80]">+{(ev.priceXlm ?? 0).toFixed(4)} SOL</span>
+                      <span className="font-mono text-xs text-[#4ade80]">+{(ev.priceXlm ?? 0).toFixed(4)} {tokenConfig.symbol}</span>
                     </div>
                   ))}
                 </div>
@@ -733,7 +882,7 @@ export default function DashboardPage() {
                       <td className="py-2 pr-3 font-mono text-xs text-white/80">{row.invoiceId}</td>
                       <td className="py-2 pr-3 font-mono text-xs text-white/80">{row.agentName}</td>
                       <td className="py-2 pr-3 font-mono text-xs text-[#00FFE5]">{modelName(row.model)}</td>
-                      <td className="py-2 pr-3 font-mono text-xs text-[#4ade80]">{row.amountXlm.toFixed(4)} SOL</td>
+                      <td className="py-2 pr-3 font-mono text-xs text-[#4ade80]">{row.amountXlm.toFixed(4)} {tokenConfig.symbol}</td>
                       <td className="py-2 pr-3 font-mono text-xs">
                         <a href={row.txExplorerUrl} target="_blank" rel="noreferrer" className="text-[#FFB800] hover:underline">
                           {shortHash(row.txHash)}
@@ -785,7 +934,7 @@ export default function DashboardPage() {
                     </div>
                     <div className="flex items-center gap-3 shrink-0">
                       {typeof ev.priceXlm === 'number' && ev.priceXlm > 0 && (
-                        <span className="font-mono text-xs text-[#4ade80]">+{ev.priceXlm.toFixed(4)} SOL</span>
+                        <span className="font-mono text-xs text-[#4ade80]">+{ev.priceXlm.toFixed(4)} {tokenConfig.symbol}</span>
                       )}
                       {ev.txHash && (
                         <a href={ev.txExplorerUrl} target="_blank" rel="noreferrer" className="font-mono text-[9px] text-[#FFB800] hover:underline">
@@ -827,14 +976,14 @@ export default function DashboardPage() {
                       )}
                     </Link>
                     <div className="font-mono text-xs text-gray-500 mt-0.5">
-                      {agent.model === 'openai-gpt4o-mini' ? 'GPT-4o Mini' : 'Claude Haiku'} · {agent.price_xlm} SOL/req · {agent.visibility}
+                      {agent.model === 'openai-gpt4o-mini' ? 'GPT-4o Mini' : 'Claude Haiku'} · {agent.price_xlm} {tokenConfig.symbol}/req · {agent.visibility}
                     </div>
                     {agent.forked_from && (
                       <div className="font-mono text-[10px] text-purple-400 mt-0.5">Forked · ID: {agent.forked_from.slice(0, 8)}…</div>
                     )}
                   </div>
                   <div className="text-right">
-                    <div className="font-mono text-sm text-[#FFB800]">{(agent.total_earned_xlm ?? 0).toFixed(4)} SOL</div>
+                    <div className="font-mono text-sm text-[#FFB800]">{(agent.total_earned_xlm ?? 0).toFixed(4)} {tokenConfig.symbol}</div>
                     {xlmPrice && <div className="font-mono text-xs text-gray-500">≈ ${((agent.total_earned_xlm ?? 0) * xlmPrice).toFixed(2)}</div>}
                     <div className="font-mono text-xs text-gray-500">{(agent.total_requests ?? 0).toLocaleString()} requests</div>
                     <button

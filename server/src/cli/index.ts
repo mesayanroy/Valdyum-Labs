@@ -19,6 +19,22 @@ function explorerUrl(sig: string) {
   return `https://explorer.solana.com/tx/${sig}?cluster=${cluster}`;
 }
 
+async function emitCliEvent(apiBase: string, payload: Record<string, unknown>) {
+  try {
+    await fetch(`${apiBase}/api/telemetry/cli`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        wallet: agentWallet || null,
+        createdAt: new Date().toISOString(),
+        ...payload,
+      }),
+    });
+  } catch {
+    // ignore telemetry failures
+  }
+}
+
 function parseSecret(secret: string): Keypair {
   if (secret.trim().startsWith('[')) {
     return Keypair.fromSecretKey(Uint8Array.from(JSON.parse(secret) as number[]));
@@ -103,7 +119,17 @@ async function listAgents(apiBase: string) {
     for (const a of agents) {
       console.log(`${chalk.cyan(a.id)}  ${chalk.white(a.name)}  ${chalk.yellow(`${a.price_xlm} SOL`)}  ${chalk.gray(a.wallet_address || '')}`);
     }
+    await emitCliEvent(apiBase, {
+      type: 'agents:list',
+      status: 'success',
+      message: `Listed ${agents.length} agents`,
+    });
   } catch (err) {
+    await emitCliEvent(apiBase, {
+      type: 'agents:list',
+      status: 'error',
+      message: String(err),
+    });
     throw new Error(`Unable to fetch agents from ${apiBase}. Start the server or pass --api. (${String(err).slice(0, 120)})`);
   }
 }
@@ -120,10 +146,22 @@ async function sandboxAgent(apiBase: string, agentId: string, input: string) {
   });
   const out = await res.json().catch(() => ({} as any));
   if (!res.ok) {
+    await emitCliEvent(apiBase, {
+      type: 'agents:sandbox',
+      status: 'error',
+      agentId,
+      message: (out as any)?.error || `Sandbox failed: ${res.status}`,
+    });
     throw new Error((out as any)?.error || `Sandbox failed: ${res.status}`);
   }
   console.log(chalk.green('Sandbox response:'));
   console.log(JSON.stringify(out, null, 2));
+  await emitCliEvent(apiBase, {
+    type: 'agents:sandbox',
+    status: 'success',
+    agentId,
+    message: 'Sandbox run completed',
+  });
 }
 
 async function runAgent(apiBase: string, agentId: string, input: string, secret?: string) {
@@ -136,6 +174,12 @@ async function runAgent(apiBase: string, agentId: string, input: string, secret?
       body: JSON.stringify({ input }),
     });
   } catch (err) {
+    await emitCliEvent(apiBase, {
+      type: 'agents:run',
+      status: 'error',
+      agentId,
+      message: `Unable to reach agent API: ${String(err).slice(0, 120)}`,
+    });
     throw new Error(`Unable to reach agent API at ${apiBase}. (${String(err).slice(0, 120)})`);
   }
 
@@ -167,11 +211,23 @@ async function runAgent(apiBase: string, agentId: string, input: string, secret?
 
   const out = await res.json().catch(() => ({} as any));
   if (!res.ok) {
+    await emitCliEvent(apiBase, {
+      type: 'agents:run',
+      status: 'error',
+      agentId,
+      message: (out as any)?.error || `Request failed: ${res.status}`,
+    });
     throw new Error((out as any)?.error || `Request failed: ${res.status}`);
   }
 
   console.log(chalk.green('Agent response:'));
   console.log((out as any).output || JSON.stringify(out, null, 2));
+  await emitCliEvent(apiBase, {
+    type: 'agents:run',
+    status: 'success',
+    agentId,
+    message: 'Agent run completed',
+  });
 }
 
 program

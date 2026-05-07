@@ -52,6 +52,8 @@ import dashboardRouter from './routes/dashboard';
 import faucetRouter from './routes/faucet';
 import paymentRouter from './routes/payment';
 import clawcreditRouter from './routes/clawcredit';
+import telemetryRouter from './routes/telemetry';
+import workflowsRouter from './routes/workflows';
 
 app.use('/api/agents', agentsDeployRouter);
 app.use('/api/agents', agentsRouter);
@@ -60,6 +62,8 @@ app.use('/api/dashboard', dashboardRouter);
 app.use('/api/faucet', faucetRouter);
 app.use('/api/payment', paymentRouter);
 app.use('/api/clawcredit', clawcreditRouter);
+app.use('/api/telemetry', telemetryRouter);
+app.use('/api/workflows', workflowsRouter);
 
 // ─── Start ────────────────────────────────────────────────────────────────────
 

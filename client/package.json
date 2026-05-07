@@ -12,10 +12,11 @@
     "@gsap/react": "^2.1.2",
     "@mdx-js/loader": "^3.1.1",
     "@mdx-js/react": "^3.1.1",
+    "@monaco-editor/react": "4.7.0",
     "@next/mdx": "^15.5.4",
     "@project-serum/anchor": "^0.26.0",
-    "@solana/web3.js": "^1.83.0",
     "@solana/spl-token": "^0.4.14",
+    "@solana/web3.js": "^1.83.0",
     "@types/three": "^0.183.1",
     "@valdyum/shared": "workspace:*",
     "ably": "^2.20.0",
@@ -24,8 +25,10 @@
     "next": "^15.5.13",
     "react": "^18",
     "react-dom": "^18",
+    "reactflow": "11.11.4",
     "recharts": "^3.8.1",
-    "three": "^0.183.2"
+    "three": "^0.183.2",
+    "zustand": "5.0.13"
   },
   "devDependencies": {
     "@types/node": "^20.19.37",
@@ -38,4 +41,3 @@
     "typescript": "^5"
   }
 }
-    

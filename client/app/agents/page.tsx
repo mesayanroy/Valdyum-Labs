@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import AgentCard from '@/components/AgentCard';
 import { Agent } from '@/types';
+import { tokenConfig } from '@/lib/token';
 
 export default function AgentsPage() {
   const [agents, setAgents] = useState<Agent[]>([]);
@@ -13,6 +14,8 @@ export default function AgentsPage() {
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   const [removingAgentId, setRemovingAgentId] = useState<string | null>(null);
+  const [forkingAgentId, setForkingAgentId] = useState<string | null>(null);
+  const [forkMessage, setForkMessage] = useState<string | null>(null);
 
   useEffect(() => {
     setWalletAddress(localStorage.getItem('wallet_address') || '');
@@ -75,6 +78,34 @@ export default function AgentsPage() {
     }
   };
 
+  const handleFork = async (agent: Agent) => {
+    if (!walletAddress) {
+      setForkMessage('Connect your wallet to fork an agent.');
+      return;
+    }
+    setForkingAgentId(agent.id);
+    setForkMessage(null);
+    try {
+      const res = await fetch(`/api/agents/${agent.id}/fork`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ walletAddress }),
+      });
+      const data = await res.json().catch(() => ({})) as { agent?: Agent; error?: string };
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to fork agent');
+      }
+      if (data.agent) {
+        setAgents((prev) => [data.agent, ...prev]);
+      }
+      setForkMessage(`Forked ${agent.name}. View it in your dashboard.`);
+    } catch (err) {
+      setForkMessage(err instanceof Error ? err.message : String(err));
+    } finally {
+      setForkingAgentId(null);
+    }
+  };
+
   return (
     <div className="min-h-screen">
       <div className="max-w-7xl mx-auto px-4 py-10">
@@ -84,8 +115,14 @@ export default function AgentsPage() {
         >
           <h1 className="font-syne text-4xl font-bold text-white mb-2">Agent Marketplace</h1>
           <p className="text-gray-400 font-mono text-sm mb-8">
-            Browse and use deployed AI agents. Pay per request with SOL.
+            Browse and use deployed AI agents. Pay per request with {tokenConfig.symbol}.
           </p>
+
+          {forkMessage && (
+            <div className="mb-6 rounded-xl border border-[rgba(0,255,229,0.2)] bg-[rgba(0,255,229,0.06)] px-4 py-3 font-mono text-xs text-[#00FFE5]">
+              {forkMessage}
+            </div>
+          )}
 
           {/* Filters */}
           <div className="flex flex-wrap gap-3 mb-8">
@@ -124,11 +161,14 @@ export default function AgentsPage() {
             <div className="text-center py-20 text-gray-500 font-mono">No agents found.</div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {filtered.map((agent) => (
-                <div key={agent.id} className="space-y-2">
-                  <AgentCard agent={agent} />
-                  {walletAddress && walletAddress === agent.owner_wallet && (
-                    <button
+            {filtered.map((agent) => (
+              <div key={agent.id} className="space-y-2">
+                <AgentCard agent={agent} onFork={handleFork} />
+                {forkingAgentId === agent.id && (
+                  <p className="text-xs font-mono text-[#FFB800]">Forking agent…</p>
+                )}
+                {walletAddress && walletAddress === agent.owner_wallet && (
+                  <button
                       onClick={() => removeAgent(agent)}
                       disabled={removingAgentId === agent.id}
                       className="w-full py-1.5 text-xs font-mono border border-red-700/70 text-red-300 rounded hover:bg-red-500/10 disabled:opacity-50"
