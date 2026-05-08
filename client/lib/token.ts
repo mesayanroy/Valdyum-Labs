@@ -12,3 +12,14 @@ export function formatTokenAmount(amount: number): string {
   if (!Number.isFinite(amount)) return `0 ${tokenConfig.symbol}`;
   return `${amount.toFixed(4)} ${tokenConfig.symbol}`;
 }
+
+export function tokenMintLabel(): string {
+  if (tokenConfig.mint) {
+    return `${tokenConfig.mint.slice(0, 6)}…${tokenConfig.mint.slice(-4)}`;
+  }
+  return tokenConfig.symbol === 'SOL' ? 'native' : 'TBD';
+}
+
+export function tokenMetadataLabel(): string {
+  return `Mint: ${tokenMintLabel()} · ${tokenConfig.decimals} decimals`;
+}

@@ -95,8 +95,9 @@ export default function AgentsPage() {
       if (!res.ok) {
         throw new Error(data.error || 'Failed to fork agent');
       }
-      if (data.agent) {
-        setAgents((prev) => [data.agent, ...prev]);
+      const forkedAgent = data.agent;
+      if (forkedAgent) {
+        setAgents((prev) => [forkedAgent, ...prev]);
       }
       setForkMessage(`Forked ${agent.name}. View it in your dashboard.`);
     } catch (err) {
@@ -107,19 +108,20 @@ export default function AgentsPage() {
   };
 
   return (
-    <div className="min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 py-10">
+    <div className="min-h-screen bg-[#140d08] text-[#f7f0e3] relative overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 bg-[url('/background/slide2.png')] bg-cover bg-center opacity-10" />
+      <div className="max-w-7xl mx-auto px-4 py-10 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <h1 className="font-syne text-4xl font-bold text-white mb-2">Agent Marketplace</h1>
-          <p className="text-gray-400 font-mono text-sm mb-8">
+          <h1 className="font-syne text-4xl font-bold text-[#f5e7d1] mb-2">Imperium Agents</h1>
+          <p className="text-[#cbb38b] font-mono text-sm mb-8">
             Browse and use deployed AI agents. Pay per request with {tokenConfig.symbol}.
           </p>
 
           {forkMessage && (
-            <div className="mb-6 rounded-xl border border-[rgba(0,255,229,0.2)] bg-[rgba(0,255,229,0.06)] px-4 py-3 font-mono text-xs text-[#00FFE5]">
+            <div className="mb-6 rounded-xl border border-[rgba(212,175,55,0.4)] bg-[rgba(212,175,55,0.08)] px-4 py-3 font-mono text-xs text-[#d4af37]">
               {forkMessage}
             </div>
           )}
@@ -131,7 +133,7 @@ export default function AgentsPage() {
               placeholder="Search agents..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="flex-1 min-w-[200px] px-4 py-2.5 bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.08)] rounded-lg text-white text-sm font-mono placeholder-gray-600 focus:outline-none focus:border-[rgba(0,255,229,0.4)]"
+              className="flex-1 min-w-[200px] px-4 py-2.5 bg-[rgba(17,12,8,0.7)] border border-[rgba(212,175,55,0.3)] rounded-lg text-[#f7f0e3] text-sm font-mono placeholder-[#8a7a63] focus:outline-none focus:border-[rgba(212,175,55,0.6)]"
             />
             <div className="flex gap-2">
               {['all', 'openai-gpt4o-mini', 'anthropic-claude-haiku'].map((m) => (
@@ -140,8 +142,8 @@ export default function AgentsPage() {
                   onClick={() => setModelFilter(m)}
                   className={`px-3 py-2 text-xs font-mono rounded-lg border transition-all ${
                     modelFilter === m
-                      ? 'border-[#00FFE5] text-[#00FFE5] bg-[rgba(0,255,229,0.08)]'
-                      : 'border-[rgba(255,255,255,0.08)] text-gray-500 hover:text-gray-300'
+                      ? 'border-[#d4af37] text-[#d4af37] bg-[rgba(212,175,55,0.12)]'
+                      : 'border-[rgba(255,255,255,0.08)] text-[#9c8871] hover:text-[#f5e7d1]'
                   }`}
                 >
                   {m === 'all' ? 'All Models' : m === 'openai-gpt4o-mini' ? 'GPT-4o Mini' : 'Claude Haiku'}

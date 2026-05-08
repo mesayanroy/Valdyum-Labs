@@ -21,7 +21,7 @@ import { Agent } from '@/types';
 import { useMarketplaceFeed } from '@/hooks/useMarketplaceFeed';
 import { truncateAddress } from '@/lib/stellar';
 import { fetchSolBalance, solanaClusterLabel } from '@/lib/solana';
-import { tokenConfig } from '@/lib/token';
+import { tokenConfig, tokenMetadataLabel } from '@/lib/token';
 
 type AnalyticsResponse = {
   byModel: Array<{ model: string; requests: number; paidRequests: number; earnedXlm: number; avgLatencyMs: number }>;
@@ -286,6 +286,54 @@ export default function DashboardPage() {
     };
   }, [fetchAll]);
 
+  useEffect(() => {
+    let closed = false;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let realtimeRef: any = null;
+
+    const connect = async () => {
+      try {
+        const probe = await fetch('/api/ably/token', { method: 'GET' });
+        if (!probe.ok) return;
+      } catch {
+        return;
+      }
+
+      const Ably = (await import('ably')).default;
+      if (closed) return;
+
+      const realtime = new Ably.Realtime({ authUrl: '/api/ably/token', autoConnect: true });
+      realtimeRef = realtime;
+
+      realtime.channels.get('cli-events').subscribe((msg: import('ably').InboundMessage) => {
+        const payload = msg.data as CliEventRow;
+        if (!payload?.id) return;
+        setCliEvents((prev) => {
+          if (prev.some((row) => row.id === payload.id)) return prev;
+          return [payload, ...prev].slice(0, 50);
+        });
+      });
+
+      realtime.channels.get('pipeline-events').subscribe((msg: import('ably').InboundMessage) => {
+        const payload = msg.data as PipelineRunRow;
+        if (!payload?.id) return;
+        setPipelineRuns((prev) => {
+          if (prev.some((row) => row.id === payload.id)) return prev;
+          return [payload, ...prev].slice(0, 20);
+        });
+      });
+    };
+
+    void connect();
+
+    return () => {
+      closed = true;
+      if (realtimeRef && typeof realtimeRef.close === 'function') {
+        try { realtimeRef.close(); } catch { /* ignore */ }
+      }
+    };
+  }, []);
+
   const removeAgent = async (agent: Agent) => {
     if (!walletAddress || deletingAgentId) return;
     if (walletAddress !== agent.owner_wallet) return;
@@ -419,20 +467,22 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="min-h-screen">
-      <div className="max-w-6xl mx-auto px-4 py-10">
+    <div className="min-h-screen bg-[#120b07] text-[#f7f0e3] relative overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 bg-[url('/background/p1.png')] bg-cover bg-center opacity-10" />
+      <div className="max-w-6xl mx-auto px-4 py-10 relative z-10">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
 
           <div>
-            <h1 className="font-syne text-4xl font-bold text-white mb-1">Dashboard</h1>
+            <h1 className="font-syne text-4xl font-bold text-[#f5e7d1] mb-1">Imperium Dashboard</h1>
             <p className="font-mono text-xs text-gray-500">{walletAddress}</p>
+            <p className="font-mono text-[10px] text-[#cbb38b] mt-0.5">{tokenMetadataLabel()}</p>
             <p className="font-mono text-[10px] text-gray-600 mt-0.5">Auto-refresh every 10s · Last: {analytics ? new Date(analytics.generatedAt).toLocaleTimeString([], { hour12: false }) : '—'}</p>
           </div>
 
           {/* Stat Cards */}
           <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
             {statCards.map((stat) => (
-              <div key={stat.label} className="p-5 rounded-xl border border-[rgba(0,255,229,0.1)] bg-[rgba(255,255,255,0.02)]">
+              <div key={stat.label} className="p-5 rounded-xl border border-[rgba(212,175,55,0.25)] bg-[rgba(27,18,12,0.65)]">
                 <div className={`font-syne text-2xl font-bold ${stat.color}`}>
                   {stat.value}{stat.unit ? ` ${stat.unit}` : ''}
                 </div>

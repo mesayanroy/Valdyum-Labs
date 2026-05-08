@@ -8,7 +8,7 @@ import TerminalOutput from '@/components/TerminalOutput';
 import PaymentModal from '@/components/PaymentModal';
 import { truncateAddress } from '@/lib/stellar';
 import { useMarketplaceFeed } from '@/hooks/useMarketplaceFeed';
-import { tokenConfig } from '@/lib/token';
+import { tokenConfig, tokenMetadataLabel } from '@/lib/token';
 
 type RuntimeInfo = {
   agent_id: string;
@@ -269,7 +269,8 @@ export default function AgentDetailPage() {
 const data = await res.json();`;
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_10%_0%,rgba(0,255,229,0.08),transparent_30%),radial-gradient(circle_at_90%_100%,rgba(255,184,0,0.08),transparent_35%),#07080d] text-white">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_10%_0%,rgba(212,175,55,0.12),transparent_35%),radial-gradient(circle_at_90%_100%,rgba(122,31,31,0.16),transparent_40%),#120b07] text-[#f7f0e3] relative overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 bg-[url('/background/p2.png')] bg-cover bg-center opacity-10" />
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -283,8 +284,9 @@ const data = await res.json();`;
             </div>
             <div className="text-right space-y-2">
               <div>
-                <div className="text-[#FFB800] font-syne font-bold text-2xl md:text-3xl">{agent.price_xlm} {tokenConfig.symbol}</div>
+                <div className="text-[#d4af37] font-syne font-bold text-2xl md:text-3xl">{agent.price_xlm} {tokenConfig.symbol}</div>
                 <div className="font-mono text-xs text-white/50">per request</div>
+                <div className="font-mono text-[10px] text-[#cbb38b] mt-1">{tokenMetadataLabel()}</div>
               </div>
               {viewerWallet && viewerWallet === agent.owner_wallet && (
                 <button

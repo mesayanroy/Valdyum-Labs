@@ -56,14 +56,18 @@ router.post('/', async (req: Request, res: Response) => {
 
   const supabase = getSupabase();
   if (supabase) {
-    await supabase.from('workflows').upsert({
-      id: record.id,
-      owner_wallet: record.owner_wallet,
-      name: record.name,
-      description: record.description,
-      definition: record.definition,
-      updated_at: record.updated_at,
-    }, { onConflict: 'id' }).catch(() => undefined);
+    try {
+      await supabase.from('workflows').upsert({
+        id: record.id,
+        owner_wallet: record.owner_wallet,
+        name: record.name,
+        description: record.description,
+        definition: record.definition,
+        updated_at: record.updated_at,
+      }, { onConflict: 'id' });
+    } catch {
+      // ignore
+    }
   }
 
   res.json({ workflow: record });

@@ -64,16 +64,20 @@ router.post('/cli', async (req: Request, res: Response) => {
 
   const supabase = getSupabase();
   if (supabase) {
-    await supabase.from('cli_events').insert({
-      id: event.id,
-      wallet_address: event.wallet,
-      event_type: event.type,
-      status: event.status,
-      message: event.message,
-      agent_id: event.agentId,
-      pipeline_id: event.pipelineId,
-      created_at: event.createdAt,
-    }).catch(() => undefined);
+    try {
+      await supabase.from('cli_events').insert({
+        id: event.id,
+        wallet_address: event.wallet,
+        event_type: event.type,
+        status: event.status,
+        message: event.message,
+        agent_id: event.agentId,
+        pipeline_id: event.pipelineId,
+        created_at: event.createdAt,
+      });
+    } catch {
+      // ignore
+    }
   }
 
   await publish('cli-events', event);
@@ -129,14 +133,18 @@ router.post('/pipelines', async (req: Request, res: Response) => {
 
   const supabase = getSupabase();
   if (supabase) {
-    await supabase.from('pipeline_runs').insert({
-      id: run.id,
-      wallet_address: run.wallet,
-      pipeline_name: run.pipelineName,
-      status: run.status,
-      executed_at: run.executedAt,
-      duration_ms: run.durationMs,
-    }).catch(() => undefined);
+    try {
+      await supabase.from('pipeline_runs').insert({
+        id: run.id,
+        wallet_address: run.wallet,
+        pipeline_name: run.pipelineName,
+        status: run.status,
+        executed_at: run.executedAt,
+        duration_ms: run.durationMs,
+      });
+    } catch {
+      // ignore
+    }
   }
 
   await publish('pipeline-events', run);

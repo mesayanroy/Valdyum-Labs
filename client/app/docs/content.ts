@@ -435,7 +435,7 @@ Build, register on-chain, and start your agent.
 | \`--network\` | string | mainnet or devnet |
 | \`--dry-run\` | boolean | Preview without executing |
 | \`--visibility\` | string | public, private, or subscription |
-| \`--price\` | string | Listing price in SOL |
+| \`--price\` | string | Listing price in VALD$ (Solana) |
 
 ### valdyum publish
 Publish agent to marketplace.

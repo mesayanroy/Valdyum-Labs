@@ -419,7 +419,7 @@ router.post('/:id/fork', async (req: Request, res: Response) => {
 
     const forkedId = uuidv4();
     const forkedName = body.name || `${agent.name} (fork)`;
-    const forkedAgent = {
+    const forkedAgent: Parameters<typeof upsertDemoAgent>[0] = {
       id: forkedId,
       owner_wallet: ownerWallet,
       name: forkedName,
@@ -457,12 +457,16 @@ router.post('/:id/fork', async (req: Request, res: Response) => {
       return;
     }
 
-    await supabase.from('agent_forks').insert({
-      original_agent_id: agent.id,
-      forked_agent_id: forkedId,
-      forked_by_wallet: ownerWallet,
-      created_at: new Date().toISOString(),
-    }).catch(() => undefined);
+    try {
+      await supabase.from('agent_forks').insert({
+        original_agent_id: agent.id,
+        forked_agent_id: forkedId,
+        forked_by_wallet: ownerWallet,
+        created_at: new Date().toISOString(),
+      });
+    } catch {
+      // non-fatal
+    }
 
     res.json({ agent: data });
   } catch (err) {

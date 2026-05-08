@@ -9,10 +9,10 @@ const metrics = [
 
 export default function GpuDashboard() {
   return (
-    <div className="rounded-2xl border border-white/10 bg-[rgba(10,10,16,0.85)] p-4">
+    <div className="rounded-2xl border border-[rgba(212,175,55,0.2)] bg-[rgba(20,13,9,0.85)] p-4">
       <div className="flex items-center justify-between mb-3">
         <h3 className="font-syne text-sm font-semibold text-white">GPU Optimization</h3>
-        <span className="font-mono text-[10px] text-white/40">Metal · ROCm · CUDA</span>
+        <span className="font-mono text-[10px] text-[#cbb38b]">Metal · ROCm · CUDA</span>
       </div>
       <div className="grid grid-cols-2 gap-3">
         {metrics.map((metric) => (

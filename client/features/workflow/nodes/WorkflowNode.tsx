@@ -4,15 +4,15 @@ import { Handle, Position } from 'reactflow';
 import type { WorkflowNodeData } from '../types';
 
 const statusColor: Record<WorkflowNodeData['status'], string> = {
-  idle: 'border-white/10 text-white/70',
-  running: 'border-[#00FFE5]/60 text-[#00FFE5]',
+  idle: 'border-white/10 text-[#cbb38b]',
+  running: 'border-[#d4af37]/70 text-[#d4af37]',
   success: 'border-[#4ade80]/60 text-[#4ade80]',
   error: 'border-[#f87171]/60 text-[#f87171]',
 };
 
 export default function WorkflowNode({ data }: { data: WorkflowNodeData }) {
   return (
-    <div className={`rounded-2xl border bg-[rgba(7,8,13,0.9)] px-4 py-3 min-w-[190px] shadow-[0_0_18px_rgba(0,255,229,0.08)] ${statusColor[data.status]}`}>
+    <div className={`rounded-2xl border bg-[rgba(20,13,9,0.92)] px-4 py-3 min-w-[190px] shadow-[0_0_18px_rgba(212,175,55,0.12)] ${statusColor[data.status]}`}>
       <div className="flex items-center justify-between gap-2">
         <div>
           <div className="font-syne text-sm font-semibold">{data.label}</div>
@@ -47,8 +47,8 @@ export default function WorkflowNode({ data }: { data: WorkflowNodeData }) {
         </div>
       </div>
 
-      <Handle type="target" position={Position.Left} className="w-2 h-2 bg-[#00FFE5]" />
-      <Handle type="source" position={Position.Right} className="w-2 h-2 bg-[#FFB800]" />
+      <Handle type="target" position={Position.Left} className="w-2 h-2 bg-[#d4af37]" />
+      <Handle type="source" position={Position.Right} className="w-2 h-2 bg-[#b86b4b]" />
     </div>
   );
 }

@@ -4,8 +4,8 @@ import { useState } from 'react';
 import type { WorkflowLogEntry } from '../types';
 
 const levelStyles: Record<WorkflowLogEntry['level'], string> = {
-  info: 'text-[#00FFE5]',
-  warn: 'text-[#FFB800]',
+  info: 'text-[#d4af37]',
+  warn: 'text-[#b86b4b]',
   error: 'text-red-400',
   success: 'text-[#4ade80]',
 };
@@ -14,7 +14,7 @@ export default function TerminalPanel({ logs }: { logs: WorkflowLogEntry[] }) {
   const [open, setOpen] = useState(true);
 
   return (
-    <div className={`rounded-2xl border border-white/10 bg-[#070710] overflow-hidden ${open ? 'max-h-[320px]' : 'max-h-[56px]'} transition-all duration-300`}>
+    <div className={`rounded-2xl border border-[rgba(212,175,55,0.2)] bg-[#100b08] overflow-hidden ${open ? 'max-h-[320px]' : 'max-h-[56px]'} transition-all duration-300`}>
       <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-black/40">
         <div className="flex items-center gap-2">
           <div className="flex gap-1.5">

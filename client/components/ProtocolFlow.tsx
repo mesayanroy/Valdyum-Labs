@@ -9,6 +9,7 @@
  */
 
 import { motion } from 'framer-motion';
+import { tokenConfig } from '@/lib/token';
 
 interface FlowStep {
   id:      number;
@@ -62,7 +63,7 @@ const STEPS: FlowStep[] = [
   },
 ];
 
-const ARROW_LABELS = ['HTTP 402', 'SOL tx', 'verify', 'events'];
+const ARROW_LABELS = ['HTTP 402', `${tokenConfig.symbol} tx`, 'verify', 'events'];
 
 export default function ProtocolFlow() {
   return (

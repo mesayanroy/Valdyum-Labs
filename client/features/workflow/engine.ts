@@ -34,6 +34,7 @@ export async function runExecution(
   setExecution: SetExecution,
 ) {
   const start = Date.now();
+  const maxRetries = 2;
   setExecution({ status: 'running', lastRunAt: new Date().toISOString(), error: undefined });
   appendLog({ level: 'info', message: 'Simulation started: building execution graph.' });
 
@@ -48,17 +49,36 @@ export async function runExecution(
 
     updateNode(nodeId, (data) => ({ ...data, status: 'running' as WorkflowNodeStatus }));
     appendLog({ level: 'info', message: `Executing ${node.data.label}`, nodeId });
-    await sleep(500 + Math.random() * 800);
 
-    const latency = Math.round(120 + Math.random() * 680);
-    updateNode(nodeId, (data) => ({
-      ...data,
-      status: 'success' as WorkflowNodeStatus,
-      latencyMs: latency,
-      throughput: `${(Math.random() * 2 + 0.2).toFixed(2)} ops/s`,
-      logs: [`Executed in ${latency}ms`, ...data.logs].slice(0, 5),
-    }));
-    appendLog({ level: 'success', message: `${node.data.label} completed in ${latency}ms`, nodeId });
+    let attempt = 0;
+    let success = false;
+    while (attempt <= maxRetries && !success) {
+      attempt += 1;
+      await sleep(400 + Math.random() * 700);
+      const shouldFail = Math.random() < 0.08;
+      if (!shouldFail) {
+        success = true;
+        const latency = Math.round(120 + Math.random() * 680);
+        updateNode(nodeId, (data) => ({
+          ...data,
+          status: 'success' as WorkflowNodeStatus,
+          latencyMs: latency,
+          throughput: `${(Math.random() * 2 + 0.2).toFixed(2)} ops/s`,
+          logs: [`Executed in ${latency}ms`, `attempt ${attempt}/${maxRetries + 1}`, ...data.logs].slice(0, 5),
+        }));
+        appendLog({ level: 'success', message: `${node.data.label} completed in ${latency}ms`, nodeId });
+      } else if (attempt <= maxRetries) {
+        appendLog({ level: 'warn', message: `${node.data.label} failed, retrying (${attempt}/${maxRetries})`, nodeId });
+      }
+    }
+
+    if (!success) {
+      updateNode(nodeId, (data) => ({ ...data, status: 'error' as WorkflowNodeStatus }));
+      const errorMessage = `${node.data.label} failed after ${maxRetries + 1} attempts`;
+      appendLog({ level: 'error', message: errorMessage, nodeId });
+      setExecution({ status: 'error', error: errorMessage });
+      return;
+    }
 
     executed.add(nodeId);
     for (const target of outgoing.get(nodeId) || []) {

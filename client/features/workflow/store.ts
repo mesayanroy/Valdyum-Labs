@@ -51,7 +51,7 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
   },
   connect: (connection) => {
     set((state) => ({
-      edges: addEdge({ ...connection, animated: true, style: { stroke: '#00FFE5' } }, state.edges),
+      edges: addEdge({ ...connection, animated: true, style: { stroke: '#d4af37' } }, state.edges),
     }));
   },
   addNode: (kind) => {

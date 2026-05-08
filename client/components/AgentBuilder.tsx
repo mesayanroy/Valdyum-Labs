@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { tokenConfig } from '@/lib/token';
+import { tokenConfig, tokenMetadataLabel } from '@/lib/token';
 
 type Step = 'configure' | 'prompt' | 'deploy';
 
@@ -471,6 +471,7 @@ export default function AgentBuilder() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-mono text-gray-400 mb-1.5">Price ({tokenConfig.symbol}/request)</label>
+                <p className="text-[10px] font-mono text-[#cbb38b] mb-2">{tokenMetadataLabel()}</p>
                 <input
                   type="number"
                   value={form.priceXlm}

@@ -10,10 +10,10 @@ export default function StrategyEditor({
   onChange: (value: string) => void;
 }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-[#0b0c12] overflow-hidden">
+    <div className="rounded-2xl border border-[rgba(212,175,55,0.2)] bg-[#120c08] overflow-hidden">
       <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
         <h3 className="font-syne text-sm font-semibold text-white">Strategy Code</h3>
-        <span className="font-mono text-[10px] text-white/40">monaco · typescript</span>
+        <span className="font-mono text-[10px] text-[#cbb38b]">monaco · typescript</span>
       </div>
       <div className="h-[260px]">
         <Editor

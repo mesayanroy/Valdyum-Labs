@@ -24,13 +24,13 @@ export default function DeploymentModal({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: 20 }}
             transition={{ duration: 0.2 }}
-            className="w-full max-w-2xl rounded-3xl border border-white/10 bg-[#0b0c12] p-6 shadow-2xl"
+            className="w-full max-w-2xl rounded-3xl border border-[rgba(212,175,55,0.3)] bg-[#120c08] p-6 shadow-2xl"
             onClick={(event) => event.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="font-syne text-xl font-semibold text-white">Deploy Workflow</h2>
-                <p className="font-mono text-xs text-white/40">Select execution mode and runtime options.</p>
+                <h2 className="font-syne text-xl font-semibold text-[#f5e7d1]">Deploy Workflow</h2>
+                <p className="font-mono text-xs text-[#cbb38b]">Select execution mode and runtime options.</p>
               </div>
               <button onClick={onClose} className="text-white/40 hover:text-white">✕</button>
             </div>
@@ -44,7 +44,7 @@ export default function DeploymentModal({
               ].map((card) => (
                 <div key={card.title} className="rounded-2xl border border-white/10 bg-white/5 p-4">
                   <div className="font-mono text-xs text-white">{card.title}</div>
-                  <p className="mt-2 text-[11px] text-white/40">{card.desc}</p>
+                  <p className="mt-2 text-[11px] text-[#cbb38b]">{card.desc}</p>
                 </div>
               ))}
             </div>
@@ -69,8 +69,8 @@ export default function DeploymentModal({
             </div>
 
             <div className="mt-6 flex justify-between items-center">
-              <div className="text-[10px] font-mono text-white/40">0x402 payment payloads will be auto-attached.</div>
-              <button className="px-4 py-2 rounded-xl bg-[#00FFE5] text-black font-mono text-xs font-semibold hover:bg-[#0ef2dc]">
+              <div className="text-[10px] font-mono text-[#cbb38b]">0x402 payment payloads will be auto-attached.</div>
+              <button className="px-4 py-2 rounded-xl bg-[#d4af37] text-black font-mono text-xs font-semibold hover:bg-[#c69b2f]">
                 Deploy Workflow
               </button>
             </div>
