@@ -12,6 +12,7 @@ import {
 } from 'recharts';
 import CandlestickChart, { CloseEvent } from '@/components/CandlestickChart';
 import type { Agent } from '@/types';
+import { tokenConfig } from '@/lib/token';
 
 interface OHLC {
   ts: string;
@@ -375,8 +376,9 @@ export default function TradingPage() {
   const filteredAgents = agentCategory === 'all' ? AGENT_TEMPLATES : AGENT_TEMPLATES.filter((a) => a.category === agentCategory);
 
   return (
-    <div className="min-h-screen">
-      <div className="max-w-[1440px] mx-auto px-4 py-6 space-y-4">
+    <div className="min-h-screen bg-[#120b07] text-[#f7f0e3] relative overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 bg-[url('/background/slide3.png')] bg-cover bg-center opacity-10" />
+      <div className="max-w-[1440px] mx-auto px-4 py-6 space-y-4 relative z-10">
 
         {/* Token Pair Selector */}
         <div className="flex flex-wrap gap-2 overflow-x-auto pb-1">
@@ -419,7 +421,7 @@ export default function TradingPage() {
           <div className="flex items-center gap-3">
             {walletAddress && (
               <div className="font-mono text-xs text-gray-500 border border-white/10 rounded-lg px-3 py-1.5">
-                SOL: <span className="text-[#FFB800]">{walletBalance ? parseFloat(walletBalance).toFixed(2) : '...'}</span>
+                {tokenConfig.symbol}: <span className="text-[#FFB800]">{walletBalance ? parseFloat(walletBalance).toFixed(2) : '...'}</span>
               </div>
             )}
             {(['testnet', 'mainnet'] as const).map((n) => (
@@ -512,7 +514,7 @@ export default function TradingPage() {
                         { label: 'Entry', value: `$${fmtPrice(position.entryPrice)}`, color: 'text-white' },
                         { label: 'Size', value: String(position.size), color: 'text-white' },
                         { label: 'Leverage', value: `${position.leverage}×`, color: 'text-[#FFB800]' },
-                        { label: 'Collateral', value: `${position.collateral} SOL`, color: 'text-white' },
+                        { label: 'Collateral', value: `${position.collateral} ${tokenConfig.symbol}`, color: 'text-white' },
                         { label: 'Unrealised PnL', value: `${position.unrealisedPnl >= 0 ? '+' : ''}$${fmtPrice(position.unrealisedPnl)}`, color: position.unrealisedPnl >= 0 ? 'text-[#4ade80]' : 'text-red-400' },
                         { label: 'TP', value: position.tp ? `$${fmtPrice(position.tp)}` : '—', color: 'text-[#FFB800]' },
                         { label: 'SL', value: position.sl ? `$${fmtPrice(position.sl)}` : '—', color: 'text-red-400' },
@@ -567,7 +569,7 @@ export default function TradingPage() {
                   <div className="font-mono text-[10px] text-gray-500 mb-1">{selectedPair.name} · Live</div>
                   <div className={`font-syne text-2xl font-bold text-[#00FFE5] ${pricesLoading ? 'animate-pulse' : ''}`}>${fmtPrice(currentPrice)}</div>
                   <div className={`font-mono text-xs mt-1 ${isUp ? 'text-[#4ade80]' : 'text-red-400'}`}>{isUp ? '▲' : '▼'} {Math.abs(priceChange24h).toFixed(2)}% 24h</div>
-                  {walletBalance && <div className="font-mono text-[10px] text-gray-500 mt-2 border-t border-white/[0.06] pt-2">Wallet: <span className="text-[#FFB800]">{parseFloat(walletBalance).toFixed(2)} SOL</span></div>}
+                  {walletBalance && <div className="font-mono text-[10px] text-gray-500 mt-2 border-t border-white/[0.06] pt-2">Wallet: <span className="text-[#FFB800]">{parseFloat(walletBalance).toFixed(2)} {tokenConfig.symbol}</span></div>}
                 </div>
 
                 <div className="rounded-2xl border border-white/[0.07] bg-[rgba(5,5,12,0.85)] p-4 space-y-4">
@@ -591,7 +593,7 @@ export default function TradingPage() {
                     </div>
                   )}
                   <div>
-                    <label className="block text-[10px] font-mono text-gray-500 mb-1">Collateral (SOL)</label>
+                    <label className="block text-[10px] font-mono text-gray-500 mb-1">Collateral ({tokenConfig.symbol})</label>
                     <input value={collateral} onChange={(e) => setCollateral(e.target.value)} type="number" min="1" className="w-full px-3 py-2 bg-white/[0.03] border border-white/[0.08] rounded-lg text-white text-sm font-mono focus:outline-none focus:border-[rgba(0,255,229,0.4)]" />
                   </div>
                   <div>
@@ -615,7 +617,7 @@ export default function TradingPage() {
                       <option value="">Manual (no agent)</option>
                       {AGENT_TEMPLATES.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
                     </select>
-                    {selectedAgent && <div className="mt-1.5 font-mono text-[9px] text-gray-500">+{AGENT_TEMPLATES.find((a) => a.id === selectedAgent)?.priceXlm} SOL agent fee · 0x402</div>}
+                    {selectedAgent && <div className="mt-1.5 font-mono text-[9px] text-gray-500">+{AGENT_TEMPLATES.find((a) => a.id === selectedAgent)?.priceXlm} {tokenConfig.symbol} agent fee · 0x402</div>}
                   </div>
                   <AnimatePresence>
                     {orderError && <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="p-2.5 rounded bg-red-900/20 border border-red-900 text-red-400 text-xs font-mono">{orderError}</motion.div>}
@@ -674,7 +676,7 @@ export default function TradingPage() {
                           {agent.tags.map((t) => <span key={t} className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[rgba(0,255,229,0.06)] text-[#00FFE5] border border-[rgba(0,255,229,0.15)]">#{t}</span>)}
                         </div>
                         <div className="flex items-center justify-between mt-auto">
-                          <span className="font-mono text-xs text-[#FFB800]">{agent.priceXlm} SOL/req</span>
+                          <span className="font-mono text-xs text-[#FFB800]">{agent.priceXlm} {tokenConfig.symbol}/req</span>
                           <button onClick={() => { setSelectedAgent(agent.id); setActiveTab('chart'); }} className="px-3 py-1 text-xs font-mono border border-[#00FFE5] text-[#00FFE5] rounded hover:bg-[#00FFE5] hover:text-black transition-all">Use</button>
                         </div>
                       </motion.div>
@@ -860,7 +862,7 @@ if (res.status === 402) {
                             { label: 'Size', value: `${orderAmount} units` },
                             { label: 'Est. Profit', value: `+$${fmtPrice(pendingArbTrade.spread * parseFloat(orderAmount || '1'))}`, color: 'text-[#4ade80]' },
                             { label: 'Network', value: network === 'mainnet' ? '🌐 Mainnet (real funds)' : '🔵 Testnet (simulated)', color: network === 'mainnet' ? 'text-[#4ade80]' : 'text-blue-300' },
-                            { label: 'Agent Fee', value: '0.1 SOL via 0x402', color: 'text-[#FFB800]' },
+                            { label: 'Agent Fee', value: `0.1 ${tokenConfig.symbol} via 0x402`, color: 'text-[#FFB800]' },
                           ].map((row) => (
                             <div key={row.label} className="flex justify-between">
                               <span className="text-gray-500">{row.label}</span>

@@ -385,6 +385,96 @@ router.get('/:id', async (req: Request, res: Response) => {
   }
 });
 
+// POST /:id/fork
+router.post('/:id/fork', async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const body = req.body || {};
+    const ownerWallet = body.walletAddress || body.owner_wallet || req.header('X-Wallet-Address') || '';
+
+    if (!ownerWallet) {
+      res.status(400).json({ error: 'walletAddress is required' });
+      return;
+    }
+
+    let agent = getDemoAgentById(id);
+    if (supabaseUrl && supabaseServiceKey) {
+      const supabase = createClient(supabaseUrl, supabaseServiceKey);
+      const { data, error } = await supabase
+        .from('agents')
+        .select('*')
+        .eq('id', id)
+        .single();
+      if (error) {
+        console.warn('Fork agent lookup error:', error);
+      } else if (data) {
+        agent = data as typeof agent;
+      }
+    }
+
+    if (!agent) {
+      res.status(404).json({ error: 'Agent not found' });
+      return;
+    }
+
+    const forkedId = uuidv4();
+    const forkedName = body.name || `${agent.name} (fork)`;
+    const forkedAgent: Parameters<typeof upsertDemoAgent>[0] = {
+      id: forkedId,
+      owner_wallet: ownerWallet,
+      name: forkedName,
+      description: agent.description,
+      tags: agent.tags,
+      model: agent.model,
+      system_prompt: agent.system_prompt,
+      tools: agent.tools,
+      price_xlm: agent.price_xlm,
+      visibility: 'forked',
+      forked_from: agent.id,
+      api_endpoint: agent.api_endpoint,
+      api_key: agent.api_key,
+    };
+
+    if (!supabaseUrl || !supabaseServiceKey) {
+      const created = upsertDemoAgent(forkedAgent);
+      res.json({ agent: created, mode: 'demo_fallback' });
+      return;
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const { data, error } = await supabase.from('agents').insert({
+      ...forkedAgent,
+      is_active: true,
+      total_requests: 0,
+      total_earned_xlm: 0,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    }).select().single();
+
+    if (error) {
+      console.error('Fork agent error:', error);
+      res.status(500).json({ error: 'Failed to fork agent' });
+      return;
+    }
+
+    try {
+      await supabase.from('agent_forks').insert({
+        original_agent_id: agent.id,
+        forked_agent_id: forkedId,
+        forked_by_wallet: ownerWallet,
+        created_at: new Date().toISOString(),
+      });
+    } catch {
+      // non-fatal
+    }
+
+    res.json({ agent: data });
+  } catch (err) {
+    console.error('Fork agent error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // DELETE /:id
 router.delete('/:id', async (req: Request, res: Response) => {
   try {

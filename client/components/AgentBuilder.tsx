@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
+import { tokenConfig, tokenMetadataLabel } from '@/lib/token';
 
 type Step = 'configure' | 'prompt' | 'deploy';
 
@@ -469,7 +470,8 @@ export default function AgentBuilder() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-mono text-gray-400 mb-1.5">Price (SOL/request)</label>
+                <label className="block text-xs font-mono text-gray-400 mb-1.5">Price ({tokenConfig.symbol}/request)</label>
+                <p className="text-[10px] font-mono text-[#cbb38b] mb-2">{tokenMetadataLabel()}</p>
                 <input
                   type="number"
                   value={form.priceXlm}
@@ -510,7 +512,7 @@ export default function AgentBuilder() {
               <div>
                 <div className="text-xs font-mono text-white">List in Marketplace for monetization</div>
                 <div className="text-[10px] font-mono text-gray-500 mt-0.5">
-                  Your agent will appear in the public marketplace. Earn {form.priceXlm || '0.01'} SOL per request via 0x402 protocol.
+                  Your agent will appear in the public marketplace. Earn {form.priceXlm || '0.01'} {tokenConfig.symbol} per request via 0x402 protocol.
                 </div>
               </div>
             </div>
@@ -615,7 +617,7 @@ export default function AgentBuilder() {
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Price</span>
-                <span className="text-[#FFB800]">{form.priceXlm} SOL/req</span>
+                <span className="text-[#FFB800]">{form.priceXlm} {tokenConfig.symbol}/req</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Visibility</span>

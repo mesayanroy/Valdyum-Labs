@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { Agent } from '@/types';
 import { truncateAddress } from '@/lib/stellar';
+import { tokenConfig, tokenMetadataLabel } from '@/lib/token';
 
 interface AgentCardProps {
   agent: Agent;
@@ -22,30 +23,58 @@ const modelLabel: Record<string, string> = {
 };
 
 export default function AgentCard({ agent, onFork }: AgentCardProps) {
-  const [showStrategyModal, setShowStrategyModal] = useState(false);
-  const [strategyFile, setStrategyFile] = useState<File | null>(null);
-  const [strategyNotes, setStrategyNotes] = useState('');
-  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [showPackModal, setShowPackModal] = useState(false);
+  const [downloadUrl, setDownloadUrl] = useState('');
 
   const safeOwner = agent.owner_wallet || 'Unknown';
   const totalRequests = Number(agent.total_requests ?? 0);
   const priceXlm = Number(agent.price_xlm ?? 0);
+  const apiEndpoint = agent.api_endpoint || `/api/agents/${agent.id}/run`;
 
-  const handleSaveStrategy = () => {
-    setSaveSuccess(true);
-    setTimeout(() => {
-      setSaveSuccess(false);
-      setShowStrategyModal(false);
-      setStrategyFile(null);
-      setStrategyNotes('');
-    }, 1500);
-  };
+  const runtimeJson = useMemo(() => JSON.stringify({
+    agentId: agent.id,
+    name: agent.name,
+    description: agent.description || '',
+    apiEndpoint,
+    pricing: {
+      amount: priceXlm,
+      token: tokenConfig.symbol,
+      network: `solana:${tokenConfig.network}`,
+    },
+    wallet: {
+      owner: safeOwner,
+      payoutFlow: 'Agent wallet receives payments; withdraw via Phantom after settlement.',
+    },
+    instructions: {
+      run: {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Payment-Tx-Hash': '<solana_tx_signature>',
+          'X-Payment-Wallet': '<payer_wallet>',
+        },
+        body: { input: 'Describe the task for this agent' },
+      },
+      pipeline: {
+        step: 'Add to Valdyum pipeline manager as a task node.',
+      },
+    },
+  }, null, 2), [agent.id, agent.name, agent.description, apiEndpoint, priceXlm, safeOwner]);
+
+  useEffect(() => {
+    const blob = new Blob([runtimeJson], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    setDownloadUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [runtimeJson]);
+
+  const cliSnippet = `valdyum agents:run --id ${agent.id} --prompt \"run my task\" --secret $SOLANA_AGENT_SECRET`;
 
   return (
     <>
     <motion.div
-      whileHover={{ y: -4, boxShadow: '0 0 24px rgba(0,255,229,0.08)' }}
-      className="rounded-xl border border-[rgba(0,255,229,0.12)] bg-[rgba(255,255,255,0.03)] p-5 flex flex-col gap-3 cursor-pointer transition-all"
+      whileHover={{ y: -4, boxShadow: '0 0 24px rgba(212,175,55,0.18)' }}
+      className="rounded-xl border border-[rgba(212,175,55,0.25)] bg-[rgba(20,13,9,0.75)] p-5 flex flex-col gap-3 cursor-pointer transition-all"
     >
       <div className="flex items-start justify-between gap-2">
         <div>
@@ -59,20 +88,20 @@ export default function AgentCard({ agent, onFork }: AgentCardProps) {
         </span>
       </div>
 
-      {agent.tags && agent.tags.length > 0 && (
-        <div className="flex flex-wrap gap-1">
-          {agent.tags.map((tag) => (
-            <span
-              key={tag}
-              className="text-xs font-mono px-1.5 py-0.5 rounded bg-[rgba(0,255,229,0.06)] text-[#00FFE5] border border-[rgba(0,255,229,0.15)]"
-            >
-              #{tag}
-            </span>
-          ))}
-        </div>
-      )}
+        {agent.tags && agent.tags.length > 0 && (
+          <div className="flex flex-wrap gap-1">
+            {agent.tags.map((tag) => (
+              <span
+                key={tag}
+                className="text-xs font-mono px-1.5 py-0.5 rounded bg-[rgba(212,175,55,0.12)] text-[#d4af37] border border-[rgba(212,175,55,0.35)]"
+              >
+                #{tag}
+              </span>
+            ))}
+          </div>
+        )}
 
-      <div className="flex items-center justify-between text-xs font-mono text-gray-500 border-t border-[rgba(255,255,255,0.05)] pt-3">
+      <div className="flex items-center justify-between text-xs font-mono text-[#b8a38a] border-t border-[rgba(255,255,255,0.05)] pt-3">
         <div className="flex items-center gap-1.5">
           <span className="w-4 h-4 rounded-full bg-gradient-to-br from-[#00FFE5] to-[#FFB800] flex items-center justify-center text-[8px] text-black font-bold shrink-0">
             {safeOwner.slice(1, 2)}
@@ -80,7 +109,7 @@ export default function AgentCard({ agent, onFork }: AgentCardProps) {
           <a
             href={`/dashboard?wallet=${safeOwner}`}
             title={`Owner: ${safeOwner}`}
-            className="hover:text-[#00FFE5] transition-colors truncate max-w-[90px]"
+            className="hover:text-[#d4af37] transition-colors truncate max-w-[90px]"
             onClick={(e) => e.stopPropagation()}
           >
             {truncateAddress(safeOwner)}
@@ -88,110 +117,106 @@ export default function AgentCard({ agent, onFork }: AgentCardProps) {
         </div>
         <div className="flex items-center gap-3">
           <span>{totalRequests.toLocaleString()} reqs</span>
-          <span className="text-[#FFB800]">{priceXlm} SOL/req</span>
+          <span className="text-[#d4af37]">{priceXlm} {tokenConfig.symbol}/req</span>
         </div>
       </div>
 
-      <div className="flex gap-2 mt-1">
+      <div className="grid grid-cols-2 gap-2 mt-1">
         <Link
           href={`/agents/${agent.id}`}
-          className="flex-1 text-center py-1.5 text-xs font-mono border border-[#00FFE5] text-[#00FFE5] rounded hover:bg-[#00FFE5] hover:text-black transition-all"
+          className="text-center py-1.5 text-xs font-mono border border-[#d4af37] text-[#d4af37] rounded hover:bg-[#d4af37] hover:text-black transition-all"
         >
           Use API
         </Link>
+        <Link
+          href={`/agents/${agent.id}#run`}
+          className="text-center py-1.5 text-xs font-mono border border-[rgba(255,255,255,0.15)] text-[#b8a38a] rounded hover:border-[#d4af37] hover:text-[#d4af37] transition-all"
+        >
+          Run
+        </Link>
         <button
           onClick={() => onFork?.(agent)}
-          className="flex-1 py-1.5 text-xs font-mono border border-[rgba(255,255,255,0.15)] text-gray-400 rounded hover:border-[#FFB800] hover:text-[#FFB800] transition-all"
+          className="py-1.5 text-xs font-mono border border-[rgba(255,255,255,0.15)] text-[#b8a38a] rounded hover:border-[#d4af37] hover:text-[#d4af37] transition-all"
         >
           Fork
         </button>
         <button
-          onClick={(e) => { e.stopPropagation(); setShowStrategyModal(true); }}
-          className="flex-1 py-1.5 text-xs font-mono border border-[rgba(0,255,229,0.2)] text-[#00FFE5] rounded hover:bg-[rgba(0,255,229,0.1)] transition-all"
+          onClick={(e) => { e.stopPropagation(); setShowPackModal(true); }}
+          className="py-1.5 text-xs font-mono border border-[rgba(212,175,55,0.4)] text-[#d4af37] rounded hover:bg-[rgba(212,175,55,0.12)] transition-all"
         >
-          Strategy
+          Agent Pack
         </button>
       </div>
     </motion.div>
 
     <AnimatePresence>
-      {showStrategyModal && (
+      {showPackModal && (
         <motion.div
-          key="strategy-overlay"
+          key="pack-overlay"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4"
-          onClick={() => setShowStrategyModal(false)}
+          onClick={() => setShowPackModal(false)}
         >
           <motion.div
-            key="strategy-modal"
+            key="pack-modal"
             initial={{ opacity: 0, scale: 0.95, y: 16 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 16 }}
             transition={{ duration: 0.18 }}
-            className="w-full max-w-md rounded-xl border border-[rgba(0,255,229,0.25)] bg-[#0d1117] p-6 space-y-5 shadow-2xl"
+            className="w-full max-w-2xl rounded-xl border border-[rgba(212,175,55,0.35)] bg-[#120c08] p-6 space-y-4 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between">
-              <h2 className="font-syne font-bold text-[#00FFE5] text-lg">Upload Strategy</h2>
+              <h2 className="font-syne font-bold text-[#d4af37] text-lg">Agent Runtime Pack</h2>
               <button
-                onClick={() => setShowStrategyModal(false)}
+                onClick={() => setShowPackModal(false)}
                 className="text-gray-500 hover:text-white text-lg leading-none transition-colors"
               >
                 ✕
               </button>
             </div>
 
-            <div
-              role="button"
-              tabIndex={0}
-              className="flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-[rgba(0,255,229,0.25)] bg-[rgba(0,255,229,0.03)] py-8 px-4 cursor-pointer hover:border-[rgba(0,255,229,0.5)] transition-all"
-              onClick={() => document.getElementById(`strategy-file-${agent.id}`)?.click()}
-              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') document.getElementById(`strategy-file-${agent.id}`)?.click(); }}
-            >
-              <span className="text-2xl">📄</span>
-              <p className="text-xs font-mono text-gray-400 text-center">
-                {strategyFile ? strategyFile.name : 'Drag & drop or click to upload'}
-              </p>
-              <p className="text-[10px] font-mono text-gray-600">.json, .txt, .md, .yaml</p>
-              <input
-                id={`strategy-file-${agent.id}`}
-                type="file"
-                accept=".json,.txt,.md,.yaml,.yml"
-                className="hidden"
-                onChange={(e) => setStrategyFile(e.target.files?.[0] ?? null)}
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="rounded-lg border border-white/10 bg-black/30 p-3">
+                <div className="font-mono text-[10px] text-gray-500 uppercase tracking-widest mb-2">CLI</div>
+                <pre className="text-xs font-mono text-white/80 whitespace-pre-wrap">{cliSnippet}</pre>
+              </div>
+              <div className="rounded-lg border border-white/10 bg-black/30 p-3">
+                <div className="font-mono text-[10px] text-gray-500 uppercase tracking-widest mb-2">Payout Flow</div>
+                <p className="text-xs font-mono text-white/70">
+                  Payments land in the agent wallet. Withdraw to your Phantom wallet after settlement.
+                </p>
+                <p className="text-[10px] font-mono text-[#d4af37] mt-2">{tokenMetadataLabel()}</p>
+              </div>
             </div>
 
-            <div>
-              <label className="block text-xs font-mono text-gray-400 mb-1.5">Strategy Notes / Prompt Customization</label>
-              <textarea
-                value={strategyNotes}
-                onChange={(e) => setStrategyNotes(e.target.value)}
-                placeholder="Add custom instructions or strategy notes for this agent..."
-                rows={4}
-                className="w-full px-3 py-2.5 bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.08)] rounded-lg text-white text-sm font-mono placeholder-gray-600 focus:outline-none focus:border-[rgba(0,255,229,0.4)] resize-none"
-              />
+            <div className="rounded-lg border border-white/10 bg-black/30 p-3">
+              <div className="font-mono text-[10px] text-gray-500 uppercase tracking-widest mb-2">JSON Payload</div>
+              <pre className="max-h-[220px] overflow-y-auto text-[11px] font-mono text-white/70 whitespace-pre-wrap">{runtimeJson}</pre>
             </div>
 
-            {saveSuccess && (
-              <p className="text-xs font-mono text-[#00FFE5] text-center">✓ Strategy saved successfully!</p>
-            )}
-
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-2">
               <button
-                onClick={() => setShowStrategyModal(false)}
-                className="flex-1 py-2.5 text-xs font-mono border border-[rgba(255,255,255,0.1)] text-gray-400 rounded-lg hover:text-white transition-colors"
+                onClick={() => navigator.clipboard.writeText(runtimeJson)}
+                className="px-3 py-1.5 rounded-lg border border-[rgba(212,175,55,0.5)] text-[#d4af37] text-xs font-mono hover:bg-[rgba(212,175,55,0.12)]"
               >
-                Cancel
+                Copy JSON
               </button>
               <button
-                onClick={handleSaveStrategy}
-                className="flex-1 py-2.5 text-xs font-mono bg-[#00FFE5] text-black rounded-lg font-bold hover:bg-[#00e6ce] transition-colors"
+                onClick={() => navigator.clipboard.writeText(cliSnippet)}
+                className="px-3 py-1.5 rounded-lg border border-white/10 text-white/70 text-xs font-mono hover:text-white"
               >
-                Save Strategy
+                Copy CLI
               </button>
+              <a
+                href={downloadUrl}
+                download={`${agent.name.replace(/\s+/g, '_')}_agent.json`}
+                className="px-3 py-1.5 rounded-lg border border-[#FFB800]/50 text-[#FFB800] text-xs font-mono hover:bg-[rgba(255,184,0,0.1)]"
+              >
+                Download JSON
+              </a>
             </div>
           </motion.div>
         </motion.div>

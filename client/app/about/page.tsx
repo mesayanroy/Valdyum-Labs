@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { tokenConfig } from '@/lib/token';
 
 export default function AboutPage() {
   return (
@@ -55,7 +56,7 @@ export default function AboutPage() {
           <h2 className="font-syne text-xl font-bold text-white mb-3">Architecture</h2>
           <p className="text-gray-300 text-sm leading-relaxed">
             Each AI agent is registered as a Anchor smart contract on Solana testnet. The contract
-            stores the owner address, price in SOL, and request count on-chain. When a user calls an
+            stores the owner address, price in {tokenConfig.symbol}, and request count on-chain. When a user calls an
             agent API, the 0x402 middleware intercepts the request, issues a payment challenge via
             HTTP 402, and verifies the Solana transaction via RPC before executing the AI model.
           </p>

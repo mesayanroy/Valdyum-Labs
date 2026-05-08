@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import AgentCard from '@/components/AgentCard';
 import { Agent } from '@/types';
 import { sendSolTransfer, solExplorerTx } from '@/lib/phantom';
+import { tokenConfig } from '@/lib/token';
 
 interface ForkModalProps {
   agent: Agent;
@@ -40,7 +41,7 @@ function ForkModal({ agent, onClose, onSuccess }: ForkModalProps) {
         onClick={(e) => e.stopPropagation()}>
         <h2 className="font-syne text-xl font-bold text-white mb-1">Fork Agent</h2>
         <p className="text-gray-400 text-sm mb-5">
-          Pay <span className="text-[#FFB800] font-bold">{FORK_FEE_XLM} SOL</span> to fork &quot;{agent.name}&quot; and customise it.
+          Pay <span className="text-[#FFB800] font-bold">{FORK_FEE_XLM} {tokenConfig.symbol}</span> to fork &quot;{agent.name}&quot; and customise it.
         </p>
 
         <div className="space-y-4 mb-5">
@@ -57,7 +58,7 @@ function ForkModal({ agent, onClose, onSuccess }: ForkModalProps) {
         </div>
 
         <div className="text-xs font-mono text-gray-500 mb-4 p-3 rounded bg-white/[0.02] border border-white/[0.06]">
-          <div className="flex justify-between"><span>Fork fee</span><span className="text-[#FFB800]">{FORK_FEE_XLM} SOL</span></div>
+          <div className="flex justify-between"><span>Fork fee</span><span className="text-[#FFB800]">{FORK_FEE_XLM} {tokenConfig.symbol}</span></div>
           <div className="flex justify-between mt-1"><span>Destination</span><span className="text-white/70 truncate max-w-[200px]">{agent.owner_wallet}</span></div>
         </div>
 
@@ -77,7 +78,7 @@ function ForkModal({ agent, onClose, onSuccess }: ForkModalProps) {
           </button>
           <button onClick={handleFork} disabled={step === 'paying' || step === 'done'}
             className="flex-1 py-2.5 text-sm font-mono bg-[#FFB800] text-black rounded-lg font-bold hover:bg-[#e6a600] transition-colors disabled:opacity-50">
-            {step === 'paying' ? 'Processing...' : step === 'done' ? 'Forked!' : `Fork & Pay ${FORK_FEE_XLM} SOL`}
+            {step === 'paying' ? 'Processing...' : step === 'done' ? 'Forked!' : `Fork & Pay ${FORK_FEE_XLM} ${tokenConfig.symbol}`}
           </button>
         </div>
       </div>
@@ -116,7 +117,7 @@ export default function MarketplacePage() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <h1 className="font-syne text-4xl font-bold text-white mb-2">Marketplace</h1>
           <p className="text-gray-400 font-mono text-sm">
-            Discover, buy, and fork AI agents on AgentForge. All payments in SOL via the 0x402 protocol.
+            Discover, buy, and fork AI agents on AgentForge. All payments in {tokenConfig.symbol} via the 0x402 protocol.
           </p>
         </motion.div>
 

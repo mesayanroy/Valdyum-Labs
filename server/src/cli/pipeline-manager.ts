@@ -68,6 +68,22 @@ export class PipelineManager {
     this.agentWallet = agentWallet;
   }
 
+  private async emitPipelineEvent(payload: Record<string, unknown>): Promise<void> {
+    try {
+      await fetch(`${this.apiBase}/api/telemetry/pipelines`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          wallet: this.agentWallet || null,
+          executedAt: new Date().toISOString(),
+          ...payload,
+        }),
+      });
+    } catch {
+      // ignore telemetry failures
+    }
+  }
+
   /**
    * Create a new pipeline
    */
@@ -122,6 +138,11 @@ export class PipelineManager {
     this.executions.set(execution.executionId, execution);
 
     try {
+      await this.emitPipelineEvent({
+        id: execution.executionId,
+        pipelineName: config.name,
+        status: 'running',
+      });
       // Resolve execution order based on dependencies
       const executionOrder = this.resolveExecutionOrder(config);
       
@@ -160,9 +181,21 @@ export class PipelineManager {
 
       execution.status = 'completed';
       execution.endTime = new Date().toISOString();
+      await this.emitPipelineEvent({
+        id: execution.executionId,
+        pipelineName: config.name,
+        status: 'success',
+        durationMs: execution.endTime ? new Date(execution.endTime).getTime() - new Date(execution.startTime).getTime() : undefined,
+      });
     } catch (err) {
       execution.status = 'failed';
       execution.endTime = new Date().toISOString();
+      await this.emitPipelineEvent({
+        id: execution.executionId,
+        pipelineName: config.name,
+        status: 'error',
+        durationMs: execution.endTime ? new Date(execution.endTime).getTime() - new Date(execution.startTime).getTime() : undefined,
+      });
       throw err;
     }
 

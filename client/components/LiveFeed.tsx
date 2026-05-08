@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useMarketplaceFeed } from '@/hooks/useMarketplaceFeed';
 import { truncateAddress } from '@/lib/stellar';
 import type { MarketplaceActivityEvent } from '@/types/events';
+import { tokenConfig } from '@/lib/token';
 
 const TYPE_STYLES: Record<MarketplaceActivityEvent['eventType'], string> = {
   agent_run: 'text-[#111111]',
@@ -71,9 +72,9 @@ export default function LiveFeed() {
                     {formatEventLabel(ev)}
                   </span>
                   {typeof ev.priceXlm === 'number' && ev.priceXlm > 0 && (
-                    <span className="font-mono text-[11px] font-medium text-[#799ee0]">
-                      +{ev.priceXlm.toFixed(2)} SOL
-                    </span>
+                      <span className="font-mono text-[11px] font-medium text-[#799ee0]">
+                        +{ev.priceXlm.toFixed(2)} {tokenConfig.symbol}
+                      </span>
                   )}
                 </div>
                 <div className="flex items-center gap-2">

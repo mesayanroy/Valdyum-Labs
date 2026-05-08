@@ -13,6 +13,7 @@ type DemoAgentInput = {
   tools?: string[];
   price_xlm: number;
   visibility?: Agent['visibility'];
+  forked_from?: string;
   api_endpoint?: string;
   api_key?: string;
 };
@@ -102,6 +103,7 @@ export function upsertDemoAgent(input: DemoAgentInput): Agent {
     tools: input.tools ?? existing?.tools ?? [],
     price_xlm: input.price_xlm,
     visibility: input.visibility ?? existing?.visibility ?? 'public',
+    forked_from: input.forked_from ?? existing?.forked_from,
     api_endpoint: input.api_endpoint ?? existing?.api_endpoint,
     api_key: input.api_key ?? existing?.api_key,
     total_requests: existing?.total_requests ?? 0,

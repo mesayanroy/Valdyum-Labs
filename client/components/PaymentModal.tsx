@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import type { PhantomProvider } from '../types/phantom';
+import { tokenConfig, tokenMetadataLabel } from '@/lib/token';
 
 function getPhantomProvider(): PhantomProvider | undefined {
   if (typeof window === 'undefined') return undefined;
@@ -176,7 +177,11 @@ export default function PaymentModal({
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Amount</span>
-                <span className="text-[#FFB800] font-bold">{priceXlm} SOL</span>
+                <span className="text-[#FFB800] font-bold">{priceXlm} {tokenConfig.symbol}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Mint</span>
+                <span className="text-gray-300 text-xs">{tokenMetadataLabel()}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Network</span>

@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { truncateAddress } from '@/lib/stellar';
+import { fetchSolBalance } from '@/lib/solana';
+import { tokenConfig } from '@/lib/token';
 import { createPortal } from 'react-dom';
 import type { PhantomProvider } from '../types/phantom';
 
@@ -45,9 +47,8 @@ export default function WalletConnect() {
 
   const fetchBalance = async (addr: string) => {
     try {
-      const { getXlmBalance } = await import('@/lib/stellar');
-      const bal = await getXlmBalance(addr);
-      setBalance(parseFloat(bal).toFixed(2));
+      const bal = await fetchSolBalance(addr);
+      setBalance(bal.toFixed(3));
     } catch {
       setBalance('0');
     }
@@ -108,7 +109,7 @@ export default function WalletConnect() {
         <div className="flex items-center gap-2 px-3 py-1.5 rounded border border-[rgba(0,255,229,0.2)] bg-[rgba(0,255,229,0.04)]">
           <div className="w-2 h-2 rounded-full bg-[#00FFE5] animate-pulse" />
           <span className="font-mono text-xs text-[#00FFE5]">{truncateAddress(address)}</span>
-          <span className="font-mono text-xs text-gray-400">{balance} SOL</span>
+          <span className="font-mono text-xs text-gray-400">{balance} {tokenConfig.symbol}</span>
         </div>
         <button
           onClick={disconnect}

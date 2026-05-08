@@ -54,7 +54,7 @@ const sidebarLinks = [
   },
   {
     href: '/workflow',
-    label: 'Workflow',
+    label: 'Valdyum Workflow',
     icon: (
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <rect x="3" y="3" width="5" height="5" rx="1" /><rect x="16" y="3" width="5" height="5" rx="1" />
@@ -70,8 +70,8 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed left-0 top-16 bottom-0 z-40 w-56 bg-[rgba(5,5,8,0.92)] border-r border-[rgba(0,255,229,0.07)] flex flex-col py-6 px-3 overflow-y-auto">
-      <p className="font-mono text-[10px] text-gray-600 uppercase tracking-widest px-3 mb-3">App</p>
+    <aside className="fixed left-0 top-16 bottom-0 z-40 w-56 bg-[rgba(18,12,8,0.95)] border-r border-[rgba(212,175,55,0.18)] flex flex-col py-6 px-3 overflow-y-auto">
+      <p className="font-mono text-[10px] text-[#cbb38b] uppercase tracking-widest px-3 mb-3">Imperium</p>
       <nav className="flex flex-col gap-0.5">
         {sidebarLinks.map((link) => {
           const active = pathname ? pathname === link.href || pathname.startsWith(link.href + '/') : false;
@@ -81,11 +81,11 @@ export default function Sidebar() {
               href={link.href}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-mono transition-all ${
                 active
-                  ? 'text-[#00FFE5] bg-[rgba(0,255,229,0.1)] border border-[rgba(0,255,229,0.15)]'
-                  : 'text-gray-400 hover:text-white hover:bg-[rgba(255,255,255,0.04)]'
+                  ? 'text-[#d4af37] bg-[rgba(212,175,55,0.12)] border border-[rgba(212,175,55,0.3)]'
+                  : 'text-[#9c8871] hover:text-[#f5e7d1] hover:bg-[rgba(255,255,255,0.04)]'
               }`}
             >
-              <span className={active ? 'text-[#00FFE5]' : 'text-gray-500'}>{link.icon}</span>
+              <span className={active ? 'text-[#d4af37]' : 'text-[#7c6a55]'}>{link.icon}</span>
               {link.label}
             </Link>
           );
@@ -93,7 +93,7 @@ export default function Sidebar() {
       </nav>
 
       <div className="mt-auto px-3 pt-6 border-t border-[rgba(255,255,255,0.04)]">
-        <p className="font-mono text-[9px] text-gray-700 leading-relaxed">
+        <p className="font-mono text-[9px] text-[#7c6a55] leading-relaxed">
           Valdyum v0.2<br />
           Testnet · 0x402 Protocol
         </p>

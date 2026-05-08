@@ -3,6 +3,8 @@
 import { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { MarketplaceActivityEvent } from '@/types/events';
+import { tokenConfig } from '@/lib/token';
+import { solExplorerTx } from '@/lib/phantom';
 
 interface Notification {
   id: string;
@@ -70,9 +72,9 @@ export default function AblyNotifications() {
               : `New Agent Deployed`,
           body:
             ev.eventType === 'payment_received'
-              ? `+${(ev.priceXlm || 0).toFixed(4)} SOL · ${ev.agentName || ev.agentId}`
+              ? `+${(ev.priceXlm || 0).toFixed(4)} ${tokenConfig.symbol} · ${ev.agentName || ev.agentId}`
               : ev.eventType === 'agent_run'
-              ? `Request completed${ev.priceXlm ? ` · ${ev.priceXlm} SOL` : ' · free'}`
+              ? `Request completed${ev.priceXlm ? ` · ${ev.priceXlm} ${tokenConfig.symbol}` : ' · free'}`
               : `${ev.agentName || ev.agentId} is now live`,
           timestamp: ev.timestamp,
           txHash: ev.txHash,
@@ -116,7 +118,7 @@ export default function AblyNotifications() {
                 <p className="text-xs text-white/60 mt-0.5 truncate">{n.body}</p>
                 {n.txHash && (
                   <a
-                    href={`https://stellar.expert/explorer/testnet/tx/${n.txHash}`}
+                    href={solExplorerTx(n.txHash)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-[10px] text-[#00FFE5] underline mt-1 block"

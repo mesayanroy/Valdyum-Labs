@@ -8,6 +8,7 @@ import TerminalOutput from '@/components/TerminalOutput';
 import PaymentModal from '@/components/PaymentModal';
 import { truncateAddress } from '@/lib/stellar';
 import { useMarketplaceFeed } from '@/hooks/useMarketplaceFeed';
+import { tokenConfig, tokenMetadataLabel } from '@/lib/token';
 
 type RuntimeInfo = {
   agent_id: string;
@@ -249,11 +250,10 @@ export default function AgentDetailPage() {
   const marketplaceEditable = ['public', 'forked'].includes(String(agent.visibility || ''));
 
   const cliUsage = [
-    'pnpm run cli -- agents list',
-    `pnpm run cli -- agents get ${agent.id}`,
-    `pnpm run cli -- run --id ${agent.id} --input \"your task\"`,
-    'pnpm run cli -- tasks list',
-    'pnpm run cli -- approvals list',
+    'valdyum agents:list',
+    `valdyum agents:run --id ${agent.id} --prompt \"your task\" --secret $SOLANA_AGENT_SECRET`,
+    'valdyum dashboard:status',
+    'valdyum tx:status --hash <tx_signature>',
   ].join('\n');
 
   const devSnippet = `const res = await fetch('${runtimeInfo?.api_endpoint || agent.api_endpoint || `/api/agents/${agent.id}/run`}', {
@@ -261,7 +261,7 @@ export default function AgentDetailPage() {
   headers: {
     'Content-Type': 'application/json',
     // Add these after 402 challenge:
-    // 'X-Payment-Tx-Hash': '<stellar_tx_hash>',
+    // 'X-Payment-Tx-Hash': '<solana_tx_signature>',
     // 'X-Payment-Wallet': '<your_wallet>'
   },
   body: JSON.stringify({ input: 'Automate this workflow' })
@@ -269,7 +269,8 @@ export default function AgentDetailPage() {
 const data = await res.json();`;
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_10%_0%,rgba(0,255,229,0.08),transparent_30%),radial-gradient(circle_at_90%_100%,rgba(255,184,0,0.08),transparent_35%),#07080d] text-white">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_10%_0%,rgba(212,175,55,0.12),transparent_35%),radial-gradient(circle_at_90%_100%,rgba(122,31,31,0.16),transparent_40%),#120b07] text-[#f7f0e3] relative overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 bg-[url('/background/p2.png')] bg-cover bg-center opacity-10" />
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -283,8 +284,9 @@ const data = await res.json();`;
             </div>
             <div className="text-right space-y-2">
               <div>
-                <div className="text-[#FFB800] font-syne font-bold text-2xl md:text-3xl">{agent.price_xlm} SOL</div>
+                <div className="text-[#d4af37] font-syne font-bold text-2xl md:text-3xl">{agent.price_xlm} {tokenConfig.symbol}</div>
                 <div className="font-mono text-xs text-white/50">per request</div>
+                <div className="font-mono text-[10px] text-[#cbb38b] mt-1">{tokenMetadataLabel()}</div>
               </div>
               {viewerWallet && viewerWallet === agent.owner_wallet && (
                 <button
@@ -388,7 +390,7 @@ const data = await res.json();`;
             </aside>
           </div>
 
-          <section className="border border-white/15 rounded-3xl bg-white/[0.03] p-5 md:p-7">
+          <section id="run" className="border border-white/15 rounded-3xl bg-white/[0.03] p-5 md:p-7">
             <h2 className="text-center font-syne text-2xl md:text-3xl mb-5">Run Agent</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 items-center">
@@ -404,7 +406,7 @@ const data = await res.json();`;
                 disabled={running || !input}
                 className="border border-white/20 rounded-2xl px-5 py-3 bg-[#00FFE5] text-black hover:bg-[#0ef2dc] font-bold text-sm disabled:opacity-50"
               >
-                {running ? 'Running...' : `Run (${agent.price_xlm} SOL)`}
+                {running ? 'Running...' : `Run (${agent.price_xlm} ${tokenConfig.symbol})`}
               </button>
             </div>
 
@@ -431,12 +433,12 @@ const data = await res.json();`;
               <div className="space-y-2 text-sm text-white/85">
                 <div><strong>API Key:</strong> {runtimeInfo?.api_key || agent.api_key || 'N/A'}</div>
                 <div><strong>User Wallet:</strong> {lastSignerWallet || 'N/A'}</div>
-                <div><strong>Price:</strong> {agent.price_xlm} SOL</div>
-                <div><strong>Billed Last Run:</strong> {lastBilledXlm} SOL</div>
+                <div><strong>Price:</strong> {agent.price_xlm} {tokenConfig.symbol}</div>
+                <div><strong>Billed Last Run:</strong> {lastBilledXlm} {tokenConfig.symbol}</div>
                 <div><strong>Forked:</strong> {forkCount} times</div>
                 <div><strong>URL Endpoint:</strong> {runtimeInfo?.api_endpoint || agent.api_endpoint || 'N/A'}</div>
                 <div><strong>Total Requests:</strong> {totalRequests.toLocaleString()}</div>
-                <div><strong>Total Earned:</strong> {totalEarnedXlm} SOL</div>
+                <div><strong>Total Earned:</strong> {totalEarnedXlm} {tokenConfig.symbol}</div>
               </div>
             </div>
 
@@ -468,8 +470,8 @@ const data = await res.json();`;
               <div className="text-[11px] text-white/55">Total Requests</div>
             </div>
             <div className="rounded-xl border border-white/15 bg-white/[0.03] p-3 text-center">
-              <div className="font-mono text-[#4ade80]">{totalEarnedXlm} SOL</div>
-              <div className="text-[11px] text-white/55">Total Earned</div>
+                <div className="font-mono text-[#4ade80]">{totalEarnedXlm} {tokenConfig.symbol}</div>
+                <div className="text-[11px] text-white/55">Total Earned</div>
             </div>
             <div className="rounded-xl border border-white/15 bg-white/[0.03] p-3 text-center">
               <div className="font-mono text-[#FFB800]">{forkCount}</div>
