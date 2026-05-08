@@ -89,3 +89,8 @@ export const buildInitialEdges = (): WorkflowEdge[] => [
   { id: 'e6', source: 'x402_payment', target: 'trust_layer', animated: true },
   { id: 'e7', source: 'ai_decision', target: 'cli_runtime', animated: true },
 ];
+
+export const createWorkflowId = () =>
+  (typeof crypto !== 'undefined' && crypto.randomUUID
+    ? crypto.randomUUID()
+    : `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`);

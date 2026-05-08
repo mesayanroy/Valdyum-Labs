@@ -89,12 +89,12 @@ router.get('/cli', async (req: Request, res: Response) => {
   const supabase = getSupabase();
 
   if (supabase) {
-    const query = supabase
+    let query = supabase
       .from('cli_events')
       .select('id, wallet_address, event_type, status, message, agent_id, pipeline_id, created_at')
       .order('created_at', { ascending: false })
       .limit(50);
-    if (wallet) query.eq('wallet_address', wallet);
+    if (wallet) query = query.eq('wallet_address', wallet);
     const { data } = await query;
     if (data) {
       res.json({
@@ -156,12 +156,12 @@ router.get('/pipelines', async (req: Request, res: Response) => {
   const supabase = getSupabase();
 
   if (supabase) {
-    const query = supabase
+    let query = supabase
       .from('pipeline_runs')
       .select('id, wallet_address, pipeline_name, status, executed_at, duration_ms')
       .order('executed_at', { ascending: false })
       .limit(20);
-    if (wallet) query.eq('wallet_address', wallet);
+    if (wallet) query = query.eq('wallet_address', wallet);
     const { data } = await query;
     if (data) {
       res.json({

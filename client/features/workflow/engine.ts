@@ -26,6 +26,8 @@ function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+const FAILURE_PROBABILITY = 0.08;
+
 export async function runExecution(
   nodes: WorkflowNode[],
   edges: WorkflowEdge[],
@@ -55,7 +57,7 @@ export async function runExecution(
     while (attempt <= maxRetries && !success) {
       attempt += 1;
       await sleep(400 + Math.random() * 700);
-      const shouldFail = Math.random() < 0.08;
+      const shouldFail = Math.random() < FAILURE_PROBABILITY;
       if (!shouldFail) {
         success = true;
         const latency = Math.round(120 + Math.random() * 680);

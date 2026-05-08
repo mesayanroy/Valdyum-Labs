@@ -17,8 +17,9 @@ import {
   StrategyEditor,
   TerminalPanel,
 } from '@/features/workflow/components';
+import { tokenConfig } from '@/lib/token';
 
-const DEFAULT_STRATEGY = `// Valdyum Workflow Strategy\n// Example: Trigger -> Oracle -> AI Decision -> Jupiter -> Jito -> 0x402 -> Trust\n\nexport async function execute(context) {\n  const { priceFeed, execution } = context;\n  if (priceFeed.spread > 0.5) {\n    await execution.swap('SOL', 'USDC', { slippage: 0.003 });\n    await execution.bundle({ tip: 0.0002 });\n    await execution.pay402({ amount: 0.05 });\n  }\n}\n`;
+const buildDefaultStrategy = (symbol: string) => `// Valdyum Workflow Strategy\n// Example: Trigger -> Oracle -> AI Decision -> Jupiter -> Jito -> 0x402 -> Trust\n\nexport async function execute(context) {\n  const { priceFeed, execution } = context;\n  if (priceFeed.spread > 0.5) {\n    await execution.swap('${symbol}', 'USDC', { slippage: 0.003 });\n    await execution.bundle({ tip: 0.0002 });\n    await execution.pay402({ amount: 0.05 });\n  }\n}\n`;
 
 export default function WorkflowPage() {
   const nodes = useWorkflowStore((state) => state.nodes);
@@ -46,7 +47,7 @@ export default function WorkflowPage() {
     [nodes, selectedNodeId],
   );
 
-  const [strategyCode, setStrategyCode] = useState(DEFAULT_STRATEGY);
+  const [strategyCode, setStrategyCode] = useState(() => buildDefaultStrategy(tokenConfig.symbol));
 
   useEffect(() => {
     const cleanup = startMockStreams(nodes, appendLog, updateNode);

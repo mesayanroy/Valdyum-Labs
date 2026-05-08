@@ -288,8 +288,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     let closed = false;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let realtimeRef: any = null;
+    let realtimeRef: import('ably').Realtime | null = null;
 
     const connect = async () => {
       try {
@@ -328,7 +327,7 @@ export default function DashboardPage() {
 
     return () => {
       closed = true;
-      if (realtimeRef && typeof realtimeRef.close === 'function') {
+      if (realtimeRef) {
         try { realtimeRef.close(); } catch { /* ignore */ }
       }
     };

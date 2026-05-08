@@ -8,7 +8,7 @@ import type {
   WorkflowNodeData,
   WorkflowNodeKind,
 } from './types';
-import { buildInitialEdges, buildInitialNodes, buildWorkflowNode } from './utils';
+import { buildInitialEdges, buildInitialNodes, buildWorkflowNode, createWorkflowId } from './utils';
 
 interface WorkflowState {
   nodes: WorkflowNode[];
@@ -33,7 +33,6 @@ interface WorkflowState {
 
 const initialNodes = buildInitialNodes();
 const initialEdges = buildInitialEdges();
-const uid = () => (typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`);
 
 export const useWorkflowStore = create<WorkflowState>((set, get) => ({
   nodes: initialNodes,
@@ -70,7 +69,7 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
   },
   appendLog: (entry) => {
     const logEntry: WorkflowLogEntry = {
-      id: uid(),
+      id: createWorkflowId(),
       timestamp: new Date().toISOString(),
       ...entry,
     };
