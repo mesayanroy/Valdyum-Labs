@@ -28,7 +28,7 @@ function isMissingColumnError(
   if (!error) return false;
   const message = (error.message || '').toLowerCase();
   return (error.code === '42703' && message.includes(`column agents.${column}`.toLowerCase())) ||
-         (error.code === 'PGRST204' && message.includes(`'${column}'`));
+    (error.code === 'PGRST204' && message.includes(`'${column}'`));
 }
 
 function getMissingColumnName(error: { message?: string } | null | undefined): string | null {
@@ -666,7 +666,7 @@ router.post('/:id/run', async (req: Request, res: Response) => {
     if (priceSol > 0 && !paymentTxHash) {
       const requestNonce = Math.random().toString(36).slice(2, 10);
       const memo = `agent:${agentId}:req:${requestNonce}`.slice(0, 28);
-      
+
       res.status(200).set({
         'X-Payment-Required': 'sol',
         'X-Payment-Amount': String(agent.price_sol),

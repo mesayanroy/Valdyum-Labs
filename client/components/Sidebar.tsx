@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 
 const sidebarLinks = [
@@ -70,9 +71,23 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed left-0 top-16 bottom-0 z-40 w-56 bg-[rgba(18,12,8,0.95)] border-r border-[rgba(212,175,55,0.18)] flex flex-col py-6 px-3 overflow-y-auto">
-      <p className="font-mono text-[10px] text-[#cbb38b] uppercase tracking-widest px-3 mb-3">Imperium</p>
-      <nav className="flex flex-col gap-0.5">
+    <aside className="fixed left-0 top-0 bottom-0 z-40 w-56 bg-[rgba(18,12,8,0.95)] border-r border-[rgba(212,175,55,0.18)] flex flex-col overflow-y-auto">
+      {/* Brand Header */}
+      <div className="h-16 flex items-center px-6 bg-white border-b border-[rgba(212,175,55,0.1)] mb-6">
+        <Link href="/" className="relative h-10 w-full">
+          <Image
+            src="/brand/Valdyumlogo.png"
+            alt="Valdyum logo"
+            fill
+            sizes="160px"
+            className="object-contain object-left scale-[1.8] origin-left"
+            priority
+          />
+        </Link>
+      </div>
+
+      <p className="font-mono text-[10px] text-[#cbb38b] uppercase tracking-widest px-6 mb-3">Imperium</p>
+      <nav className="flex flex-col gap-0.5 px-3">
         {sidebarLinks.map((link) => {
           const active = pathname ? pathname === link.href || pathname.startsWith(link.href + '/') : false;
           return (
@@ -92,7 +107,7 @@ export default function Sidebar() {
         })}
       </nav>
 
-      <div className="mt-auto px-3 pt-6 border-t border-[rgba(255,255,255,0.04)]">
+      <div className="mt-auto px-6 py-6 border-t border-[rgba(255,255,255,0.04)]">
         <p className="font-mono text-[9px] text-[#7c6a55] leading-relaxed">
           Valdyum v0.2<br />
           Testnet · 0x402 Protocol
