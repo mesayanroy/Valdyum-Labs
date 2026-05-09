@@ -93,6 +93,7 @@ export function useMarketplaceFeed(
       // Subscribe to all events (or just the filtered type)
       const handleMessage = (msg: import('ably').InboundMessage) => {
         const activity = msg.data as MarketplaceActivityEvent;
+        console.log('[ABLY] Incoming Marketplace Event:', activity.eventType, activity);
         if (filter && activity.eventType !== filter) return;
 
         setEvents((prev) => {

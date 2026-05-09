@@ -37,9 +37,9 @@ async function fetchAgent(agentId: string) {
     owner_wallet: string;
     model: string;
     system_prompt: string;
-    price_xlm: number;
+    price_sol: number;
     total_requests: number;
-    total_earned_xlm: number;
+    total_earned_sol: number;
   };
 }
 
@@ -79,7 +79,7 @@ const consumer = createConsumer<PaymentConfirmedEvent>(
   CONSUMER_GROUP,
   TOPICS.PAYMENT_CONFIRMED,
   async (event) => {
-    const { requestId, agentId, txHash, callerWallet, ownerWallet, priceXlm, input, confirmedAt } =
+    const { requestId, agentId, txHash, callerWallet, ownerWallet, priceSol, input, confirmedAt } =
       event;
 
     console.log(`[AgentExecutor] Executing agent ${agentId} for request ${requestId}`);
@@ -113,7 +113,7 @@ const consumer = createConsumer<PaymentConfirmedEvent>(
         input_payload: { input },
         output_response: { output },
         payment_tx_hash: txHash,
-        payment_amount_xlm: priceXlm,
+        payment_amount_sol: priceSol,
         protocol: '0x402',
         status: 'success',
         latency_ms: latencyMs,
@@ -130,7 +130,7 @@ const consumer = createConsumer<PaymentConfirmedEvent>(
       model: agent.model,
       callerWallet,
       ownerWallet,
-      priceXlm,
+      priceSol,
       input,
       output,
       latencyMs,

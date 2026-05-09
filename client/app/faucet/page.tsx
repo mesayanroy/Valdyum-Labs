@@ -42,11 +42,11 @@ export default function FaucetPage() {
 
     if (AF_TOKEN_CONTRACT) {
       try {
-        const txHash = await claimAfTokensWithFreighter();
+        const txHash = await claimAfTokensWithPhantom();
         setTxHash(txHash);
         setClaimsRemaining(null);
         setStatus('success');
-        await addTokenToFreighter();
+        await addTokenToPhantom();
         return;
       } catch (err) {
         setErrorMsg(err instanceof Error ? err.message : 'AF$ claim failed');
@@ -72,7 +72,7 @@ export default function FaucetPage() {
     }
   }
 
-  async function claimAfTokensWithFreighter(): Promise<string> {
+  async function claimAfTokensWithPhantom(): Promise<string> {
     const connectedAddress = await connectPhantom();
 
     const recipient = walletAddress.trim();
@@ -83,7 +83,7 @@ export default function FaucetPage() {
     return txHash;
   }
 
-  async function addTokenToFreighter() {
+  async function addTokenToPhantom() {
     if (!AF_TOKEN_CONTRACT) {
       setTokenStatus('error');
       setErrorMsg('AF$ contract is not configured in this environment.');
@@ -226,7 +226,7 @@ export default function FaucetPage() {
                   </p>
                   <button
                     type="button"
-                    onClick={addTokenToFreighter}
+                    onClick={addTokenToPhantom}
                     disabled={tokenStatus === 'adding' || tokenStatus === 'added'}
                     className="rounded-lg border border-[rgba(0,255,229,0.2)] bg-[rgba(0,255,229,0.08)] px-3 py-2 text-xs font-semibold text-[#00FFE5] transition-colors hover:bg-[rgba(0,255,229,0.12)] disabled:opacity-60"
                   >

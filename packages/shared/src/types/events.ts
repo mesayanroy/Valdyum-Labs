@@ -13,14 +13,14 @@ export interface PaymentPendingEvent {
   requestId: string;
   /** The agent being invoked. */
   agentId: string;
-  /** Stellar transaction hash provided by the caller. */
+  /** Solana transaction hash provided by the caller. */
   txHash: string;
-  /** Caller Stellar wallet address. */
+  /** Caller Solana wallet address. */
   callerWallet: string;
   /** Expected payout destination (agent owner wallet). */
   ownerWallet: string;
-  /** Required payment amount in XLM. */
-  priceXlm: number;
+  /** Required payment amount in SOL. */
+  priceSol: number;
   /** Memo that must be present on the tx (up to 28 chars). */
   memo: string;
   /** The user's prompt / input payload. */
@@ -31,16 +31,16 @@ export interface PaymentPendingEvent {
 
 // ─── payment.confirmed ───────────────────────────────────────────────────────
 
-/** Published by the Payment Verifier after Horizon confirms the tx. */
+/** Published by the Payment Verifier after RPC confirms the tx. */
 export interface PaymentConfirmedEvent {
   requestId: string;
   agentId: string;
   txHash: string;
   callerWallet: string;
   ownerWallet: string;
-  priceXlm: number;
+  priceSol: number;
   input: string;
-  /** ISO-8601 timestamp when Horizon confirmed the ledger inclusion. */
+  /** ISO-8601 timestamp when RPC confirmed the ledger inclusion. */
   confirmedAt: string;
 }
 
@@ -54,7 +54,7 @@ export interface AgentCompletedEvent {
   model: string;
   callerWallet: string;
   ownerWallet: string;
-  priceXlm: number;
+  priceSol: number;
   input: string;
   output: string;
   latencyMs: number;
@@ -69,10 +69,10 @@ export interface AgentCompletedEvent {
 export interface BillingUpdatedEvent {
   agentId: string;
   ownerWallet: string;
-  /** Amount added in this billing cycle (XLM). */
-  earnedXlm: number;
-  /** Running total earned by the agent (XLM). */
-  totalEarnedXlm: number;
+  /** Amount added in this billing cycle (SOL). */
+  earnedSol: number;
+  /** Running total earned by the agent (SOL). */
+  totalEarnedSol: number;
   /** Running total number of successful requests. */
   totalRequests: number;
   /** ISO-8601 timestamp. */
@@ -90,12 +90,12 @@ export interface MarketplaceActivityEvent {
   agentName: string;
   callerWallet?: string;
   ownerWallet: string;
-  priceXlm?: number;
+  priceSol?: number;
   txHash?: string;
   txExplorerUrl?: string;
   model?: string;
   invoiceId?: string;
-  totalEarnedXlm?: number;
+  totalEarnedSol?: number;
   totalRequests?: number;
   /** ISO-8601 timestamp. */
   timestamp: string;
@@ -103,9 +103,9 @@ export interface MarketplaceActivityEvent {
 
 // ─── chain.synced ─────────────────────────────────────────────────────────────
 
-/** Published by the Chain Syncer after a Soroban state change is detected. */
+/** Published by the Chain Syncer after a Anchor state change is detected. */
 export interface ChainSyncedEvent {
-  /** Soroban contract ID. */
+  /** Anchor contract ID. */
   contractId: string;
   /** The on-chain node / agent ID. */
   nodeId: string;

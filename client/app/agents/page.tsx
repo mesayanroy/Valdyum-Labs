@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import AgentCard from '@/components/AgentCard';
 import { Agent } from '@/types';
 import { tokenConfig } from '@/lib/token';
+import ForkModal from '@/components/ForkModal';
 
 export default function AgentsPage() {
   const [agents, setAgents] = useState<Agent[]>([]);
@@ -14,8 +15,9 @@ export default function AgentsPage() {
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   const [removingAgentId, setRemovingAgentId] = useState<string | null>(null);
-  const [forkingAgentId, setForkingAgentId] = useState<string | null>(null);
+  const [forkingAgent, setForkingAgent] = useState<Agent | null>(null);
   const [forkMessage, setForkMessage] = useState<string | null>(null);
+  const [successTx, setSuccessTx] = useState<string | null>(null);
 
   useEffect(() => {
     setWalletAddress(localStorage.getItem('wallet_address') || '');
@@ -56,7 +58,7 @@ export default function AgentsPage() {
 
   const removeAgent = async (agent: Agent) => {
     if (!walletAddress || walletAddress !== agent.owner_wallet || removingAgentId) return;
-    const ok = window.confirm(`Remove agent \"${agent.name}\" from active listings?`);
+    const ok = window.confirm(`Remove agent "${agent.name}" from active listings?`);
     if (!ok) return;
 
     setRemovingAgentId(agent.id);
@@ -78,44 +80,19 @@ export default function AgentsPage() {
     }
   };
 
-  const handleFork = async (agent: Agent) => {
-    if (!walletAddress) {
-      setForkMessage('Connect your wallet to fork an agent.');
-      return;
-    }
-    setForkingAgentId(agent.id);
-    setForkMessage(null);
-    try {
-      const res = await fetch(`/api/agents/${agent.id}/fork`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ walletAddress }),
-      });
-      const data = await res.json().catch(() => ({})) as { agent?: Agent; error?: string };
-      if (!res.ok) {
-        throw new Error(data.error || 'Failed to fork agent');
-      }
-      const forkedAgent = data.agent;
-      if (forkedAgent) {
-        setAgents((prev) => [forkedAgent, ...prev]);
-      }
-      setForkMessage(`Forked ${agent.name}. View it in your dashboard.`);
-    } catch (err) {
-      setForkMessage(err instanceof Error ? err.message : String(err));
-    } finally {
-      setForkingAgentId(null);
-    }
+  const handleFork = (agent: Agent) => {
+    setForkingAgent(agent);
   };
 
   return (
-    <div className="min-h-screen bg-[#140d08] text-[#f7f0e3] relative overflow-hidden">
-      <div className="pointer-events-none absolute inset-0 bg-[url('/background/slide2.png')] bg-cover bg-center opacity-10" />
+    <div className="min-h-screen bg-[#0a0a0c] text-[#f7f0e3] relative overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 bg-[url('/background/slide33.png')] bg-cover bg-center opacity-15" />
       <div className="max-w-7xl mx-auto px-4 py-10 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <h1 className="font-syne text-4xl font-bold text-[#f5e7d1] mb-2">Imperium Agents</h1>
+          <h1 className="font-cinzel text-4xl font-bold text-[#f5e7d1] mb-2">Legion of Praetorians</h1>
           <p className="text-[#cbb38b] font-mono text-sm mb-8">
             Browse and use deployed AI agents. Pay per request with {tokenConfig.symbol}.
           </p>
@@ -166,7 +143,7 @@ export default function AgentsPage() {
             {filtered.map((agent) => (
               <div key={agent.id} className="space-y-2">
                 <AgentCard agent={agent} onFork={handleFork} />
-                {forkingAgentId === agent.id && (
+                {forkingAgent?.id === agent.id && (
                   <p className="text-xs font-mono text-[#FFB800]">Forking agent…</p>
                 )}
                 {walletAddress && walletAddress === agent.owner_wallet && (

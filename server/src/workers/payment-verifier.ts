@@ -26,7 +26,7 @@ const consumer = createConsumer<PaymentPendingEvent>(
       txHash,
       callerWallet,
       ownerWallet,
-      priceXlm,
+      priceSol,
       input,
       memo,
     } = event;
@@ -46,7 +46,7 @@ const consumer = createConsumer<PaymentPendingEvent>(
         txHash,
         callerWallet,
         ownerWallet,
-        priceXlm,
+        priceSol,
         input,
         confirmedAt: new Date().toISOString(),
       };

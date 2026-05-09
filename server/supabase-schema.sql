@@ -22,14 +22,14 @@ CREATE TABLE IF NOT EXISTS public.agents (
   model TEXT DEFAULT 'openai-gpt4o-mini',
   system_prompt TEXT DEFAULT '',
   tools JSONB DEFAULT '[]',
-  price_xlm NUMERIC(10,4) DEFAULT 0.01,
+  price_sol NUMERIC(10,4) DEFAULT 0.01,
   visibility TEXT DEFAULT 'public' CHECK (visibility IN ('public', 'private', 'forked')),
   forked_from UUID,
   api_endpoint TEXT,
   api_key TEXT,
-  soroban_contract_id TEXT,
+  anchor_contract_id TEXT,
   total_requests BIGINT DEFAULT 0,
-  total_earned_xlm NUMERIC(16,4) DEFAULT 0,
+  total_earned_sol NUMERIC(16,4) DEFAULT 0,
   is_active BOOLEAN DEFAULT true,
   created_at TIMESTAMPTZ DEFAULT now(),
   updated_at TIMESTAMPTZ DEFAULT now()
@@ -40,7 +40,7 @@ ALTER TABLE public.agents ADD COLUMN IF NOT EXISTS model TEXT DEFAULT 'openai-gp
 ALTER TABLE public.agents ADD COLUMN IF NOT EXISTS system_prompt TEXT DEFAULT '';
 ALTER TABLE public.agents ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT true;
 ALTER TABLE public.agents ADD COLUMN IF NOT EXISTS total_requests BIGINT DEFAULT 0;
-ALTER TABLE public.agents ADD COLUMN IF NOT EXISTS total_earned_xlm NUMERIC(16,4) DEFAULT 0;
+ALTER TABLE public.agents ADD COLUMN IF NOT EXISTS total_earned_sol NUMERIC(16,4) DEFAULT 0;
 ALTER TABLE public.agents ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT now();
 ALTER TABLE public.agents ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT now();
 
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS public.agent_requests (
   input_payload JSONB,
   output_payload JSONB,
   payment_tx_hash TEXT,
-  payment_amount_xlm NUMERIC(12,4) DEFAULT 0,
+  payment_amount_sol NUMERIC(12,4) DEFAULT 0,
   latency_ms INTEGER,
   tx_explorer_url TEXT,
   status TEXT DEFAULT 'pending',
@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS public.agent_requests (
 );
 
 -- Add missing columns to existing agent_requests table (idempotent migrations)
-ALTER TABLE public.agent_requests ADD COLUMN IF NOT EXISTS payment_amount_xlm NUMERIC(12,4) DEFAULT 0;
+ALTER TABLE public.agent_requests ADD COLUMN IF NOT EXISTS payment_amount_sol NUMERIC(12,4) DEFAULT 0;
 ALTER TABLE public.agent_requests ADD COLUMN IF NOT EXISTS latency_ms INTEGER;
 ALTER TABLE public.agent_requests ADD COLUMN IF NOT EXISTS tx_explorer_url TEXT;
 
@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS public.invoices (
   agent_id UUID NOT NULL,
   owner_wallet TEXT NOT NULL,
   caller_wallet TEXT,
-  amount_xlm NUMERIC(12,4) NOT NULL,
+  amount_sol NUMERIC(12,4) NOT NULL,
   tx_hash TEXT,
   tx_explorer_url TEXT,
   payment_tx_hash TEXT,

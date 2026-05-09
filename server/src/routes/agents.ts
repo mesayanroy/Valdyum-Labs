@@ -53,7 +53,7 @@ function explorerUrl(txHash: string): string {
 async function verifyPayment(
   txHash: string,
   ownerWallet: string,
-  priceXlm: number,
+  priceSol: number,
   agentId: string,
   callerWallet?: string
 ): Promise<{ valid: boolean; error?: string }> {
@@ -63,7 +63,7 @@ async function verifyPayment(
     const result = await verifyPaymentTransaction(
       txHash,
       ownerWallet,
-      priceXlm,
+      priceSol,
       expectedMemoPrefix,
       callerWallet
     );
@@ -156,7 +156,7 @@ router.post('/create', async (req: Request, res: Response) => {
       model,
       system_prompt,
       tools,
-      price_xlm,
+      price_sol,
       visibility,
     } = body;
 
@@ -170,8 +170,8 @@ router.post('/create', async (req: Request, res: Response) => {
       return;
     }
 
-    if (parseFloat(price_xlm) < 0.01) {
-      res.status(400).json({ error: 'Minimum price is 0.01 XLM' });
+    if (parseFloat(price_sol) < 0.01) {
+      res.status(400).json({ error: 'Minimum price is 0.01 SOL' });
       return;
     }
 
@@ -202,7 +202,7 @@ router.post('/create', async (req: Request, res: Response) => {
         model,
         system_prompt,
         tools: tools || [],
-        price_xlm: parseFloat(price_xlm) || 0.01,
+        price_sol: parseFloat(price_sol) || 0.01,
         visibility: visibility || 'public',
         api_endpoint: apiEndpoint,
         api_key: apiKey,
@@ -236,7 +236,7 @@ router.post('/create', async (req: Request, res: Response) => {
       model,
       system_prompt,
       tools: tools || [],
-      price_xlm: parseFloat(price_xlm) || 0.01,
+      price_sol: parseFloat(price_sol) || 0.01,
       visibility: visibility || 'public',
       api_endpoint: apiEndpoint,
       api_key: apiKey,
@@ -273,7 +273,7 @@ router.post('/create', async (req: Request, res: Response) => {
           model,
           system_prompt,
           tools: tools || [],
-          price_xlm: parseFloat(price_xlm) || 0.01,
+          price_sol: parseFloat(price_sol) || 0.01,
           visibility: visibility || 'public',
           api_endpoint: apiEndpoint,
           api_key: apiKey,
@@ -428,7 +428,7 @@ router.post('/:id/fork', async (req: Request, res: Response) => {
       model: agent.model,
       system_prompt: agent.system_prompt,
       tools: agent.tools,
-      price_xlm: agent.price_xlm,
+      price_sol: agent.price_sol,
       visibility: 'forked',
       forked_from: agent.id,
       api_endpoint: agent.api_endpoint,
@@ -446,7 +446,7 @@ router.post('/:id/fork', async (req: Request, res: Response) => {
       ...forkedAgent,
       is_active: true,
       total_requests: 0,
-      total_earned_xlm: 0,
+      total_earned_sol: 0,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     }).select().single();
@@ -603,22 +603,9 @@ router.post('/:id/sandbox', async (req: Request, res: Response) => {
       ? body.customization.prompt
       : agent.system_prompt;
 
-    let output = 'Unknown model';
-    if (agent.model === 'openai-gpt4o-mini') {
-      if (!process.env.OPENAI_API_KEY) {
-        output = '[Sandbox mode] OpenAI API key not configured.';
-      } else {
-        const { runOpenAIAgent } = await import('../services/openai');
-        output = await runOpenAIAgent(effectivePrompt, input);
-      }
-    } else if (agent.model === 'anthropic-claude-haiku') {
-      if (!process.env.ANTHROPIC_API_KEY) {
-        output = '[Sandbox mode] Anthropic API key not configured.';
-      } else {
-        const { runAnthropicAgent } = await import('../services/anthropic');
-        output = await runAnthropicAgent(effectivePrompt, input);
-      }
-    }
+    const { simulateAgentWorkflow } = await import('../services/sandbox');
+    const logs = await simulateAgentWorkflow(agent.name, effectivePrompt);
+    const output = logs.join('\n');
 
     res.json({
       ok: true,
@@ -655,8 +642,8 @@ router.post('/:id/run', async (req: Request, res: Response) => {
       res.status(500).json({ error: 'Agent owner wallet is not configured' });
       return;
     }
-    const priceXlm = Number(agent.price_xlm || 0);
-    if (Number.isNaN(priceXlm) || priceXlm < 0) {
+    const priceSol = Number(agent.price_sol || 0);
+    if (Number.isNaN(priceSol) || priceSol < 0) {
       res.status(500).json({ error: 'Agent pricing configuration is invalid' });
       return;
     }
@@ -676,27 +663,29 @@ router.post('/:id/run', async (req: Request, res: Response) => {
     const paymentTxHash = req.header('X-Payment-Tx-Hash');
     const callerWallet = req.header('X-Payment-Wallet') || '';
 
-    if (priceXlm > 0 && !paymentTxHash) {
+    if (priceSol > 0 && !paymentTxHash) {
       const requestNonce = Math.random().toString(36).slice(2, 10);
       const memo = `agent:${agentId}:req:${requestNonce}`.slice(0, 28);
       
-      res.status(402).set({
+      res.status(200).set({
         'X-Payment-Required': 'sol',
-        'X-Payment-Amount': String(agent.price_xlm),
+        'X-Payment-Amount': String(agent.price_sol),
         'X-Payment-Address': agent.owner_wallet,
         'X-Payment-Network': 'solana',
         'X-Payment-Facilitator': facilitatorUrl,
         'X-Payment-Memo': memo,
       }).json({
+        paymentRequired: true,
         error: 'Payment required',
         payment_details: {
-          amount_xlm: agent.price_xlm,
+          amount_sol: agent.price_sol,
           address: agent.owner_wallet,
           network: 'solana',
           facilitator_url: facilitatorUrl,
           memo,
         },
       });
+
       return;
     }
 
@@ -706,10 +695,11 @@ router.post('/:id/run', async (req: Request, res: Response) => {
       ? body.customization.prompt
       : agent.system_prompt;
 
-    if (paymentTxHash && priceXlm > 0) {
-      const paymentVerification = await verifyPayment(paymentTxHash, agent.owner_wallet, priceXlm, agentId, callerWallet || undefined);
+    if (paymentTxHash && priceSol > 0) {
+      const paymentVerification = await verifyPayment(paymentTxHash, agent.owner_wallet, priceSol, agentId, callerWallet || undefined);
       if (!paymentVerification.valid) {
-        res.status(402).json({
+        res.status(200).json({
+          paymentRequired: true,
           error: 'Payment verification failed',
           details: paymentVerification.error || null,
         });
@@ -719,14 +709,16 @@ router.post('/:id/run', async (req: Request, res: Response) => {
 
     let output = 'Unknown model';
     if (agent.model === 'openai-gpt4o-mini') {
-      if (!process.env.OPENAI_API_KEY) {
-        output = '[Demo mode] OpenAI API key not configured.';
+      const apiKey = process.env.OPENAI_API_KEY;
+      if (!apiKey) {
+        output = '[Unit Status] Neural Core Disconnected: API Key missing.';
       } else {
         try {
           const { runOpenAIAgent } = await import('../services/openai');
-          output = await runOpenAIAgent(effectivePrompt, input);
+          const aiResponse = await runOpenAIAgent(effectivePrompt, input);
+          output = aiResponse;
         } catch (err) {
-          output = `[AI Error] ${String(err)}`;
+          output = `[Neural] ${String(err)}`;
         }
       }
     } else if (agent.model === 'anthropic-claude-haiku') {
@@ -755,7 +747,7 @@ router.post('/:id/run', async (req: Request, res: Response) => {
           input_payload: { input, customization: body.customization || null },
           payment_tx_hash: paymentTxHash || null,
           tx_explorer_url: paymentTxHash ? explorerUrl(paymentTxHash) : null,
-          payment_amount_xlm: paymentTxHash ? priceXlm : 0,
+          payment_amount_sol: paymentTxHash ? priceSol : 0,
           status: 'success',
           latency_ms: latencyMs,
         };
@@ -771,7 +763,7 @@ router.post('/:id/run', async (req: Request, res: Response) => {
             agent_id: agentId,
             owner_wallet: agent.owner_wallet,
             caller_wallet: callerWallet || null,
-            amount_xlm: priceXlm,
+            amount_sol: priceSol,
             tx_hash: paymentTxHash,
             tx_explorer_url: explorerUrl(paymentTxHash),
           }, { onConflict: 'request_id' });
@@ -779,14 +771,14 @@ router.post('/:id/run', async (req: Request, res: Response) => {
 
         await supabase.from('agents').update({
           total_requests: Number(agent.total_requests || 0) + 1,
-          total_earned_xlm: paymentTxHash ? Number(agent.total_earned_xlm || 0) + priceXlm : Number(agent.total_earned_xlm || 0),
+          total_earned_sol: paymentTxHash ? Number(agent.total_earned_sol || 0) + priceSol : Number(agent.total_earned_sol || 0),
           updated_at: new Date().toISOString(),
         }).eq('id', agentId);
       } catch (dbErr) {
-        incrementDemoAgentStats(agentId, { paid: Boolean(paymentTxHash), amountXlm: Number(agent.price_xlm || 0) });
+        incrementDemoAgentStats(agentId, { paid: Boolean(paymentTxHash), amountXlm: Number(agent.price_sol || 0) });
       }
     } else {
-      incrementDemoAgentStats(agentId, { paid: Boolean(paymentTxHash), amountXlm: Number(agent.price_xlm || 0) });
+      incrementDemoAgentStats(agentId, { paid: Boolean(paymentTxHash), amountXlm: Number(agent.price_sol || 0) });
     }
 
     const activity: MarketplaceActivityEvent = {
@@ -795,7 +787,7 @@ router.post('/:id/run', async (req: Request, res: Response) => {
       agentName: agent.name,
       callerWallet: callerWallet || undefined,
       ownerWallet: agent.owner_wallet,
-      priceXlm: paymentTxHash ? priceXlm : 0,
+      priceSol: paymentTxHash ? priceSol : 0,
       txHash: paymentTxHash || undefined,
       txExplorerUrl: paymentTxHash ? explorerUrl(paymentTxHash) : undefined,
       timestamp: new Date().toISOString(),
@@ -818,7 +810,7 @@ router.post('/:id/run', async (req: Request, res: Response) => {
       latency_ms: latencyMs,
       tx_hash: paymentTxHash || null,
       tx_explorer_url: paymentTxHash ? explorerUrl(paymentTxHash) : null,
-      billed_xlm: paymentTxHash ? priceXlm : 0,
+      billed_xlm: paymentTxHash ? priceSol : 0,
       runtime: {
         agent_id: agentId,
         owner_wallet: agent.owner_wallet,

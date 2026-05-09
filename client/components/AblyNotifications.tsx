@@ -13,7 +13,7 @@ interface Notification {
   body: string;
   timestamp: string;
   txHash?: string;
-  amountXlm?: number;
+  amountSol?: number;
 }
 
 const TYPE_COLORS: Record<Notification['type'], string> = {
@@ -72,13 +72,13 @@ export default function AblyNotifications() {
               : `New Agent Deployed`,
           body:
             ev.eventType === 'payment_received'
-              ? `+${(ev.priceXlm || 0).toFixed(4)} ${tokenConfig.symbol} · ${ev.agentName || ev.agentId}`
+              ? `+${(ev.priceSol || 0).toFixed(4)} ${tokenConfig.symbol} · ${ev.agentName || ev.agentId}`
               : ev.eventType === 'agent_run'
-              ? `Request completed${ev.priceXlm ? ` · ${ev.priceXlm} ${tokenConfig.symbol}` : ' · free'}`
+              ? `Request completed${ev.priceSol ? ` · ${ev.priceSol} ${tokenConfig.symbol}` : ' · free'}`
               : `${ev.agentName || ev.agentId} is now live`,
           timestamp: ev.timestamp,
           txHash: ev.txHash,
-          amountXlm: ev.priceXlm,
+          amountSol: ev.priceSol,
         };
 
         setNotifications((prev) => [notification, ...prev].slice(0, 5));

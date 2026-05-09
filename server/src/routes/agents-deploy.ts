@@ -17,12 +17,12 @@ const SOLANA_CLUSTER = process.env.SOLANA_CLUSTER || process.env.NEXT_PUBLIC_SOL
 
 router.post('/validate-deploy', async (req: Request, res: Response) => {
   try {
-    const { deployer_wallet, agent_id, metadata_hash, price_xlm } = req.body;
+    const { deployer_wallet, agent_id, metadata_hash, price_sol } = req.body;
 
     console.log(`[validate-deploy] using VALIDATOR_CONTRACT_ID: ${VALIDATOR_CONTRACT_ID}`);
 
-    if (!deployer_wallet || !agent_id || !metadata_hash || price_xlm === undefined) {
-      res.status(400).json({ error: 'Missing required fields: deployer_wallet, agent_id, metadata_hash, price_xlm' });
+    if (!deployer_wallet || !agent_id || !metadata_hash || price_sol === undefined) {
+      res.status(400).json({ error: 'Missing required fields: deployer_wallet, agent_id, metadata_hash, price_sol' });
       return;
     }
 
@@ -36,12 +36,12 @@ router.post('/validate-deploy', async (req: Request, res: Response) => {
       return;
     }
 
-    if (price_xlm < 0 || !Number.isFinite(price_xlm)) {
+    if (price_sol < 0 || !Number.isFinite(price_sol)) {
       res.status(400).json({ error: 'Price must be a non-negative number' });
       return;
     }
 
-    await logDeploymentEvent('validate_deploy_requested', agent_id, deployer_wallet, { price_xlm, metadata_hash });
+    await logDeploymentEvent('validate_deploy_requested', agent_id, deployer_wallet, { price_sol, metadata_hash });
 
     if (!VALIDATOR_CONTRACT_ID) {
       console.warn('[validate-deploy] NEXT_PUBLIC_SOLANA_VALIDATOR_ID not set — running in dev mode');
@@ -50,21 +50,21 @@ router.post('/validate-deploy', async (req: Request, res: Response) => {
       res.status(200).json({
         status: 'dev_mode',
         message: 'Dev mode: On-chain validation skipped',
-        confirmation_message: `Confirm Agent Deployment\n========================\n\nAgent ID: ${agent_id}\nOwner Wallet: ${deployer_wallet}\nPrice: ${price_xlm} XLM per request\nMetadata Hash: ${metadata_hash}\n\nValidation Fee: 5 XLM\nNetwork: Stellar Testnet\n\nBy signing, you authorize:\n1. Agent registration on AgentValidator\n2. Fee collection (5 XLM) for validation\n3. Permanent agent entry in AgentRegistry\n4. Public marketplace listing`,
+        confirmation_message: `Confirm Agent Deployment\n========================\n\nAgent ID: ${agent_id}\nOwner Wallet: ${deployer_wallet}\nPrice: ${price_sol} SOL per request\nMetadata Hash: ${metadata_hash}\n\nValidation Fee: 5 SOL\nNetwork: Solana Testnet\n\nBy signing, you authorize:\n1. Agent registration on AgentValidator\n2. Fee collection (5 SOL) for validation\n3. Permanent agent entry in AgentRegistry\n4. Public marketplace listing`,
         validation_fee_xlm: 5,
         network: 'testnet',
       });
       return;
     }
 
-    const priceStroops = Math.floor(price_xlm * 10_000_000);
+    const priceLamports = Math.floor(price_sol * 10_000_000);
 
     try {
       const { xdr, validationFee, networkPassphrase } = await buildValidationTransaction(
         deployer_wallet,
         agent_id,
         metadata_hash,
-        priceStroops
+        priceLamports
       );
 
       res.json({
@@ -72,17 +72,17 @@ router.post('/validate-deploy', async (req: Request, res: Response) => {
         validation_tx_xdr: xdr,
         network_passphrase: networkPassphrase,
         validation_fee_xlm: validationFee,
-        validation_fee_stroops: validationFee,
+        validation_fee_lamports: validationFee,
         agent_id,
         deployer_wallet,
-        confirmation_message: `Confirm Agent Deployment on Solana\n=============================================\n\nAgent ID:        ${agent_id}\nOwner Wallet:    ${deployer_wallet}\nPrice per Request: ${price_xlm} (units)\nMetadata Hash:   ${metadata_hash}\n\nValidation Fee:  0 (handled off-chain)\n\nNetwork:         Solana Testnet\nSmart Contracts:\n  - AgentValidator: ${VALIDATOR_CONTRACT_ID}\n\nBy signing this transaction, you authorize:\n  ✓ Verification of your Solana wallet ownership\n  ✓ Duplicate agent ID check in AgentRegistry\n  ✓ Reservation of this agent_id on-chain\n\nThis is Step 1 of 2. After signing, you will\nconfirm final deployment with your signature.`,
+        confirmation_message: `Confirm Agent Deployment on Solana\n=============================================\n\nAgent ID:        ${agent_id}\nOwner Wallet:    ${deployer_wallet}\nPrice per Request: ${price_sol} (units)\nMetadata Hash:   ${metadata_hash}\n\nValidation Fee:  0 (handled off-chain)\n\nNetwork:         Solana Testnet\nSmart Contracts:\n  - AgentValidator: ${VALIDATOR_CONTRACT_ID}\n\nBy signing this transaction, you authorize:\n  ✓ Verification of your Solana wallet ownership\n  ✓ Duplicate agent ID check in AgentRegistry\n  ✓ Reservation of this agent_id on-chain\n\nThis is Step 1 of 2. After signing, you will\nconfirm final deployment with your signature.`,
         instructions: [
-          'Step 1 of 3: Sign this validation transaction in your Freighter wallet',
+          'Step 1 of 3: Sign this validation transaction in your Phantom wallet',
           'Step 2: After signing, submit it to /api/agents/confirm-deploy',
           'Step 3: Sign and submit the final confirmation transaction',
           'Result: Agent deployed on-chain and registered in marketplace',
         ],
-        next_step: 'Sign the validation_tx_xdr in Freighter, then POST the signed XDR to /api/agents/confirm-deploy',
+        next_step: 'Sign the validation_tx_xdr in Phantom, then POST the signed XDR to /api/agents/confirm-deploy',
       });
       return;
     } catch (txErr) {
@@ -106,7 +106,7 @@ router.post('/validate-deploy', async (req: Request, res: Response) => {
 
 router.post('/confirm-deploy', async (req: Request, res: Response) => {
   try {
-    const { deployer_wallet, agent_id, price_xlm, metadata_hash } = req.body;
+    const { deployer_wallet, agent_id, price_sol, metadata_hash } = req.body;
     const signedRequestTxXdr = req.body.signed_request_tx_xdr || req.body.signed_tx_xdr || '';
     const validationMessage = req.body.validation_message || req.body.confirmation_message || '';
 
@@ -125,7 +125,7 @@ router.post('/confirm-deploy', async (req: Request, res: Response) => {
       return;
     }
 
-    await logDeploymentEvent('confirm_deploy_requested', agent_id, deployer_wallet, { price_xlm, metadata_hash });
+    await logDeploymentEvent('confirm_deploy_requested', agent_id, deployer_wallet, { price_sol, metadata_hash });
 
     // For Solana flow we accept the signed validation payload and continue.
     if (VALIDATOR_CONTRACT_ID) {
@@ -140,11 +140,11 @@ router.post('/confirm-deploy', async (req: Request, res: Response) => {
       agent_id,
       deployer_wallet,
       signature_hash: sigHashHex,
-      message: 'Sign the confirm_deploy transaction to finalize agent registration on Soroban.',
+      message: 'Sign the confirm_deploy transaction to finalize agent registration on Anchor.',
     };
 
     if (!VALIDATOR_CONTRACT_ID) {
-      await persistDeploymentToDatabase(deployer_wallet, agent_id, metadata_hash, price_xlm, 50_000_000);
+      await persistDeploymentToDatabase(deployer_wallet, agent_id, metadata_hash, price_sol, 50_000_000);
       await logDeploymentEvent('confirm_deploy_dev_mode', agent_id, deployer_wallet, { signature_hash: sigHashHex });
 
       res.status(200).json({
@@ -159,7 +159,7 @@ router.post('/confirm-deploy', async (req: Request, res: Response) => {
       const { xdr: confirmTxXdr } = await buildConfirmationTransaction(sigHashHex, {
         deployer_wallet,
         agent_id,
-        price_xlm,
+        price_sol,
         metadata_hash,
       });
       responseData = {
@@ -183,7 +183,7 @@ router.post('/confirm-deploy', async (req: Request, res: Response) => {
 
 router.post('/submit-confirmation', async (req: Request, res: Response) => {
   try {
-    const { deployer_wallet, agent_id, price_xlm, metadata_hash, signature_hash, transaction_hash } = req.body;
+    const { deployer_wallet, agent_id, price_sol, metadata_hash, signature_hash, transaction_hash } = req.body;
 
     if (!deployer_wallet || !agent_id || !metadata_hash || !signature_hash) {
       res.status(400).json({ error: 'Missing required fields' });
@@ -200,8 +200,8 @@ router.post('/submit-confirmation', async (req: Request, res: Response) => {
       return;
     }
 
-    const feeStroops = 50_000_000;
-    const dbResult = await persistDeploymentToDatabase(deployer_wallet, agent_id, metadata_hash, price_xlm, feeStroops);
+    const feeLamports = 50_000_000;
+    const dbResult = await persistDeploymentToDatabase(deployer_wallet, agent_id, metadata_hash, price_sol, feeLamports);
 
     if (!(dbResult as any).success) {
       const dbError = (dbResult as any).error;
@@ -210,7 +210,7 @@ router.post('/submit-confirmation', async (req: Request, res: Response) => {
       return;
     }
 
-    await logDeploymentEvent('submit_confirmation_success', agent_id, deployer_wallet, { signature_hash, transaction_hash, price_xlm, fee_stroops: feeStroops });
+    await logDeploymentEvent('submit_confirmation_success', agent_id, deployer_wallet, { signature_hash, transaction_hash, price_sol, fee_lamports: feeLamports });
 
     const status = await getDeploymentStatus(agent_id);
 

@@ -15,15 +15,15 @@ export interface Agent {
   model: 'openai-gpt4o-mini' | 'anthropic-claude-haiku';
   system_prompt: string;
   tools: string[];
-  price_xlm: number;
+  price_sol: number;
   visibility: 'public' | 'private' | 'forked';
   forked_from?: string;
   api_endpoint?: string;
   api_key?: string;
-  soroban_contract_id?: string;
+  anchor_contract_id?: string;
   on_chain_node_id?: string;
   total_requests: number;
-  total_earned_xlm: number;
+  total_earned_sol: number;
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -37,7 +37,7 @@ export interface AgentRequest {
   input_payload?: Record<string, unknown>;
   output_response?: Record<string, unknown>;
   payment_tx_hash?: string;
-  payment_amount_xlm?: number;
+  payment_amount_sol?: number;
   protocol: string;
   status: 'success' | 'failed' | 'pending';
   latency_ms?: number;

@@ -6,7 +6,7 @@ March 27, 2026
 ## Contract Information
 
 ### AgentRegistry Contract
-- **Network**: Stellar Testnet
+- **Network**: Solana Testnet
 - **Contract ID**: `CDTLE6RKAXDXMKDTBLNXYQFIDQKXFM4ARYBX6DG6XDHJPXRESIJEL3MU`
 - **WASM Hash**: `469a2815b8fedacae79d95d1a00413ae3ce9766f0854ac6d61bc3b66305fedc9`
 - **Optimized WASM Size**: 4,460 bytes
@@ -35,7 +35,7 @@ The AgentRegistry contract exposes the following functions:
 A test registration was performed:
 - **Test Tx**: https://stellar.expert/explorer/testnet/tx/72d57d00e18a6ca74008f0e7857f6d1945f56e3d9cd039bc6af65d126d767ec8
 - **Agent ID**: `test_agent_1`
-- **Price**: 500,000 stroops (0.05 XLM)
+- **Price**: 500,000 lamports (0.05 SOL)
 - **Owner**: Alice account
 
 ## Environment Setup
@@ -49,5 +49,5 @@ STELLAR_AGENT_SECRET=SC22G2DCY443NWBCIMTBA4CSUGTZ4T5HLCCLWJDRCKGMSMNG2KEL6QB7
 
 ## Additional Resources
 
-- **Stellar Testnet Explorer**: https://stellar.expert/explorer/testnet
-- **Soroban Documentation**: https://developers.stellar.org/docs/build/smart-contracts
+- **Solana Testnet Explorer**: https://stellar.expert/explorer/testnet
+- **Anchor Documentation**: https://developers.stellar.org/docs/build/smart-contracts

@@ -1,5 +1,5 @@
 /*
- * DEPRECATED: Soroban deployment service removed for Solana migration.
+ * DEPRECATED: Anchor deployment service removed for Solana migration.
  * This file has been completely replaced by Anchor program deployment.
  * All stellar-sdk imports and functions have been removed.
  *
@@ -26,7 +26,7 @@ export async function buildValidationTransaction(
   wallet: string,
   id: string,
   hash: string,
-  stroops: number
+  lamports: number
 ): Promise<{ xdr: string; validationFee: number; networkPassphrase: string }> {
   return {
     xdr: '',

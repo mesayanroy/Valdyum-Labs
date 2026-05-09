@@ -60,13 +60,13 @@ export default function WorkflowPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#120b07] text-[#f7f0e3] relative overflow-hidden">
+    <div className="min-h-screen bg-[#0a0a0c] text-[#f7f0e3] relative overflow-hidden">
       <div className="pointer-events-none absolute inset-0 bg-[url('/background/slide33.png')] bg-cover bg-center opacity-10" />
       <div className="px-6 pt-8 pb-4 relative z-10">
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="space-y-2">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
-              <h1 className="font-syne text-3xl font-bold text-[#f5e7d1]">Valdyum Workflow</h1>
+              <h1 className="font-cinzel text-3xl font-bold text-[#f5e7d1]">Valdyum Workflow</h1>
               <p className="font-mono text-xs text-[#cbb38b]">
                 Design, simulate, and deploy autonomous Solana agent pipelines with 0x402-native payments.
               </p>
@@ -135,7 +135,7 @@ export default function WorkflowPage() {
         <div className="space-y-4">
           <div className="rounded-2xl border border-[rgba(212,175,55,0.2)] bg-[rgba(20,13,9,0.85)] p-4 space-y-3">
             <div className="flex items-center justify-between">
-              <h3 className="font-syne text-sm font-semibold">Node Inspector</h3>
+              <h3 className="font-cinzel text-sm font-semibold">Node Inspector</h3>
               <span className="font-mono text-[10px] text-white/40">{selectedNode?.data.label}</span>
             </div>
             {selectedNode && (

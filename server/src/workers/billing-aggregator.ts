@@ -4,7 +4,7 @@
  * Listens on `valdyum.agent.completed`.
  *
  * For each completed agent run it:
- *  1. Increments `total_requests` and `total_earned_xlm` on the agent row.
+ *  1. Increments `total_requests` and `total_earned_sol` on the agent row.
  *  2. Publishes `valdyum.billing.updated` with the updated totals.
  */
 
@@ -29,7 +29,7 @@ const consumer = createConsumer<AgentCompletedEvent>(
   CONSUMER_GROUP,
   TOPICS.AGENT_COMPLETED,
   async (event) => {
-    const { agentId, ownerWallet, priceXlm } = event;
+    const { agentId, ownerWallet, priceSol } = event;
 
     console.log(`[BillingAggregator] Updating earnings for agent ${agentId}`);
 
@@ -38,7 +38,7 @@ const consumer = createConsumer<AgentCompletedEvent>(
     // Read current totals
     const { data: agent, error: fetchErr } = await sb
       .from('agents')
-      .select('total_requests, total_earned_xlm')
+      .select('total_requests, total_earned_sol')
       .eq('id', agentId)
       .single();
 
@@ -48,13 +48,13 @@ const consumer = createConsumer<AgentCompletedEvent>(
     }
 
     const newTotalRequests = (agent.total_requests ?? 0) + 1;
-    const newTotalEarned = (agent.total_earned_xlm ?? 0) + priceXlm;
+    const newTotalEarned = (agent.total_earned_sol ?? 0) + priceSol;
 
     const { error: updateErr } = await sb
       .from('agents')
       .update({
         total_requests: newTotalRequests,
-        total_earned_xlm: newTotalEarned,
+        total_earned_sol: newTotalEarned,
         updated_at: new Date().toISOString(),
       })
       .eq('id', agentId);
@@ -67,15 +67,15 @@ const consumer = createConsumer<AgentCompletedEvent>(
     const billing: BillingUpdatedEvent = {
       agentId,
       ownerWallet,
-      earnedXlm: priceXlm,
-      totalEarnedXlm: newTotalEarned,
+      earnedSol: priceSol,
+      totalEarnedSol: newTotalEarned,
       totalRequests: newTotalRequests,
       updatedAt: new Date().toISOString(),
     };
 
     await publish(TOPICS.BILLING_UPDATED, billing);
     console.log(
-      `[BillingAggregator] Agent ${agentId} | total_earned=${newTotalEarned} XLM | requests=${newTotalRequests}`
+      `[BillingAggregator] Agent ${agentId} | total_earned=${newTotalEarned} SOL | requests=${newTotalRequests}`
     );
   }
 );

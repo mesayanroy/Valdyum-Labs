@@ -20,7 +20,7 @@ export default function TerminalPanel({ logs }: { logs: WorkflowLogEntry[] }) {
           <div className="flex gap-1.5">
             <div className="w-2 h-2 rounded-full bg-[#FF4545]" />
             <div className="w-2 h-2 rounded-full bg-[#FFB800]" />
-            <div className="w-2 h-2 rounded-full bg-[#00FFE5]" />
+            <div className="w-2 h-2 rounded-full bg-[#d4af37]" />
           </div>
           <span className="font-mono text-[10px] text-white/50">live-terminal.log</span>
         </div>

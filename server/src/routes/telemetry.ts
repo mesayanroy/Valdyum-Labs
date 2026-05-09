@@ -35,18 +35,57 @@ function getSupabase() {
   return createClient(supabaseUrl, supabaseServiceKey);
 }
 
-async function publish(channel: string, payload: unknown) {
+let ablyRest: Ably.Rest | null = null;
+function getAbly() {
   const key = process.env.ABLY_API_KEY;
-  if (!key) return;
+  if (!key) return null;
+  if (!ablyRest) ablyRest = new Ably.Rest({ key });
+  return ablyRest;
+}
+
+async function publish(channel: string, payload: any) {
   try {
-    const ably = new Ably.Rest({ key });
-    await ably.channels.get(channel).publish('event', payload);
-  } catch {
-    // ignore
+    const client = getAbly();
+    if (!client) return;
+    
+    // Enrich agent name if possible
+    let agentName = payload.agentName || payload.pipelineName || 'Imperial Unit';
+    if (payload.agentId && payload.agentId !== '0000') {
+      const supabase = getSupabase();
+      if (supabase) {
+        const { data } = await supabase.from('agents').select('name').eq('id', payload.agentId).single();
+        if (data?.name) agentName = data.name;
+      }
+    }
+
+    const eventName = payload.type || 'system_event';
+    const activity = {
+      eventType: eventName,
+      agentId: payload.agentId || '0000',
+      agentName: agentName,
+      callerWallet: payload.wallet || '0x0000',
+      priceSol: payload.yield || payload.amountSol || 0,
+      signature: payload.signature || payload.sig || 'N/A',
+      timestamp: payload.createdAt || payload.executedAt || new Date().toISOString(),
+      metadata: {
+        ...payload,
+        message: payload.message || 'Decree processed'
+      }
+    };
+
+    // Publish to the specific channel
+    await client.channels.get(channel).publish(eventName, payload);
+    
+    // Also publish a unified version to the 'marketplace' channel for the dashboard console & ledger
+    await client.channels.get('marketplace').publish(eventName, activity);
+    console.log(`[ABLY] Broadcast successful: ${eventName} for ${agentName}`);
+  } catch (err) {
+    console.error(`[ABLY] Broadcast failed:`, err);
   }
 }
 
 router.post('/cli', async (req: Request, res: Response) => {
+  console.log(`[TELEMETRY] Incoming CLI Event:`, req.body?.type);
   const body = req.body || {};
   const event: CliEvent = {
     id: body.id || `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,

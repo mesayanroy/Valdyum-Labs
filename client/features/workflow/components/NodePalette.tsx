@@ -7,7 +7,7 @@ export default function NodePalette({ onAdd }: { onAdd: (kind: WorkflowNodeKind)
   return (
     <div className="rounded-2xl border border-[rgba(212,175,55,0.2)] bg-[rgba(20,13,9,0.85)] p-4 space-y-3">
       <div className="flex items-center justify-between">
-        <h3 className="font-syne text-sm font-semibold text-white">Node Library</h3>
+        <h3 className="font-cinzel text-sm font-semibold text-white">Node Library</h3>
         <span className="font-mono text-[10px] text-[#cbb38b]">drag · add</span>
       </div>
       <div className="space-y-2 max-h-[320px] overflow-y-auto pr-1">

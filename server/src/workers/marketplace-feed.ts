@@ -55,7 +55,7 @@ export const completedConsumer = createConsumer<AgentCompletedEvent>(
       agentName: event.agentId, // will be enriched by the frontend from Supabase
       callerWallet: event.callerWallet,
       ownerWallet: event.ownerWallet,
-      priceXlm: event.priceXlm,
+      priceSol: event.priceSol,
       timestamp: event.completedAt,
     };
 
@@ -75,8 +75,8 @@ export const billingConsumer = createConsumer<BillingUpdatedEvent>(
       agentId: event.agentId,
       agentName: event.agentId,
       ownerWallet: event.ownerWallet,
-      priceXlm: event.earnedXlm,
-      totalEarnedXlm: event.totalEarnedXlm,
+      priceSol: event.earnedSol,
+      totalEarnedSol: event.totalEarnedSol,
       totalRequests: event.totalRequests,
       timestamp: event.updatedAt,
     };

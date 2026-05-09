@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMarketplaceFeed } from '@/hooks/useMarketplaceFeed';
-import { truncateAddress } from '@/lib/stellar';
+import { truncateAddress } from '@/lib/solana';
 import type { MarketplaceActivityEvent } from '@/types/events';
 import { tokenConfig } from '@/lib/token';
 
@@ -71,9 +71,9 @@ export default function LiveFeed() {
                   <span className={`font-mono text-[13px] font-semibold tracking-tight ${TYPE_STYLES[ev.eventType]}`}>
                     {formatEventLabel(ev)}
                   </span>
-                  {typeof ev.priceXlm === 'number' && ev.priceXlm > 0 && (
+                  {typeof ev.priceSol === 'number' && ev.priceSol > 0 && (
                       <span className="font-mono text-[11px] font-medium text-[#799ee0]">
-                        +{ev.priceXlm.toFixed(2)} {tokenConfig.symbol}
+                        +{ev.priceSol.toFixed(2)} {tokenConfig.symbol}
                       </span>
                   )}
                 </div>

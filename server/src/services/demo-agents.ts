@@ -11,7 +11,7 @@ type DemoAgentInput = {
   model: Agent['model'];
   system_prompt: string;
   tools?: string[];
-  price_xlm: number;
+  price_sol: number;
   visibility?: Agent['visibility'];
   forked_from?: string;
   api_endpoint?: string;
@@ -56,11 +56,11 @@ const demoAgents = new Map<string, Agent>([
       model: 'openai-gpt4o-mini',
       system_prompt: 'You are a DeFi analyst...',
       tools: ['on_chain_data', 'web_search'],
-      price_xlm: 0.05,
+      price_sol: 0.05,
       visibility: 'public',
       api_endpoint: 'https://valdyum.dev/api/agents/1/run',
       total_requests: 1420,
-      total_earned_xlm: 71,
+      total_earned_sol: 71,
       is_active: true,
       created_at: nowIso(),
       updated_at: nowIso(),
@@ -101,13 +101,13 @@ export function upsertDemoAgent(input: DemoAgentInput): Agent {
     model: input.model,
     system_prompt: input.system_prompt,
     tools: input.tools ?? existing?.tools ?? [],
-    price_xlm: input.price_xlm,
+    price_sol: input.price_sol,
     visibility: input.visibility ?? existing?.visibility ?? 'public',
     forked_from: input.forked_from ?? existing?.forked_from,
     api_endpoint: input.api_endpoint ?? existing?.api_endpoint,
     api_key: input.api_key ?? existing?.api_key,
     total_requests: existing?.total_requests ?? 0,
-    total_earned_xlm: existing?.total_earned_xlm ?? 0,
+    total_earned_sol: existing?.total_earned_sol ?? 0,
     is_active: existing?.is_active ?? true,
     created_at: existing?.created_at ?? nowIso(),
     updated_at: nowIso(),
@@ -124,7 +124,7 @@ export function incrementDemoAgentStats(id: string, opts: { paid: boolean; amoun
 
   found.total_requests += 1;
   if (opts.paid) {
-    found.total_earned_xlm += opts.amountXlm;
+    found.total_earned_sol += opts.amountXlm;
   }
   found.updated_at = nowIso();
   demoAgents.set(id, found);

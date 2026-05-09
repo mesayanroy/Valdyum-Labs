@@ -59,40 +59,40 @@ interface TokenInfo {
 }
 
 const TOKEN_PAIRS = [
-  { id: 'xlm', symbol: 'SOL/USDC', name: 'Solana Lumens', coinGeckoId: 'stellar', icon: '⭐' },
+  { id: 'sol', symbol: 'SOL/USDC', name: 'Solana', coinGeckoId: 'solana', icon: '◎' },
   { id: 'btc', symbol: 'BTC/USDC', name: 'Bitcoin', coinGeckoId: 'bitcoin', icon: '₿' },
   { id: 'eth', symbol: 'ETH/USDC', name: 'Ethereum', coinGeckoId: 'ethereum', icon: 'Ξ' },
-  { id: 'sol', symbol: 'SOL/USDC', name: 'Solana', coinGeckoId: 'solana', icon: '◎' },
   { id: 'bnb', symbol: 'BNB/USDC', name: 'BNB', coinGeckoId: 'binancecoin', icon: '●' },
   { id: 'xrp', symbol: 'XRP/USDC', name: 'XRP', coinGeckoId: 'ripple', icon: '✕' },
-  { id: 'usdt', symbol: 'USDT/USDC', name: 'Tether', coinGeckoId: 'tether', icon: '₮' },
-  { id: 'usdc', symbol: 'USDC/SOL', name: 'USD Coin', coinGeckoId: 'usd-coin', icon: '$' },
+  { id: 'jup', symbol: 'JUP/SOL', name: 'Jupiter', coinGeckoId: 'jupiter-exchange-solana', icon: '♃' },
+  { id: 'jto', symbol: 'JTO/SOL', name: 'Jito', coinGeckoId: 'jito-governance-token', icon: 'J' },
+  { id: 'pyth', symbol: 'PYTH/SOL', name: 'Pyth', coinGeckoId: 'pyth-network', icon: 'P' },
 ] as const;
 
 const FALLBACK_PRICES: Record<string, number> = {
-  stellar: 0.1242,
+  solana: 185.42,
   bitcoin: 67500,
   ethereum: 3800,
-  solana: 185,
   binancecoin: 420,
   ripple: 0.55,
-  tether: 1.0,
-  'usd-coin': 1.0,
+  jupiter: 1.25,
+  jito: 3.85,
+  pyth: 0.45,
 };
 
 const AGENT_TEMPLATES = [
-  { id: 'breakout-bot', name: 'Breakout Bot', description: 'Detects price breakouts above/below Bollinger Bands and enters with tight TP/SL.', priceXlm: 0.05, tags: ['breakout', 'automated', 'xlm'], category: 'strategy' },
-  { id: 'mean-reversion', name: 'Mean Reversion', description: 'Fades extreme moves back toward the 20-period moving average on SOL/USDC.', priceXlm: 0.03, tags: ['reversion', 'xlm', 'dca'], category: 'strategy' },
-  { id: 'trend-follower', name: 'Trend Follower', description: 'Rides established trends using EMA crossovers and trailing stop-loss on Solana.', priceXlm: 0.07, tags: ['trend', 'ema', 'automated'], category: 'strategy' },
-  { id: 'arbitrage-sentinel', name: 'Arbitrage Sentinel', description: 'Monitors SOL price across Solana DEX pools for arb opportunities in real time.', priceXlm: 0.1, tags: ['arb', 'dex', 'defi'], category: 'arbitrage' },
-  { id: 'mev-scanner', name: 'MEV Scanner', description: 'Scans Solana DEX order books for MEV opportunities including front-running and sandwich trade detection.', priceXlm: 0.15, tags: ['mev', 'dex', 'advanced'], category: 'mev' },
-  { id: 'mempool-monitor', name: 'Mempool Monitor', description: 'Watches Solana transaction mempool for large pending orders and alerts before settlement.', priceXlm: 0.08, tags: ['mempool', 'alerts', 'real-time'], category: 'monitor' },
-  { id: 'liquidity-slippage', name: 'Liquidity & Slippage Tracker', description: 'Tracks pool depth and estimated slippage across Solana DEX AMM pools. Alerts when slippage exceeds your threshold.', priceXlm: 0.06, tags: ['liquidity', 'slippage', 'amm'], category: 'monitor' },
-  { id: 'multi-token-arb', name: 'Multi-Token Arbitrage', description: 'Cross-chain arbitrage scanner covering SOL, BTC, ETH, SOL price discrepancies across DEX and CEX venues.', priceXlm: 0.2, tags: ['arb', 'multi-chain', 'advanced'], category: 'arbitrage' },
+  { id: 'breakout-bot', name: 'Centurion Breakout', description: 'Detects price breakouts above/below Bollinger Bands and enters with tight TP/SL.', priceSol: 0.05, tags: ['breakout', 'automated', 'sol'], category: 'strategy' },
+  { id: 'mean-reversion', name: 'Equites Reversion', description: 'Fades extreme moves back toward the 20-period moving average on SOL/USDC.', priceSol: 0.03, tags: ['reversion', 'sol', 'dca'], category: 'strategy' },
+  { id: 'trend-follower', name: 'Legionnaire Trend', description: 'Rides established trends using EMA crossovers and trailing stop-loss on Solana.', priceSol: 0.07, tags: ['trend', 'ema', 'automated'], category: 'strategy' },
+  { id: 'arbitrage-sentinel', name: 'Senator Arbitrage', description: 'Monitors SOL price across Solana DEX pools for arb opportunities in real time.', priceSol: 0.1, tags: ['arb', 'dex', 'defi'], category: 'arbitrage' },
+  { id: 'mev-scanner', name: 'MEV Scanner', description: 'Scans Solana DEX order books for MEV opportunities including front-running and sandwich trade detection.', priceSol: 0.15, tags: ['mev', 'dex', 'advanced'], category: 'mev' },
+  { id: 'mempool-monitor', name: 'Mempool Monitor', description: 'Watches Solana transaction mempool for large pending orders and alerts before settlement.', priceSol: 0.08, tags: ['mempool', 'alerts', 'real-time'], category: 'monitor' },
+  { id: 'liquidity-slippage', name: 'Liquidity & Slippage Tracker', description: 'Tracks pool depth and estimated slippage across Solana DEX AMM pools. Alerts when slippage exceeds your threshold.', priceSol: 0.06, tags: ['liquidity', 'slippage', 'amm'], category: 'monitor' },
+  { id: 'multi-token-arb', name: 'Multi-Token Arbitrage', description: 'Cross-chain arbitrage scanner covering SOL, BTC, ETH, SOL price discrepancies across DEX and CEX venues.', priceSol: 0.2, tags: ['arb', 'multi-chain', 'advanced'], category: 'arbitrage' },
 ];
 
 const CATEGORY_COLORS: Record<string, string> = {
-  strategy: 'text-[#00FFE5] border-[rgba(0,255,229,0.3)] bg-[rgba(0,255,229,0.08)]',
+  strategy: 'text-[#d4af37] border-[rgba(212,175,55,0.3)] bg-[rgba(212,175,55,0.08)]',
   arbitrage: 'text-[#FFB800] border-[rgba(255,184,0,0.3)] bg-[rgba(255,184,0,0.08)]',
   mev: 'text-purple-400 border-purple-900 bg-purple-900/10',
   monitor: 'text-blue-400 border-blue-900 bg-blue-900/10',
@@ -121,7 +121,7 @@ function generateHistory(basePrice: number, candles = 60): OHLC[] {
 }
 
 export default function TradingPage() {
-  const [selectedPairId, setSelectedPairId] = useState('xlm');
+  const [selectedPairId, setSelectedPairId] = useState('sol');
   const [network, setNetwork] = useState<'testnet' | 'mainnet'>('testnet');
   const [tokenPrices, setTokenPrices] = useState<Record<string, TokenInfo>>({});
   const [pricesLoading, setPricesLoading] = useState(true);
@@ -131,7 +131,7 @@ export default function TradingPage() {
   const [orderSide, setOrderSide] = useState<'buy' | 'sell'>('buy');
   const [orderType, setOrderType] = useState<'market' | 'limit'>('market');
   const [orderAmount, setOrderAmount] = useState('100');
-  const [limitPrice, setLimitPrice] = useState('');
+  const [limitPrice, setDecreePrice] = useState('');
   const [tpPrice, setTpPrice] = useState('');
   const [slPrice, setSlPrice] = useState('');
   const [leverage, setLeverage] = useState(1);
@@ -253,8 +253,8 @@ export default function TradingPage() {
     setWalletAddress(addr);
     const load = async () => {
       try {
-        const { getXlmBalance } = await import('@/lib/stellar');
-        const bal = await getXlmBalance(addr);
+        const { getSolBalance } = await import('@/lib/solana');
+        const bal = await getSolBalance(addr);
         setWalletBalance(bal);
       } catch { /* ignore */ }
     };
@@ -356,9 +356,9 @@ export default function TradingPage() {
     if (orderType === 'market') {
       const liqOffset = col / (amt * leverage) * (orderSide === 'buy' ? -1 : 1);
       setPosition({ side: orderSide === 'buy' ? 'long' : 'short', entryPrice: price, size: amt, collateral: col, leverage, unrealisedPnl: 0, liquidationPrice: price + liqOffset, tp, sl, pair: selectedPairId, openedAt: new Date().toISOString() });
-      setOrderSuccess(`Market ${orderSide.toUpperCase()} filled @ $${fmtPrice(price)} · ${selectedPair.symbol}`);
+      setOrderSuccess(`Forum ${orderSide.toUpperCase()} filled @ $${fmtPrice(price)} · ${selectedPair.symbol}`);
     } else {
-      setOrderSuccess(`Limit order placed @ $${fmtPrice(price)} · ${selectedPair.symbol}`);
+      setOrderSuccess(`Decree order placed @ $${fmtPrice(price)} · ${selectedPair.symbol}`);
     }
   }, [orderAmount, orderSide, orderType, limitPrice, tpPrice, slPrice, leverage, collateral, candles, currentPrice, selectedAgent, selectedPair, selectedPairId]);
 
@@ -387,7 +387,7 @@ export default function TradingPage() {
             const change = tp?.change24h ?? 0;
             return (
               <button key={pair.id} onClick={() => setSelectedPairId(pair.id)}
-                className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-mono transition-all ${selectedPairId === pair.id ? 'border-[#00FFE5] bg-[rgba(0,255,229,0.08)] text-white' : 'border-white/10 text-gray-400 hover:border-white/30'}`}>
+                className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-mono transition-all ${selectedPairId === pair.id ? 'border-[#d4af37] bg-[rgba(212,175,55,0.08)] text-white' : 'border-white/10 text-gray-400 hover:border-white/30'}`}>
                 <span>{pair.icon}</span>
                 <span>{pair.symbol}</span>
                 {tp && <span className={change >= 0 ? 'text-[#4ade80]' : 'text-red-400'}>{change >= 0 ? '+' : ''}{change.toFixed(2)}%</span>}
@@ -405,7 +405,7 @@ export default function TradingPage() {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <div>
-              <h1 className="font-syne text-2xl font-bold text-white">{selectedPair.icon} {selectedPair.symbol}</h1>
+              <h1 className="font-cinzel text-2xl font-bold text-white">{selectedPair.icon} {selectedPair.symbol}</h1>
               <div className="font-mono text-xs text-gray-500">{selectedPair.name} · Solana {network === 'testnet' ? 'Testnet' : 'Mainnet'}</div>
             </div>
             <div>
@@ -415,7 +415,7 @@ export default function TradingPage() {
             <div className="hidden md:flex gap-6 font-mono text-xs text-gray-500 border-l border-white/10 pl-4">
               <div><div className="text-gray-600">24h High</div><div className="text-white">${fmtPrice(currentTokenInfo?.high24h ?? recentHigh)}</div></div>
               <div><div className="text-gray-600">24h Low</div><div className="text-white">${fmtPrice(currentTokenInfo?.low24h ?? recentLow)}</div></div>
-              <div><div className="text-gray-600">24h Vol</div><div className="text-[#00FFE5]">{currentTokenInfo?.volume24h ? '$' + (currentTokenInfo.volume24h / 1e9).toFixed(2) + 'B' : '—'}</div></div>
+              <div><div className="text-gray-600">24h Vol</div><div className="text-[#d4af37]">{currentTokenInfo?.volume24h ? '$' + (currentTokenInfo.volume24h / 1e9).toFixed(2) + 'B' : '—'}</div></div>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -426,7 +426,7 @@ export default function TradingPage() {
             )}
             {(['testnet', 'mainnet'] as const).map((n) => (
               <button key={n} onClick={() => setNetwork(n)}
-                className={`px-4 py-1.5 text-xs font-mono rounded-full border transition-all ${network === n ? (n === 'mainnet' ? 'border-[#4ade80] text-[#4ade80] bg-[rgba(74,222,128,0.1)]' : 'border-[#00FFE5] text-[#00FFE5] bg-[rgba(0,255,229,0.08)]') : 'border-white/10 text-gray-500 hover:text-gray-300'}`}>
+                className={`px-4 py-1.5 text-xs font-mono rounded-full border transition-all ${network === n ? (n === 'mainnet' ? 'border-[#4ade80] text-[#4ade80] bg-[rgba(74,222,128,0.1)]' : 'border-[#d4af37] text-[#d4af37] bg-[rgba(212,175,55,0.08)]') : 'border-white/10 text-gray-500 hover:text-gray-300'}`}>
                 {n === 'mainnet' ? '🟢 Mainnet' : '🔵 Testnet'}
               </button>
             ))}
@@ -437,8 +437,8 @@ export default function TradingPage() {
         <div className="flex gap-2 border-b border-white/[0.06] pb-0">
           {(['chart', 'agents'] as const).map((t) => (
             <button key={t} onClick={() => setActiveTab(t)}
-              className={`px-4 py-2 text-xs font-mono border-b-2 transition-all -mb-px ${activeTab === t ? 'border-[#00FFE5] text-[#00FFE5]' : 'border-transparent text-gray-500 hover:text-gray-300'}`}>
-              {t === 'chart' ? '📈 Live Chart' : '🤖 Agent SDK Templates'}
+              className={`px-4 py-2 text-xs font-mono border-b-2 transition-all -mb-px ${activeTab === t ? 'border-[#d4af37] text-[#d4af37]' : 'border-transparent text-gray-500 hover:text-gray-300'}`}>
+              {t === 'chart' ? '🏛️ Imperium Chart' : '🤖 Praetorian Templates'}
             </button>
           ))}
         </div>
@@ -463,7 +463,7 @@ export default function TradingPage() {
                 <div className="rounded-2xl border border-white/[0.07] bg-[rgba(5,5,12,0.85)] p-5">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-[#00FFE5] animate-pulse" />
+                      <span className="w-2 h-2 rounded-full bg-[#d4af37] animate-pulse" />
                       <span className="font-mono text-xs text-white/70">Live · 1m candles · {selectedPair.symbol}</span>
                       <span className="font-mono text-[9px] text-white/30">🟢 bullish  🔴 bearish</span>
                     </div>
@@ -491,7 +491,7 @@ export default function TradingPage() {
                   <div className="h-20">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={chartData} margin={{ top: 0, right: 5, bottom: 0, left: 0 }}>
-                        <Bar dataKey="volume" fill="rgba(0,255,229,0.25)" radius={[2, 2, 0, 0]} />
+                        <Bar dataKey="volume" fill="rgba(212,175,55,0.25)" radius={[2, 2, 0, 0]} />
                         <XAxis dataKey="ts" hide />
                         <YAxis hide />
                         <Tooltip contentStyle={{ background: '#0a0a14', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, color: '#fff' }}
@@ -503,9 +503,9 @@ export default function TradingPage() {
 
                 {/* Open Position */}
                 {position ? (
-                  <div className="rounded-2xl border border-[rgba(0,255,229,0.18)] bg-[rgba(0,255,229,0.03)] p-5">
+                  <div className="rounded-2xl border border-[rgba(212,175,55,0.18)] bg-[rgba(212,175,55,0.03)] p-5">
                     <div className="flex items-center justify-between mb-3">
-                      <h3 className="font-syne text-sm font-bold text-white">Open Position · {position.pair.toUpperCase()}</h3>
+                      <h3 className="font-cinzel text-sm font-bold text-white">Open Position · {position.pair.toUpperCase()}</h3>
                       <button onClick={closePosition} className="px-3 py-1 text-xs font-mono border border-red-700 text-red-400 rounded hover:bg-red-900/30 transition-all">Close Position</button>
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 font-mono text-xs">
@@ -530,9 +530,9 @@ export default function TradingPage() {
                   <div className="rounded-2xl border border-white/[0.06] bg-white/[0.01] p-4 text-center font-mono text-xs text-white/30">No open position · Place a market order to open</div>
                 )}
 
-                {/* Order History */}
+                {/* Senatus Ledger */}
                 <div className="rounded-2xl border border-white/[0.07] bg-[rgba(5,5,12,0.85)] p-5">
-                  <h3 className="font-syne text-sm font-bold text-white mb-3">Order History</h3>
+                  <h3 className="font-cinzel text-sm font-bold text-white mb-3">Senatus Ledger</h3>
                   <div className="overflow-x-auto">
                     <table className="w-full min-w-[600px] font-mono text-xs">
                       <thead>
@@ -546,13 +546,13 @@ export default function TradingPage() {
                         ) : orders.map((o) => (
                           <tr key={o.id} className="border-b border-white/[0.03]">
                             <td className="py-1.5 pr-3 text-white/60">{o.id}</td>
-                            <td className="py-1.5 pr-3 text-[#00FFE5]">{o.pair}</td>
+                            <td className="py-1.5 pr-3 text-[#d4af37]">{o.pair}</td>
                             <td className={`py-1.5 pr-3 ${o.side === 'buy' ? 'text-[#4ade80]' : 'text-red-400'}`}>{o.side.toUpperCase()}</td>
                             <td className="py-1.5 pr-3 text-white/60">{o.type}</td>
                             <td className="py-1.5 pr-3 text-white">{o.amount}</td>
                             <td className="py-1.5 pr-3 text-[#FFB800]">${fmtPrice(o.price)}</td>
                             <td className="py-1.5 pr-3">
-                              <span className={`px-1.5 py-0.5 rounded text-[9px] border ${o.status === 'filled' ? 'bg-[rgba(74,222,128,0.1)] border-green-800 text-[#4ade80]' : o.status === 'open' ? 'bg-[rgba(0,255,229,0.08)] border-[rgba(0,255,229,0.3)] text-[#00FFE5]' : 'bg-red-900/20 border-red-900 text-red-400'}`}>{o.status}</span>
+                              <span className={`px-1.5 py-0.5 rounded text-[9px] border ${o.status === 'filled' ? 'bg-[rgba(74,222,128,0.1)] border-green-800 text-[#4ade80]' : o.status === 'open' ? 'bg-[rgba(212,175,55,0.08)] border-[rgba(212,175,55,0.3)] text-[#d4af37]' : 'bg-red-900/20 border-red-900 text-red-400'}`}>{o.status}</span>
                             </td>
                             <td className="py-1.5 text-white/40">{new Date(o.timestamp).toLocaleTimeString([], { hour12: false })}</td>
                           </tr>
@@ -565,9 +565,9 @@ export default function TradingPage() {
 
               {/* Right: Order Panel */}
               <div className="space-y-4">
-                <div className="rounded-2xl border border-[rgba(0,255,229,0.12)] bg-[rgba(0,255,229,0.03)] p-4">
+                <div className="rounded-2xl border border-[rgba(212,175,55,0.12)] bg-[rgba(212,175,55,0.03)] p-4">
                   <div className="font-mono text-[10px] text-gray-500 mb-1">{selectedPair.name} · Live</div>
-                  <div className={`font-syne text-2xl font-bold text-[#00FFE5] ${pricesLoading ? 'animate-pulse' : ''}`}>${fmtPrice(currentPrice)}</div>
+                  <div className={`font-cinzel text-2xl font-bold text-[#d4af37] ${pricesLoading ? 'animate-pulse' : ''}`}>${fmtPrice(currentPrice)}</div>
                   <div className={`font-mono text-xs mt-1 ${isUp ? 'text-[#4ade80]' : 'text-red-400'}`}>{isUp ? '▲' : '▼'} {Math.abs(priceChange24h).toFixed(2)}% 24h</div>
                   {walletBalance && <div className="font-mono text-[10px] text-gray-500 mt-2 border-t border-white/[0.06] pt-2">Wallet: <span className="text-[#FFB800]">{parseFloat(walletBalance).toFixed(2)} {tokenConfig.symbol}</span></div>}
                 </div>
@@ -579,22 +579,22 @@ export default function TradingPage() {
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     {(['market', 'limit'] as const).map((t) => (
-                      <button key={t} onClick={() => setOrderType(t)} className={`py-1.5 text-xs font-mono rounded border transition-all ${orderType === t ? 'border-[#00FFE5] text-[#00FFE5] bg-[rgba(0,255,229,0.08)]' : 'border-white/10 text-gray-500'}`}>{t.charAt(0).toUpperCase() + t.slice(1)}</button>
+                      <button key={t} onClick={() => setOrderType(t)} className={`py-1.5 text-xs font-mono rounded border transition-all ${orderType === t ? 'border-[#d4af37] text-[#d4af37] bg-[rgba(212,175,55,0.08)]' : 'border-white/10 text-gray-500'}`}>{t.charAt(0).toUpperCase() + t.slice(1)}</button>
                     ))}
                   </div>
                   <div>
                     <label className="block text-[10px] font-mono text-gray-500 mb-1">Amount</label>
-                    <input value={orderAmount} onChange={(e) => setOrderAmount(e.target.value)} type="number" min="1" className="w-full px-3 py-2 bg-white/[0.03] border border-white/[0.08] rounded-lg text-white text-sm font-mono focus:outline-none focus:border-[rgba(0,255,229,0.4)]" />
+                    <input value={orderAmount} onChange={(e) => setOrderAmount(e.target.value)} type="number" min="1" className="w-full px-3 py-2 bg-white/[0.03] border border-white/[0.08] rounded-lg text-white text-sm font-mono focus:outline-none focus:border-[rgba(212,175,55,0.4)]" />
                   </div>
                   {orderType === 'limit' && (
                     <div>
-                      <label className="block text-[10px] font-mono text-gray-500 mb-1">Limit Price ($)</label>
-                      <input value={limitPrice} onChange={(e) => setLimitPrice(e.target.value)} type="number" placeholder={fmtPrice(currentPrice)} className="w-full px-3 py-2 bg-white/[0.03] border border-white/[0.08] rounded-lg text-white text-sm font-mono focus:outline-none focus:border-[rgba(0,255,229,0.4)]" />
+                      <label className="block text-[10px] font-mono text-gray-500 mb-1">Decree Price ($)</label>
+                      <input value={limitPrice} onChange={(e) => setDecreePrice(e.target.value)} type="number" placeholder={fmtPrice(currentPrice)} className="w-full px-3 py-2 bg-white/[0.03] border border-white/[0.08] rounded-lg text-white text-sm font-mono focus:outline-none focus:border-[rgba(212,175,55,0.4)]" />
                     </div>
                   )}
                   <div>
                     <label className="block text-[10px] font-mono text-gray-500 mb-1">Collateral ({tokenConfig.symbol})</label>
-                    <input value={collateral} onChange={(e) => setCollateral(e.target.value)} type="number" min="1" className="w-full px-3 py-2 bg-white/[0.03] border border-white/[0.08] rounded-lg text-white text-sm font-mono focus:outline-none focus:border-[rgba(0,255,229,0.4)]" />
+                    <input value={collateral} onChange={(e) => setCollateral(e.target.value)} type="number" min="1" className="w-full px-3 py-2 bg-white/[0.03] border border-white/[0.08] rounded-lg text-white text-sm font-mono focus:outline-none focus:border-[rgba(212,175,55,0.4)]" />
                   </div>
                   <div>
                     <div className="flex justify-between text-[10px] font-mono text-gray-500 mb-1"><span>Leverage</span><span className="text-[#FFB800]">{leverage}×</span></div>
@@ -613,11 +613,11 @@ export default function TradingPage() {
                   </div>
                   <div>
                     <label className="block text-[10px] font-mono text-gray-500 mb-1">Run via Agent (optional)</label>
-                    <select value={selectedAgent || ''} onChange={(e) => setSelectedAgent(e.target.value || null)} className="w-full px-3 py-2 bg-white/[0.03] border border-white/[0.08] rounded-lg text-white text-xs font-mono focus:outline-none focus:border-[rgba(0,255,229,0.4)]">
+                    <select value={selectedAgent || ''} onChange={(e) => setSelectedAgent(e.target.value || null)} className="w-full px-3 py-2 bg-white/[0.03] border border-white/[0.08] rounded-lg text-white text-xs font-mono focus:outline-none focus:border-[rgba(212,175,55,0.4)]">
                       <option value="">Manual (no agent)</option>
                       {AGENT_TEMPLATES.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
                     </select>
-                    {selectedAgent && <div className="mt-1.5 font-mono text-[9px] text-gray-500">+{AGENT_TEMPLATES.find((a) => a.id === selectedAgent)?.priceXlm} {tokenConfig.symbol} agent fee · 0x402</div>}
+                    {selectedAgent && <div className="mt-1.5 font-mono text-[9px] text-gray-500">+{AGENT_TEMPLATES.find((a) => a.id === selectedAgent)?.priceSol} {tokenConfig.symbol} agent fee · 0x402</div>}
                   </div>
                   <AnimatePresence>
                     {orderError && <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="p-2.5 rounded bg-red-900/20 border border-red-900 text-red-400 text-xs font-mono">{orderError}</motion.div>}
@@ -642,7 +642,7 @@ export default function TradingPage() {
                   { id: 'arb-demo', label: '⚡ Arbitrage Demo' },
                 ] as const).map((st) => (
                   <button key={st.id} onClick={() => setAgentSubTab(st.id)}
-                    className={`px-4 py-2 text-xs font-mono border-b-2 transition-all -mb-px ${agentSubTab === st.id ? 'border-[#00FFE5] text-[#00FFE5]' : 'border-transparent text-gray-500 hover:text-gray-300'}`}>
+                    className={`px-4 py-2 text-xs font-mono border-b-2 transition-all -mb-px ${agentSubTab === st.id ? 'border-[#d4af37] text-[#d4af37]' : 'border-transparent text-gray-500 hover:text-gray-300'}`}>
                     {st.label}
                   </button>
                 ))}
@@ -655,7 +655,7 @@ export default function TradingPage() {
                     <p className="font-mono text-sm text-gray-400 flex-1">Select an agent template to automate your trading strategy. Each call is metered via the 0x402 protocol.</p>
                     <div className="flex gap-2 flex-wrap">
                       {['all', 'strategy', 'arbitrage', 'mev', 'monitor'].map((cat) => (
-                        <button key={cat} onClick={() => setAgentCategory(cat)} className={`px-3 py-1 text-[10px] font-mono rounded-full border transition-all ${agentCategory === cat ? 'border-[#00FFE5] text-[#00FFE5] bg-[rgba(0,255,229,0.08)]' : 'border-white/10 text-gray-500 hover:text-gray-300'}`}>
+                        <button key={cat} onClick={() => setAgentCategory(cat)} className={`px-3 py-1 text-[10px] font-mono rounded-full border transition-all ${agentCategory === cat ? 'border-[#d4af37] text-[#d4af37] bg-[rgba(212,175,55,0.08)]' : 'border-white/10 text-gray-500 hover:text-gray-300'}`}>
                           {cat.charAt(0).toUpperCase() + cat.slice(1)}
                         </button>
                       ))}
@@ -663,8 +663,8 @@ export default function TradingPage() {
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     {filteredAgents.map((agent) => (
-                      <motion.div key={agent.id} whileHover={{ y: -4, boxShadow: '0 0 24px rgba(0,255,229,0.08)' }}
-                        className="rounded-xl border border-[rgba(0,255,229,0.12)] bg-[rgba(255,255,255,0.03)] p-5 flex flex-col gap-3">
+                      <motion.div key={agent.id} whileHover={{ y: -4, boxShadow: '0 0 24px rgba(212,175,55,0.08)' }}
+                        className="rounded-xl border border-[rgba(212,175,55,0.12)] bg-[rgba(255,255,255,0.03)] p-5 flex flex-col gap-3">
                         <div>
                           <div className="flex items-center gap-2 mb-1">
                             <h3 className="font-syne font-bold text-white text-sm">{agent.name}</h3>
@@ -673,18 +673,18 @@ export default function TradingPage() {
                           <p className="text-gray-400 text-xs mt-1">{agent.description}</p>
                         </div>
                         <div className="flex flex-wrap gap-1">
-                          {agent.tags.map((t) => <span key={t} className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[rgba(0,255,229,0.06)] text-[#00FFE5] border border-[rgba(0,255,229,0.15)]">#{t}</span>)}
+                          {agent.tags.map((t) => <span key={t} className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[rgba(212,175,55,0.06)] text-[#d4af37] border border-[rgba(212,175,55,0.15)]">#{t}</span>)}
                         </div>
                         <div className="flex items-center justify-between mt-auto">
-                          <span className="font-mono text-xs text-[#FFB800]">{agent.priceXlm} {tokenConfig.symbol}/req</span>
-                          <button onClick={() => { setSelectedAgent(agent.id); setActiveTab('chart'); }} className="px-3 py-1 text-xs font-mono border border-[#00FFE5] text-[#00FFE5] rounded hover:bg-[#00FFE5] hover:text-black transition-all">Use</button>
+                          <span className="font-mono text-xs text-[#FFB800]">{agent.priceSol} {tokenConfig.symbol}/req</span>
+                          <button onClick={() => { setSelectedAgent(agent.id); setActiveTab('chart'); }} className="px-3 py-1 text-xs font-mono border border-[#d4af37] text-[#d4af37] rounded hover:bg-[#d4af37] hover:text-black transition-all">Use</button>
                         </div>
                       </motion.div>
                     ))}
                   </div>
                   <div className="rounded-2xl border border-white/[0.07] bg-[rgba(5,5,12,0.85)] p-5">
-                    <h3 className="font-syne text-sm font-bold text-white mb-3">SDK Quick-Start (0x402)</h3>
-                    <pre className="font-mono text-xs text-[#00FFE5] overflow-x-auto whitespace-pre-wrap leading-relaxed">{`// npm install @stellar/stellar-sdk ably
+                    <h3 className="font-cinzel text-sm font-bold text-white mb-3">SDK Quick-Start (0x402)</h3>
+                    <pre className="font-mono text-xs text-[#d4af37] overflow-x-auto whitespace-pre-wrap leading-relaxed">{`// npm install @stellar/stellar-sdk ably
 const agentId = '${selectedAgent ?? AGENT_TEMPLATES[0].id}';
 const res = await fetch(\`https://valdyum.dev/api/agents/\${agentId}/run\`, {
   method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -692,7 +692,7 @@ const res = await fetch(\`https://valdyum.dev/api/agents/\${agentId}/run\`, {
 });
 if (res.status === 402) {
   const { payment_details } = await res.json();
-  const txHash = await signAndSubmitXLM(payment_details);
+  const txHash = await signAndSubmitSOL(payment_details);
   const paid = await fetch(\`https://valdyum.dev/api/agents/\${agentId}/run\`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'X-Payment-Tx-Hash': txHash, 'X-Payment-Wallet': myWallet },
@@ -727,8 +727,8 @@ if (res.status === 402) {
                   ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                       {myDeployedAgents.map((agent) => (
-                        <motion.div key={agent.id} whileHover={{ y: -3, boxShadow: '0 0 20px rgba(0,255,229,0.07)' }}
-                          className={`rounded-xl border p-5 flex flex-col gap-3 cursor-pointer transition-all ${selectedAgent === agent.id ? 'border-[#00FFE5] bg-[rgba(0,255,229,0.06)]' : 'border-white/[0.08] bg-[rgba(255,255,255,0.02)]'}`}
+                        <motion.div key={agent.id} whileHover={{ y: -3, boxShadow: '0 0 20px rgba(212,175,55,0.07)' }}
+                          className={`rounded-xl border p-5 flex flex-col gap-3 cursor-pointer transition-all ${selectedAgent === agent.id ? 'border-[#d4af37] bg-[rgba(212,175,55,0.06)]' : 'border-white/[0.08] bg-[rgba(255,255,255,0.02)]'}`}
                           onClick={() => { setSelectedAgent(agent.id); setActiveTab('chart'); }}>
                           <div className="flex items-center justify-between">
                             <h3 className="font-syne font-bold text-white text-sm">{agent.name}</h3>
@@ -739,7 +739,7 @@ if (res.status === 402) {
                           <p className="text-gray-400 text-xs flex-1">{agent.description ?? 'Custom deployed agent'}</p>
                           <div className="flex items-center justify-between mt-auto">
                             <span className="font-mono text-[10px] text-gray-500">{agent.id.slice(0, 12)}…</span>
-                            <span className="text-[10px] font-mono text-[#00FFE5]">
+                            <span className="text-[10px] font-mono text-[#d4af37]">
                               {selectedAgent === agent.id ? '✓ Selected' : 'Click to select'}
                             </span>
                           </div>
@@ -754,9 +754,9 @@ if (res.status === 402) {
               {agentSubTab === 'arb-demo' && (
                 <div className="space-y-6">
                   <div className="rounded-2xl border border-[rgba(255,184,0,0.2)] bg-[rgba(255,184,0,0.04)] p-5">
-                    <h3 className="font-syne text-sm font-bold text-[#FFB800] mb-1">⚡ Arbitrage Agent — Live Demo</h3>
+                    <h3 className="font-cinzel text-sm font-bold text-[#FFB800] mb-1">⚡ Arbitrage Agent — Live Demo</h3>
                     <p className="font-mono text-xs text-gray-400 mb-4">
-                      Watch how the <strong className="text-white">Arbitrage Sentinel</strong> scans two exchanges, detects a price spread, asks for your wallet signature, and executes the cross-exchange trade — all in real time.
+                      Watch how the <strong className="text-white">Senator Arbitrage</strong> scans two exchanges, detects a price spread, asks for your wallet signature, and executes the cross-exchange trade — all in real time.
                     </p>
 
                     {/* Step indicators */}
@@ -813,7 +813,7 @@ if (res.status === 402) {
                           {[{ name: 'Binance', logo: '🟡', price: arbPrices.binance }, { name: 'Coinbase', logo: '🔵', price: arbPrices.coinbase }].map((ex) => (
                             <div key={ex.name} className="rounded-lg border border-white/[0.07] bg-white/[0.02] p-3 font-mono text-xs animate-pulse">
                               <div className="text-gray-500 mb-1">{ex.logo} {ex.name}</div>
-                              <div className="text-[#00FFE5]">Fetching… ⏳</div>
+                              <div className="text-[#d4af37]">Fetching… ⏳</div>
                             </div>
                           ))}
                         </div>
@@ -854,8 +854,8 @@ if (res.status === 402) {
                     {/* Step 3: Review & sign */}
                     {arbStep === 3 && pendingArbTrade && (
                       <div className="space-y-3">
-                        <div className="rounded-lg border border-[rgba(0,255,229,0.2)] bg-[rgba(0,255,229,0.04)] p-4 font-mono text-xs space-y-2">
-                          <div className="text-[#00FFE5] font-bold mb-2">📋 Trade Order — Awaiting Your Signature</div>
+                        <div className="rounded-lg border border-[rgba(212,175,55,0.2)] bg-[rgba(212,175,55,0.04)] p-4 font-mono text-xs space-y-2">
+                          <div className="text-[#d4af37] font-bold mb-2">📋 Trade Order — Awaiting Your Signature</div>
                           {[
                             { label: 'Pair', value: selectedPair.symbol },
                             { label: 'Action', value: `Buy on ${pendingArbTrade.buyEx} · Sell on ${pendingArbTrade.sellEx}` },
@@ -891,7 +891,7 @@ if (res.status === 402) {
                                 persistClosedTrade(profit, selectedPair.id, 'manual', candles[candles.length - 1]?.close ?? currentPrice);
                               }, 2200);
                             }}
-                            className="py-2 font-mono text-xs font-bold rounded-lg bg-[#00FFE5] text-black hover:bg-cyan-300 transition-all">
+                            className="py-2 font-mono text-xs font-bold rounded-lg bg-[#d4af37] text-black hover:bg-cyan-300 transition-all">
                             ✍ Sign & Execute
                           </button>
                         </div>
@@ -902,11 +902,11 @@ if (res.status === 402) {
                     {arbStep === 4 && sigModalOpen && (
                       <div className="text-center space-y-3 py-4">
                         <div className="text-4xl animate-bounce">✍</div>
-                        <div className="font-mono text-sm text-[#00FFE5]">Awaiting wallet signature…</div>
+                        <div className="font-mono text-sm text-[#d4af37]">Awaiting wallet signature…</div>
                         <div className="font-mono text-xs text-gray-500">Please confirm the transaction in your wallet</div>
                         <div className="flex justify-center gap-1 mt-2">
                           {[0, 1, 2].map((i) => (
-                            <div key={i} className="w-2 h-2 rounded-full bg-[#00FFE5] animate-pulse" style={{ animationDelay: `${i * 0.2}s` }} />
+                            <div key={i} className="w-2 h-2 rounded-full bg-[#d4af37] animate-pulse" style={{ animationDelay: `${i * 0.2}s` }} />
                           ))}
                         </div>
                       </div>
@@ -935,7 +935,7 @@ if (res.status === 402) {
 
                   {/* How it works explainer */}
                   <div className="rounded-2xl border border-white/[0.07] bg-[rgba(5,5,12,0.85)] p-5 space-y-3">
-                    <h3 className="font-syne text-sm font-bold text-white">How Arbitrage Agents Work</h3>
+                    <h3 className="font-cinzel text-sm font-bold text-white">How Arbitrage Agents Work</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                       {[
                         { step: '1', icon: '🔍', title: 'Scan Prices', desc: 'Agent polls multiple CEX APIs (Binance, Coinbase, Kraken) every second for the same asset price.' },

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { truncateAddress } from '@/lib/stellar';
+import { truncateAddress } from '@/lib/solana';
 import { fetchSolBalance } from '@/lib/solana';
 import { tokenConfig } from '@/lib/token';
 import { createPortal } from 'react-dom';
@@ -48,7 +48,7 @@ export default function WalletConnect() {
   const fetchBalance = async (addr: string) => {
     try {
       const bal = await fetchSolBalance(addr);
-      setBalance(bal.toFixed(3));
+      setBalance(Number(bal).toFixed(3));
     } catch {
       setBalance('0');
     }

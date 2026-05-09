@@ -124,13 +124,13 @@
 
   <div className="nav-section-title">Getting Started</div>
   <a href="#what-is-0x402">What is 0x402?</a>
-  <a href="#freighter-wallet">Freighter Wallet</a>
+  <a href="#phantom-wallet">Phantom Wallet</a>
   <a href="#payment-flow">Payment Flow</a>
 
   <div className="nav-section-title">API Reference</div>
   <a href="#create-agent">Create & Deploy Agent</a>
   <a href="#min-price">Pricing & Fees</a>
-  <a href="#stellar-verify">Stellar Verification</a>
+  <a href="#stellar-verify">Solana Verification</a>
   <a href="#integrate-api">API Integration</a>
 
   <div className="nav-section-title">CLI & Tools</div>
@@ -157,7 +157,7 @@
 
 <div className="devs-page-title">Developer Hub</div>
 <div className="devs-page-subtitle">
-  Production-first integration reference for building on the 0x402 protocol — real Stellar payments, QStash event routing, and AI agent orchestration.
+  Production-first integration reference for building on the 0x402 protocol — real Solana payments, QStash event routing, and AI agent orchestration.
 </div>
 
 <div className="devs-section-anchor" id="what-is-0x402">
@@ -170,7 +170,7 @@
 
 <p>The <strong>0x402 Protocol</strong> is an open standard for machine-to-machine micropayments built on top of the HTTP specification. It extends the dormant <code>402 Payment Required</code> status code into a fully functional request-payment-retry handshake, enabling any API endpoint to monetize its responses in real time.</p>
 
-<p>In the AgentForge implementation, 0x402 is powered by the <strong>Stellar blockchain</strong>. When a client calls a paid agent endpoint and the server detects no valid payment credential, it responds with:</p>
+<p>In the AgentForge implementation, 0x402 is powered by the <strong>Solana blockchain</strong>. When a client calls a paid agent endpoint and the server detects no valid payment credential, it responds with:</p>
 
 <pre><code>{`HTTP/1.1 402 Payment Required
 X-Payment-Required: xlm
@@ -179,42 +179,42 @@ X-Payment-Address: GXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 X-Payment-Network: stellar
 X-Payment-Memo: agent:<id>:req:<nonce>`}</code></pre>
 
-<p>The client then creates and submits a real XLM transaction to the Stellar network, captures the transaction hash, and retries the original request with the payment proof in headers. The server verifies the transaction on-chain via Horizon before fulfilling the request.</p>
+<p>The client then creates and submits a real SOL transaction to the Solana network, captures the transaction hash, and retries the original request with the payment proof in headers. The server verifies the transaction on-chain via RPC before fulfilling the request.</p>
 
 <p>This creates a <strong>trustless, permissionless</strong> payment layer where:</p>
 <ul>
   <li>No API keys or billing accounts are needed</li>
-  <li>Payments settle in 3–5 seconds on Stellar</li>
+  <li>Payments settle in 3–5 seconds on Solana</li>
   <li>The payment proof is permanently auditable on-chain</li>
   <li>Any wallet can pay any agent without prior registration</li>
 </ul>
 
-<div className="faq-tip">💡 <strong>Tip:</strong> The minimum denomination is <strong>0.0000001 XLM</strong> (1 stroop), making sub-cent micropayments economically viable for high-frequency agent calls.</div>
+<div className="faq-tip">💡 <strong>Tip:</strong> The minimum denomination is <strong>0.0000001 SOL</strong> (1 lamport), making sub-cent micropayments economically viable for high-frequency agent calls.</div>
 
 </div>
 </details>
 
-<details className="faq" id="freighter-wallet-detail">
-<summary>🔐 How do I connect my Freighter wallet?<span className="faq-chevron">+</span></summary>
+<details className="faq" id="phantom-wallet-detail">
+<summary>🔐 How do I connect my Phantom wallet?<span className="faq-chevron">+</span></summary>
 <div className="faq-body">
 
-<p><strong>Freighter</strong> is a browser extension wallet for the Stellar network, analogous to MetaMask for Ethereum. It is the primary wallet integration in AgentForge for user-facing payment flows.</p>
+<p><strong>Phantom</strong> is a browser extension wallet for the Solana network, analogous to MetaMask for Ethereum. It is the primary wallet integration in AgentForge for user-facing payment flows.</p>
 
 <p><strong>Installation:</strong></p>
 <ol>
-  <li>Install the <strong>Freighter extension</strong> from <code>freighter.app</code> or the Chrome/Firefox Web Store</li>
-  <li>Create or import a Stellar account (12 or 24-word mnemonic)</li>
-  <li>Switch to <strong>Testnet</strong> in Freighter settings during development</li>
+  <li>Install the <strong>Phantom extension</strong> from <code>phantom.app</code> or the Chrome/Firefox Web Store</li>
+  <li>Create or import a Solana account (12 or 24-word mnemonic)</li>
+  <li>Switch to <strong>Testnet</strong> in Phantom settings during development</li>
   <li>Fund your testnet account using <code>https://friendbot.stellar.org/?addr=YOUR_ADDRESS</code></li>
 </ol>
 
 <p><strong>Integration in your app:</strong></p>
 
-<pre><code>{`import { isConnected, getPublicKey, signTransaction } from '@stellar/freighter-api';
+<pre><code>{`import { isConnected, getPublicKey, signTransaction } from '@stellar/phantom-api';
 
-// Check if Freighter is installed
+// Check if Phantom is installed
 const connected = await isConnected();
-if (!connected) throw new Error('Freighter not installed');
+if (!connected) throw new Error('Phantom not installed');
 
 // Request the user's public key
 const publicKey = await getPublicKey();
@@ -225,9 +225,9 @@ const signedXDR = await signTransaction(unsignedXDR, {
   networkPassphrase: 'Test SDF Network ; September 2015',
 });`}</code></pre>
 
-<p><strong>How AgentForge uses Freighter:</strong> When an agent endpoint returns a 402, the <code>WalletConnect</code> component triggers the <code>payXLM</code> helper which builds a Stellar payment transaction, presents it to Freighter for signing, and submits the signed XDR to Horizon. The resulting transaction hash is forwarded in the retry request header.</p>
+<p><strong>How AgentForge uses Phantom:</strong> When an agent endpoint returns a 402, the <code>WalletConnect</code> component triggers the <code>paySOL</code> helper which builds a Solana payment transaction, presents it to Phantom for signing, and submits the signed XDR to RPC. The resulting transaction hash is forwarded in the retry request header.</p>
 
-<div className="faq-note">⚠️ <strong>Note:</strong> Freighter requires the user to approve each transaction. For non-interactive server-side flows (CLI or A2A), use a raw Stellar secret key passed via <code>--secret</code> flag.</div>
+<div className="faq-note">⚠️ <strong>Note:</strong> Phantom requires the user to approve each transaction. For non-interactive server-side flows (CLI or A2A), use a raw Solana secret key passed via <code>--secret</code> flag.</div>
 
 </div>
 </details>
@@ -247,8 +247,8 @@ Content-Type: application/json
 <p>If the agent requires payment, the server returns a <code>402</code> with payment headers. No computation is performed yet.</p>
 
 <p><strong>Phase 2 — Pay (wallet transaction):</strong></p>
-<pre><code>{`// Using Freighter or a raw keypair:
-const txHash = await wallet.payXLM(
+<pre><code>{`// Using Phantom or a raw keypair:
+const txHash = await wallet.paySOL(
   paymentAddress,  // from X-Payment-Address header
   paymentAmount,   // from X-Payment-Amount header  
   paymentMemo      // from X-Payment-Memo header (CRITICAL — links tx to request)
@@ -264,7 +264,7 @@ X-Payment-Wallet: GCALLER...
 
 { "input": "Analyze this on-chain orderbook spread" }`}</code></pre>
 
-<p>The server fetches the transaction from Horizon, verifies:</p>
+<p>The server fetches the transaction from RPC, verifies:</p>
 <ul>
   <li>The transaction hash is valid and confirmed on the correct network</li>
   <li>The destination address matches the agent owner's wallet</li>
@@ -288,7 +288,7 @@ X-Payment-Wallet: GCALLER...
 <summary>🤖 How do I create and deploy an agent?<span className="faq-chevron">+</span></summary>
 <div className="faq-body">
 
-<p>Agents are created via the AgentBuilder UI or directly via the <code>POST /api/agents</code> endpoint. Each agent is owned by a Stellar wallet address and stored in Supabase.</p>
+<p>Agents are created via the AgentBuilder UI or directly via the <code>POST /api/agents</code> endpoint. Each agent is owned by a Solana wallet address and stored in Supabase.</p>
 
 <p><strong>Create via API:</strong></p>
 <pre><code>{`POST /api/agents
@@ -297,9 +297,9 @@ X-Wallet-Address: GOWNER...
 
 {
   "name": "MEV Scanner",
-  "description": "Scans Stellar DEX for arbitrage opportunities",
+  "description": "Scans Solana DEX for arbitrage opportunities",
   "model": "gpt-4o",
-  "systemPrompt": "You are a DeFi analyst specializing in Stellar AMM pools...",
+  "systemPrompt": "You are a DeFi analyst specializing in Solana AMM pools...",
   "price": "0.05",
   "isPublic": true,
   "tags": ["defi", "stellar", "arbitrage"]
@@ -336,13 +336,13 @@ X-Wallet-Address: GOWNER...
 <summary>💰 What is the minimum price per request?<span className="faq-chevron">+</span></summary>
 <div className="faq-body">
 
-<p>The minimum price for a paid agent request is <strong>0.0000001 XLM</strong> (1 stroop), the smallest denomination on Stellar. In practice, meaningful pricing starts at around <strong>0.01 XLM</strong> (~$0.001) per call.</p>
+<p>The minimum price for a paid agent request is <strong>0.0000001 SOL</strong> (1 lamport), the smallest denomination on Solana. In practice, meaningful pricing starts at around <strong>0.01 SOL</strong> (~$0.001) per call.</p>
 
 <p><strong>Recommended pricing tiers:</strong></p>
 
 <table className="env-table">
   <thead>
-    <tr><th>Use Case</th><th>Price (XLM)</th><th>Est. USD</th></tr>
+    <tr><th>Use Case</th><th>Price (SOL)</th><th>Est. USD</th></tr>
   </thead>
   <tbody>
     <tr><td>Simple lookup / classification</td><td>0.01 – 0.05</td><td>$0.001 – $0.005</td></tr>
@@ -352,7 +352,7 @@ X-Wallet-Address: GOWNER...
   </tbody>
 </table>
 
-<p>Stellar transaction fees are <strong>fixed at 100 stroops (0.00001 XLM)</strong> per transaction — negligible compared to any reasonable pricing. There are no protocol-level platform fees on AgentForge; the full amount goes directly to the agent owner's wallet.</p>
+<p>Solana transaction fees are <strong>fixed at 100 lamports (0.00001 SOL)</strong> per transaction — negligible compared to any reasonable pricing. There are no protocol-level platform fees on AgentForge; the full amount goes directly to the agent owner's wallet.</p>
 
 <div className="faq-tip">💡 For agents that handle batched or long-running tasks, consider implementing your own rate limiting and bundling multiple agent calls into a single higher-value payment to amortize the per-transaction verification overhead.</div>
 
@@ -360,15 +360,15 @@ X-Wallet-Address: GOWNER...
 </details>
 
 <details className="faq" id="stellar-verify-detail">
-<summary>⛓️ How are payments verified on Stellar?<span className="faq-chevron">+</span></summary>
+<summary>⛓️ How are payments verified on Solana?<span className="faq-chevron">+</span></summary>
 <div className="faq-body">
 
-<p>Payment verification is performed server-side by querying the <strong>Stellar Horizon API</strong>. The verifier checks five conditions to accept a payment as valid.</p>
+<p>Payment verification is performed server-side by querying the <strong>Solana RPC API</strong>. The verifier checks five conditions to accept a payment as valid.</p>
 
 <p><strong>Verification logic (simplified):</strong></p>
 <pre><code>{`async function verifyPayment(txHash: string, agentId: string, expectedAmount: string, ownerAddress: string) {
-  // 1. Fetch transaction from Horizon
-  const tx = await horizon.transactions().transaction(txHash).call();
+  // 1. Fetch transaction from RPC
+  const tx = await rpc.transactions().transaction(txHash).call();
 
   // 2. Ensure it's confirmed (not pending)
   if (!tx.successful) throw new Error('Transaction not confirmed');
@@ -380,7 +380,7 @@ X-Wallet-Address: GOWNER...
   // 4. Validate destination, amount, asset
   if (paymentOp.to !== ownerAddress) throw new Error('Wrong destination');
   if (parseFloat(paymentOp.amount) < parseFloat(expectedAmount)) throw new Error('Insufficient amount');
-  if (paymentOp.asset_type !== 'native') throw new Error('Non-XLM payment');
+  if (paymentOp.asset_type !== 'native') throw new Error('Non-SOL payment');
 
   // 5. Verify memo matches request nonce (replay protection)
   const expectedMemo = \`agent:\${agentId}:req:\${nonce}\`;
@@ -393,7 +393,7 @@ X-Wallet-Address: GOWNER...
   return { verified: true, txHash, explorerUrl: \`https://stellar.expert/explorer/testnet/tx/\${txHash}\` };
 }`}</code></pre>
 
-<p>The Horizon endpoint is configured via <code>NEXT_PUBLIC_HORIZON_URL</code>. For testnet: <code>https://horizon-testnet.stellar.org</code>. For mainnet: <code>https://horizon.stellar.org</code>.</p>
+<p>The RPC endpoint is configured via <code>NEXT_PUBLIC_HORIZON_URL</code>. For testnet: <code>https://rpc-testnet.stellar.org</code>. For mainnet: <code>https://rpc.stellar.org</code>.</p>
 
 <p><strong>Explorer links</strong> are stored alongside each verified request in Supabase, surfaced in the dashboard invoice table and returned in the run API response body.</p>
 
@@ -410,7 +410,7 @@ X-Wallet-Address: GOWNER...
 
 export interface AgentWallet {
   address: string;
-  payXLM: (to: string, amount: string, memo: string) => Promise<string>;
+  paySOL: (to: string, amount: string, memo: string) => Promise<string>;
 }
 
 export async function runAgent(
@@ -434,7 +434,7 @@ export async function runAgent(
     const memo    = res.headers.get('X-Payment-Memo')    ?? '';
 
     // Submit payment and get transaction hash
-    const txHash = await wallet.payXLM(address, amount, memo);
+    const txHash = await wallet.paySOL(address, amount, memo);
 
     // Retry with payment proof
     res = await fetch(url, {
@@ -456,13 +456,13 @@ export async function runAgent(
   return res.json();
 }`}</code></pre>
 
-<p><strong>Usage with Freighter:</strong></p>
-<pre><code>{`import { getPublicKey, signTransaction } from '@stellar/freighter-api';
+<p><strong>Usage with Phantom:</strong></p>
+<pre><code>{`import { getPublicKey, signTransaction } from '@stellar/phantom-api';
 import { TransactionBuilder, Networks, Asset, Operation, Server } from '@stellar/stellar-sdk';
 
 const wallet: AgentWallet = {
   address: await getPublicKey(),
-  payXLM: async (to, amount, memo) => {
+  paySOL: async (to, amount, memo) => {
     const server = new Server(process.env.NEXT_PUBLIC_HORIZON_URL!);
     const account = await server.loadAccount(wallet.address);
     const tx = new TransactionBuilder(account, {
@@ -501,9 +501,9 @@ console.log(result.output);`}</code></pre>
 npm run cli -- agents list
 
 # Run an agent with automatic 402 payment handling
-# --secret accepts a raw Stellar secret key for non-interactive payment
+# --secret accepts a raw Solana secret key for non-interactive payment
 npm run cli -- agents run <agent-id> \
-  -i "Find arbitrage route on XLM/USDC" \
+  -i "Find arbitrage route on SOL/USDC" \
   --secret SXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 # Create a new agent
@@ -517,7 +517,7 @@ npm run cli -- agents create \
 npm run cli -- agents get <agent-id>`}</code></pre>
 
 <p><strong>Transaction commands:</strong></p>
-<pre><code>{`# Check if a transaction is confirmed on Stellar
+<pre><code>{`# Check if a transaction is confirmed on Solana
 npm run cli -- tx status <tx_hash>
 
 # Inspect full transaction details (ops, memo, fees, timing)
@@ -551,11 +551,11 @@ npm run cli -- a2a log`}</code></pre>
   <thead><tr><th>Topic</th><th>Triggered by</th></tr></thead>
   <tbody>
     <tr><td>agentforge.payment.pending</td><td>402 challenge issued to client</td></tr>
-    <tr><td>agentforge.payment.confirmed</td><td>On-chain tx verified by Horizon</td></tr>
+    <tr><td>agentforge.payment.confirmed</td><td>On-chain tx verified by RPC</td></tr>
     <tr><td>agentforge.agent.completed</td><td>Agent run finished (paid or free)</td></tr>
     <tr><td>agentforge.billing.updated</td><td>Earnings aggregated for owner wallet</td></tr>
     <tr><td>agentforge.marketplace.activity</td><td>Public agent interactions (live feed)</td></tr>
-    <tr><td>agentforge.chain.synced</td><td>Periodic Horizon sync checkpoint</td></tr>
+    <tr><td>agentforge.chain.synced</td><td>Periodic RPC sync checkpoint</td></tr>
     <tr><td>agentforge.a2a.request</td><td>A2A routing request dispatched</td></tr>
     <tr><td>agentforge.a2a.response</td><td>A2A target agent response received</td></tr>
   </tbody>
@@ -591,7 +591,7 @@ await receiver.verify({
 <ul>
   <li>Candlestick chart of request volume (5-second polling via <code>/api/dashboard/analytics</code>)</li>
   <li>Earnings breakdown by model and time window</li>
-  <li>Invoice table with Stellar Explorer links for every paid request</li>
+  <li>Invoice table with Solana Explorer links for every paid request</li>
   <li>Live activity feed via Ably WebSocket channel (<code>agentforge-live</code>)</li>
   <li>Per-agent request history with latency, status, and tx hash</li>
 </ul>
@@ -701,7 +701,7 @@ X-Payment-Tx-Hash: <tx_hash_if_target_is_paid>
   <table className="env-table">
     <thead><tr><th>Variable</th><th>Purpose</th></tr></thead>
     <tbody>
-      <tr><td>NEXT_PUBLIC_HORIZON_URL</td><td>Horizon endpoint for tx verification</td></tr>
+      <tr><td>NEXT_PUBLIC_HORIZON_URL</td><td>RPC endpoint for tx verification</td></tr>
       <tr><td>NEXT_PUBLIC_STELLAR_NETWORK</td><td>testnet or mainnet</td></tr>
       <tr><td>QSTASH_URL</td><td>Upstash regional endpoint</td></tr>
       <tr><td>QSTASH_TOKEN</td><td>QStash publish auth token</td></tr>

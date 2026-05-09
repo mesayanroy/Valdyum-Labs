@@ -6,7 +6,7 @@ const router: Router = Router();
 router.post('/verify', async (req: Request, res: Response) => {
   try {
     const body = req.body || {};
-    const { tx_hash, expected_destination, expected_amount_xlm, expected_memo } = body;
+    const { tx_hash, expected_destination, expected_amount_sol, expected_memo } = body;
 
     if (!tx_hash) {
       res.status(400).json({ error: 'Missing tx_hash' });
@@ -16,7 +16,7 @@ router.post('/verify', async (req: Request, res: Response) => {
     const result = await verifyPaymentTransaction(
       tx_hash,
       expected_destination || '',
-      parseFloat(expected_amount_xlm) || 0,
+      parseFloat(expected_amount_sol) || 0,
       expected_memo || ''
     );
 

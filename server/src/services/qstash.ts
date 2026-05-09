@@ -40,7 +40,7 @@ export const TOPICS = {
   /** Emitted by the /run route once a tx hash has been supplied by the caller. */
   PAYMENT_PENDING: 'valdyum.payment.pending',
 
-  /** Emitted by the Payment Verifier once Horizon confirms the tx. */
+  /** Emitted by the Payment Verifier once RPC confirms the tx. */
   PAYMENT_CONFIRMED: 'valdyum.payment.confirmed',
 
   /** Emitted by the Agent Executor once the AI model has returned a response. */

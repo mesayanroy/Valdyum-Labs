@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Deploy AF$ token to Stellar testnet
+# Deploy AF$ token to Solana testnet
 # Usage: ./deploy.sh <admin-secret>
 
 set -euo pipefail
@@ -12,7 +12,7 @@ cargo build --manifest-path Cargo.toml --target wasm32-unknown-unknown --release
 
 WASM="target/wasm32-unknown-unknown/release/af_token.wasm"
 
-echo "Deploying to Stellar $NETWORK..."
+echo "Deploying to Solana $NETWORK..."
 CONTRACT_ID=$(stellar contract deploy \
   --wasm "$WASM" \
   --source "$ADMIN_SECRET" \

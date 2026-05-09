@@ -23,7 +23,7 @@ async function pushFaucetActivity(wallet: string, amount: number): Promise<void>
       agentName: 'AF$ Faucet',
       ownerWallet: wallet,
       callerWallet: wallet,
-      priceXlm: amount,
+      priceSol: amount,
       timestamp: new Date().toISOString(),
     });
   } catch { /* ignore */ }

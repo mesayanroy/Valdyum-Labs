@@ -37,7 +37,7 @@ valdyum agents run <agentId> \
   --secret $STELLAR_AGENT_SECRET
 ```
 
-If the agent returns a 402 challenge, the CLI signs and submits the Stellar payment, then retries the request automatically.
+If the agent returns a 402 challenge, the CLI signs and submits the Solana payment, then retries the request automatically.
 
 ### 4. Watch the live dashboard
 
@@ -95,7 +95,7 @@ valdyum dash --interval 5000  # refresh every 5s
 Lists all available agents with status, price, and stats.
 
 ### `valdyum agents run <agentId>`
-Runs an agent with optional 0x402 Stellar payment.
+Runs an agent with optional 0x402 Solana payment.
 
 ```bash
 valdyum agents run mev_bot --input "Find MEV opportunities" --secret $STELLAR_SECRET
@@ -103,8 +103,8 @@ valdyum agents run mev_bot --input "Find MEV opportunities" --secret $STELLAR_SE
 
 If the requested agent is paid, the CLI will:
 1. Receive the 402 payment challenge.
-2. Build and sign a Stellar payment transaction.
-3. Submit to Horizon.
+2. Build and sign a Solana payment transaction.
+3. Submit to RPC.
 4. Retry the agent call with payment proof headers.
 
 ### `valdyum a2a call <fromAgentId> <toAgentId>`
@@ -115,7 +115,7 @@ valdyum a2a call mev_bot trading_bot --input "Find and execute best opportunity"
 ```
 
 ### `valdyum tx status <txHash>`
-Checks the status of a Stellar transaction.
+Checks the status of a Solana transaction.
 
 ### `valdyum tx inspect <txHash>`
 Shows full transaction details.
@@ -125,7 +125,7 @@ Shows full transaction details.
 ```bash
 # Agent 1 analyzes → Agent 2 executes
 valdyum a2a call arbitrage_tracker trading_bot \
-  --input "Find triangular arbitrage for XLM/USDC/BTC then execute" \
+  --input "Find triangular arbitrage for SOL/USDC/BTC then execute" \
   --secret $STELLAR_SECRET
 ```
 
@@ -133,11 +133,11 @@ valdyum a2a call arbitrage_tracker trading_bot \
 
 When an agent requires payment:
 1. CLI detects `payment_details` in the 402 response
-2. Builds a Stellar XLM payment transaction
-3. Signs and submits to Horizon
+2. Builds a Solana SOL payment transaction
+3. Signs and submits to RPC
 4. Retries the agent call with `X-Payment-Tx-Hash` header
 
-If a faucet or payment step reports `invalid encoded string`, the wallet address is not a valid Stellar public key. Use a Freighter address that starts with `G` and retry.
+If a faucet or payment step reports `invalid encoded string`, the wallet address is not a valid Solana public key. Use a Phantom address that starts with `G` and retry.
 
 ## Python LangGraph Templates
 
@@ -160,14 +160,14 @@ curl -X POST http://localhost:3000/api/faucet/claim \
   -d '{"walletAddress": "G..."}'
 ```
 
-After a successful claim, use the Freighter token add prompt in the faucet UI if AF$ does not appear automatically in your wallet.
+After a successful claim, use the Phantom token add prompt in the faucet UI if AF$ does not appear automatically in your wallet.
 
 ## Environment Variables
 
 | Variable | Description |
 |----------|-------------|
 | `VALDYUM_API_URL` | Valdyum server URL (default: http://localhost:3000) |
-| `STELLAR_AGENT_SECRET` | Stellar secret key for payments |
+| `STELLAR_AGENT_SECRET` | Solana secret key for payments |
 | `QSTASH_TOKEN` | Upstash QStash token |
 | `ABLY_API_KEY` | Ably server API key |
 | `OPENAI_API_KEY` | OpenAI API key |

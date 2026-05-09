@@ -151,7 +151,7 @@ export default function CandlestickChart({
       const markerColor = closeEvent.type === 'tp' ? '#FFB800' : closeEvent.type === 'sl' ? '#f87171' : '#00FFE5';
       const pnlLabel = `${closeEvent.type === 'tp' ? '🎯 TP' : closeEvent.type === 'sl' ? '🛑 SL' : '✕ CLOSE'} ${isProfit ? '+' : ''}$${Math.abs(closeEvent.pnl).toFixed(2)}`;
 
-      // Horizontal dashed line at close price
+      // RPCtal dashed line at close price
       ctx.save();
       ctx.strokeStyle = markerColor;
       ctx.lineWidth = 1.5;

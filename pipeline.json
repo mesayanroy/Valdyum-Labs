@@ -1,0 +1,17 @@
+{
+  "name": "Imperial Market Research Pipeline",
+  "steps": [
+    {
+      "agentId": "aa3f93ec-d3a2-4c41-b6d8-e08e97254541",
+      "task": "Step 1: Analyze current SOL/USDC trend on Jupiter."
+    },
+    {
+      "agentId": "aa3f93ec-d3a2-4c41-b6d8-e08e97254541",
+      "task": "Step 2: Generate a neural summary of market volatility."
+    },
+    {
+      "agentId": "aa3f93ec-d3a2-4c41-b6d8-e08e97254541",
+      "task": "Step 3: Execute a simulated trade decree based on findings."
+    }
+  ]
+}

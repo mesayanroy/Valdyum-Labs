@@ -11,7 +11,7 @@ type RequestRow = {
   id: string;
   agent_id: string;
   payment_tx_hash: string | null;
-  payment_amount_xlm: number | null;
+  payment_amount_sol: number | null;
   latency_ms: number | null;
   created_at: string;
   caller_wallet: string | null;
@@ -30,7 +30,7 @@ type InvoiceRow = {
   agent_id: string;
   tx_hash: string;
   tx_explorer_url: string | null;
-  amount_xlm: number;
+  amount_sol: number;
   caller_wallet: string | null;
   created_at: string;
 };
@@ -67,7 +67,7 @@ router.get('/analytics', async (req: Request, res: Response) => {
       totals: {
         requests: 0,
         paidRequests: 0,
-        totalEarnedXlm: 0,
+        totalEarnedSol: 0,
         avgLatencyMs: 0,
       },
       generatedAt: new Date().toISOString(),
@@ -98,7 +98,7 @@ router.get('/analytics', async (req: Request, res: Response) => {
       totals: {
         requests: 0,
         paidRequests: 0,
-        totalEarnedXlm: 0,
+        totalEarnedSol: 0,
         avgLatencyMs: 0,
       },
       generatedAt: new Date().toISOString(),
@@ -113,7 +113,7 @@ router.get('/analytics', async (req: Request, res: Response) => {
   const { data: requests, error: requestsError } = await supabase
     .from('agent_requests')
     .select(
-      'id, agent_id, payment_tx_hash, payment_amount_xlm, latency_ms, created_at, caller_wallet, tx_explorer_url'
+      'id, agent_id, payment_tx_hash, payment_amount_sol, latency_ms, created_at, caller_wallet, tx_explorer_url'
     )
     .in('agent_id', agentIds)
     .gte('created_at', since)
@@ -130,7 +130,7 @@ router.get('/analytics', async (req: Request, res: Response) => {
 
   const byModelMap = new Map<
     string,
-    { model: string; requests: number; paidRequests: number; earnedXlm: number; avgLatencyMs: number; latencySum: number }
+    { model: string; requests: number; paidRequests: number; earnedSol: number; avgLatencyMs: number; latencySum: number }
   >();
   const requestRateMap = new Map<string, { ts: string; total: number; models: Record<string, number> }>();
   const earningsMap = new Map<string, number>();
@@ -138,7 +138,7 @@ router.get('/analytics', async (req: Request, res: Response) => {
   let latencySum = 0;
   let latencyCount = 0;
   let paidRequests = 0;
-  let totalEarnedXlm = 0;
+  let totalEarnedSol = 0;
 
   for (const row of rows) {
     const agent = agentById.get(row.agent_id);
@@ -148,7 +148,7 @@ router.get('/analytics', async (req: Request, res: Response) => {
       model: agent.model,
       requests: 0,
       paidRequests: 0,
-      earnedXlm: 0,
+      earnedSol: 0,
       avgLatencyMs: 0,
       latencySum: 0,
     };
@@ -160,12 +160,12 @@ router.get('/analytics', async (req: Request, res: Response) => {
       latencyCount += 1;
     }
 
-    const amount = Number(row.payment_amount_xlm || 0);
+    const amount = Number(row.payment_amount_sol || 0);
     if (amount > 0 && row.payment_tx_hash) {
       modelAgg.paidRequests += 1;
-      modelAgg.earnedXlm += amount;
+      modelAgg.earnedSol += amount;
       paidRequests += 1;
-      totalEarnedXlm += amount;
+      totalEarnedSol += amount;
 
       const day = row.created_at.slice(0, 10);
       earningsMap.set(day, (earningsMap.get(day) || 0) + amount);
@@ -189,7 +189,7 @@ router.get('/analytics', async (req: Request, res: Response) => {
       model: item.model,
       requests: item.requests,
       paidRequests: item.paidRequests,
-      earnedXlm: Number(item.earnedXlm.toFixed(4)),
+      earnedSol: Number(item.earnedSol.toFixed(4)),
       avgLatencyMs: item.requests > 0 ? Math.round(item.latencySum / item.requests) : 0,
     }))
     .sort((a, b) => b.requests - a.requests);
@@ -204,7 +204,7 @@ router.get('/analytics', async (req: Request, res: Response) => {
 
   const { data: invoiceRows } = await supabase
     .from('invoices')
-    .select('id, request_id, agent_id, tx_hash, tx_explorer_url, amount_xlm, caller_wallet, created_at')
+    .select('id, request_id, agent_id, tx_hash, tx_explorer_url, amount_sol, caller_wallet, created_at')
     .in('agent_id', agentIds)
     .gte('created_at', since)
     .order('created_at', { ascending: false })
@@ -219,7 +219,7 @@ router.get('/analytics', async (req: Request, res: Response) => {
           requestId: r.request_id || '',
           txHash: r.tx_hash,
           txExplorerUrl: inferExplorerUrl(r.tx_hash, r.tx_explorer_url),
-          amountXlm: Number(Number(r.amount_xlm || 0).toFixed(4)),
+          amountXlm: Number(Number(r.amount_sol || 0).toFixed(4)),
           model: agent?.model || 'unknown',
           agentName: agent?.name || r.agent_id,
           callerWallet: r.caller_wallet,
@@ -227,7 +227,7 @@ router.get('/analytics', async (req: Request, res: Response) => {
         };
       })
     : rows
-        .filter((r) => r.payment_tx_hash && Number(r.payment_amount_xlm || 0) > 0)
+        .filter((r) => r.payment_tx_hash && Number(r.payment_amount_sol || 0) > 0)
         .slice(0, 100)
         .map((r) => {
           const agent = agentById.get(r.agent_id);
@@ -236,7 +236,7 @@ router.get('/analytics', async (req: Request, res: Response) => {
             requestId: r.id,
             txHash: r.payment_tx_hash,
             txExplorerUrl: inferExplorerUrl(r.payment_tx_hash, r.tx_explorer_url),
-            amountXlm: Number(Number(r.payment_amount_xlm || 0).toFixed(4)),
+            amountXlm: Number(Number(r.payment_amount_sol || 0).toFixed(4)),
             model: agent?.model || 'unknown',
             agentName: agent?.name || r.agent_id,
             callerWallet: r.caller_wallet,
@@ -252,7 +252,7 @@ router.get('/analytics', async (req: Request, res: Response) => {
     totals: {
       requests: rows.length,
       paidRequests,
-      totalEarnedXlm: Number(totalEarnedXlm.toFixed(4)),
+      totalEarnedSol: Number(totalEarnedSol.toFixed(4)),
       avgLatencyMs: latencyCount > 0 ? Math.round(latencySum / latencyCount) : 0,
     },
     generatedAt: new Date().toISOString(),
@@ -296,7 +296,7 @@ router.get('/requests', async (req: Request, res: Response) => {
   const { data: requests, error: reqError } = await supabase
     .from('agent_requests')
     .select(
-      'id, agent_id, caller_wallet, payment_tx_hash, payment_amount_xlm, tx_explorer_url, protocol, status, latency_ms, created_at'
+      'id, agent_id, caller_wallet, payment_tx_hash, payment_amount_sol, tx_explorer_url, protocol, status, latency_ms, created_at'
     )
     .in('agent_id', agentIds)
     .order('created_at', { ascending: false })

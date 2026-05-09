@@ -1,11 +1,11 @@
 /**
  * consumers/chain-syncer.ts
  *
- * Listens for on-chain state changes from the Soroban contract and publishes
+ * Listens for on-chain state changes from the Anchor contract and publishes
  * `valdyum.chain.synced` events.
  *
- * In a full implementation this would open a Soroban RPC subscription.
- * For now it polls the Horizon account transactions stream for the contract's
+ * In a full implementation this would open a Anchor RPC subscription.
+ * For now it polls the RPC account transactions stream for the contract's
  * deployment account and emits a ChainSyncedEvent for each new ledger entry.
  */
 
@@ -17,8 +17,8 @@ const CONSUMER_GROUP = 'valdyum-chain-syncer';
 const CONTRACT_ID = process.env.NEXT_PUBLIC_SOLANA_PROGRAM_ID || process.env.SOLANA_PROGRAM_ID || '';
 
 /**
- * Start the Horizon SSE watcher for the Soroban contract account and re-publish
- * to QStash so downstream services can react without coupling to Horizon directly.
+ * Start the RPC SSE watcher for the Anchor contract account and re-publish
+ * to QStash so downstream services can react without coupling to RPC directly.
  */
 export function startChainSyncerStream(): () => void {
   if (!CONTRACT_ID) {
@@ -57,7 +57,7 @@ export function startChainSyncerStream(): () => void {
 
 /**
  * QStash consumer for chain.synced events (so other microservices can react
- * without connecting to Horizon themselves).
+ * without connecting to RPC themselves).
  */
 export const chainSyncedConsumer = createConsumer<ChainSyncedEvent>(
   CONSUMER_GROUP,

@@ -4,177 +4,93 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import AgentCard from '@/components/AgentCard';
 import { Agent } from '@/types';
-import { sendSolTransfer, solExplorerTx } from '@/lib/phantom';
+import { solExplorerTx } from '@/lib/phantom';
 import { tokenConfig } from '@/lib/token';
+import { Connection, PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { getProgram, BN } from '@/lib/anchor_program';
 
-interface ForkModalProps {
-  agent: Agent;
-  onClose: () => void;
-  onSuccess: (txHash: string) => void;
-}
-
-function ForkModal({ agent, onClose, onSuccess }: ForkModalProps) {
-  const [step, setStep] = useState<'idle' | 'paying' | 'done' | 'error'>('idle');
-  const [error, setError] = useState<string | null>(null);
-  const [customName, setCustomName] = useState(`Fork of ${agent.name}`);
-  const [customPrompt, setCustomPrompt] = useState(agent.system_prompt || '');
-  const FORK_FEE_XLM = agent.price_xlm > 0 ? agent.price_xlm * 10 : 1;
-
-  const handleFork = async () => {
-    setStep('paying');
-    setError(null);
-    try {
-      const result = await sendSolTransfer(agent.owner_wallet, FORK_FEE_XLM);
-
-      setStep('done');
-      onSuccess(result.txHash);
-    } catch (err) {
-      const msg = String(err);
-      setError(msg.startsWith('Error:') ? msg.slice(7).trim() : msg);
-      setStep('error');
-    }
-  };
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm" onClick={onClose}>
-      <div className="w-full max-w-lg mx-4 rounded-2xl border border-[rgba(255,184,0,0.2)] bg-[#0a0a10] p-6"
-        onClick={(e) => e.stopPropagation()}>
-        <h2 className="font-syne text-xl font-bold text-white mb-1">Fork Agent</h2>
-        <p className="text-gray-400 text-sm mb-5">
-          Pay <span className="text-[#FFB800] font-bold">{FORK_FEE_XLM} {tokenConfig.symbol}</span> to fork &quot;{agent.name}&quot; and customise it.
-        </p>
-
-        <div className="space-y-4 mb-5">
-          <div>
-            <label className="block text-[10px] font-mono text-gray-500 mb-1">Custom Name</label>
-            <input value={customName} onChange={(e) => setCustomName(e.target.value)}
-              className="w-full px-3 py-2 bg-white/[0.03] border border-white/[0.08] rounded-lg text-white text-sm font-mono focus:outline-none focus:border-[rgba(255,184,0,0.4)]" />
-          </div>
-          <div>
-            <label className="block text-[10px] font-mono text-gray-500 mb-1">Custom System Prompt</label>
-            <textarea value={customPrompt} onChange={(e) => setCustomPrompt(e.target.value)} rows={4}
-              className="w-full px-3 py-2 bg-white/[0.03] border border-white/[0.08] rounded-lg text-white text-sm font-mono focus:outline-none focus:border-[rgba(255,184,0,0.4)] resize-none" />
-          </div>
-        </div>
-
-        <div className="text-xs font-mono text-gray-500 mb-4 p-3 rounded bg-white/[0.02] border border-white/[0.06]">
-          <div className="flex justify-between"><span>Fork fee</span><span className="text-[#FFB800]">{FORK_FEE_XLM} {tokenConfig.symbol}</span></div>
-          <div className="flex justify-between mt-1"><span>Destination</span><span className="text-white/70 truncate max-w-[200px]">{agent.owner_wallet}</span></div>
-        </div>
-
-        {step === 'done' && (
-          <div className="mb-4 p-3 rounded bg-[rgba(74,222,128,0.08)] border border-green-900 text-[#4ade80] text-xs font-mono">
-            ✓ Fork payment confirmed! Your customised agent has been registered.
-          </div>
-        )}
-        {error && (
-          <div className="mb-4 p-3 rounded bg-[rgba(255,69,69,0.1)] border border-red-900 text-red-400 text-xs font-mono">{error}</div>
-        )}
-
-        <div className="flex gap-3">
-          <button onClick={onClose} disabled={step === 'paying'}
-            className="flex-1 py-2.5 text-sm font-mono border border-[rgba(255,255,255,0.1)] text-gray-400 rounded-lg hover:text-white transition-colors disabled:opacity-40">
-            Cancel
-          </button>
-          <button onClick={handleFork} disabled={step === 'paying' || step === 'done'}
-            className="flex-1 py-2.5 text-sm font-mono bg-[#FFB800] text-black rounded-lg font-bold hover:bg-[#e6a600] transition-colors disabled:opacity-50">
-            {step === 'paying' ? 'Processing...' : step === 'done' ? 'Forked!' : `Fork & Pay ${FORK_FEE_XLM} ${tokenConfig.symbol}`}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
+import ForkModal from '@/components/ForkModal';
 
 export default function MarketplacePage() {
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(true);
-  const [forkAgent, setForkAgent] = useState<Agent | null>(null);
-  const [forkSuccess, setForkSuccess] = useState<string | null>(null);
+  const [forkingAgent, setForkingAgent] = useState<Agent | null>(null);
+  const [successTx, setSuccessTx] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchAgents = async () => {
-      setLoading(true);
       try {
         const res = await fetch('/api/agents/list');
-        if (res.ok) {
-          const data = await res.json() as { agents: Agent[] };
-          setAgents(data.agents ?? []);
-        }
-      } catch { /* ignore */ } finally {
+        const data = await res.json();
+        setAgents(data.agents || []);
+      } catch (err) {
+        console.error('Failed to fetch agents:', err);
+      } finally {
         setLoading(false);
       }
     };
-    void fetchAgents();
+    fetchAgents();
   }, []);
 
-  const featured = agents.filter((a) => a.is_active && a.total_requests > 0).slice(0, 6);
-  const trending = agents.filter((a) => a.is_active).slice(0, 3);
-
   return (
-    <div className="min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 py-10 space-y-14">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <h1 className="font-syne text-4xl font-bold text-white mb-2">Marketplace</h1>
-          <p className="text-gray-400 font-mono text-sm">
-            Discover, buy, and fork AI agents on AgentForge. All payments in {tokenConfig.symbol} via the 0x402 protocol.
-          </p>
-        </motion.div>
-
-        {forkSuccess && (
-          <div className="p-4 rounded-xl bg-[rgba(74,222,128,0.08)] border border-green-900 text-[#4ade80] font-mono text-sm">
-            ✓ Fork payment confirmed · Tx: <a href={solExplorerTx(forkSuccess)}
-              target="_blank" rel="noreferrer" className="underline hover:text-green-300">{forkSuccess.slice(0, 20)}...</a>
+    <div className="min-h-screen bg-[#0a0a0c] relative overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 bg-[url('/background/slide33.png')] bg-cover bg-center opacity-15" />
+      <div className="max-w-[1440px] mx-auto px-6 py-12 relative z-10">
+        <div className="flex flex-col md:flex-row items-start justify-between gap-6 mb-12">
+          <div>
+            <h1 className="font-cinzel text-4xl font-bold text-[#d4af37] mb-2 tracking-wider">The Forum</h1>
+            <p className="font-mono text-sm text-[#cbb38b]">
+              Discover and fork autonomous Praetorian agents. Powered by Anchor and 0x402.
+            </p>
           </div>
+          <div className="flex items-center gap-3">
+            <div className="px-4 py-2 rounded-xl bg-[rgba(212,175,55,0.06)] border border-[rgba(212,175,55,0.2)]">
+              <span className="font-mono text-[10px] text-[#cbb38b] uppercase tracking-widest">Global TVL:</span>
+              <span className="font-mono text-sm text-[#d4af37] ml-2 font-bold">128,492 SOL</span>
+            </div>
+          </div>
+        </div>
+
+        {successTx && (
+          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}
+            className="mb-8 p-4 rounded-2xl bg-[rgba(212,175,55,0.1)] border border-[rgba(212,175,55,0.3)] flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-xl">🏛️</span>
+              <div>
+                <div className="font-mono text-sm text-[#d4af37] font-bold">Agent Forked Successfully</div>
+                <div className="font-mono text-[10px] text-[#cbb38b] mt-0.5">Senatus record updated. Tx: {successTx.slice(0, 16)}...</div>
+              </div>
+            </div>
+            <a href={solExplorerTx(successTx)} target="_blank" rel="noreferrer"
+              className="px-4 py-1.5 text-[10px] font-mono border border-[#d4af37] text-[#d4af37] rounded-lg hover:bg-[#d4af37] hover:text-black transition-all">
+              View Transaction
+            </a>
+          </motion.div>
         )}
 
         {loading ? (
-          <div className="text-gray-500 font-mono text-sm py-20 text-center animate-pulse">Loading agents from chain...</div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div key={i} className="h-[400px] rounded-3xl bg-black/40 border border-white/10" />
+            ))}
+          </div>
         ) : (
-          <>
-            <section>
-              <h2 className="font-syne text-2xl font-bold text-white mb-6">⭐ Featured Agents</h2>
-              {featured.length === 0 ? (
-                <p className="font-mono text-sm text-gray-500">No featured agents yet. Deploy the first one!</p>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                  {featured.map((agent) => (
-                    <AgentCard key={agent.id} agent={agent} onFork={(a) => setForkAgent(a)} />
-                  ))}
-                </div>
-              )}
-            </section>
-
-            <section>
-              <h2 className="font-syne text-2xl font-bold text-white mb-6">🔥 Trending Now</h2>
-              {trending.length === 0 ? (
-                <p className="font-mono text-sm text-gray-500">No trending agents yet.</p>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                  {trending.map((agent) => (
-                    <AgentCard key={agent.id} agent={agent} onFork={(a) => setForkAgent(a)} />
-                  ))}
-                </div>
-              )}
-            </section>
-
-            {agents.length === 0 && (
-              <div className="py-20 text-center">
-                <p className="font-syne text-xl text-white mb-2">No agents deployed yet</p>
-                <p className="font-mono text-sm text-gray-500">Be the first to deploy an agent on AgentForge.</p>
-              </div>
-            )}
-          </>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {agents.map((agent) => (
+              <AgentCard key={agent.id} agent={agent} onFork={() => setForkingAgent(agent)} />
+            ))}
+          </div>
         )}
       </div>
 
-      {forkAgent && (
+      {forkingAgent && (
         <ForkModal
-          agent={forkAgent}
-          onClose={() => setForkAgent(null)}
-          onSuccess={(txHash) => {
-            setForkAgent(null);
-            setForkSuccess(txHash);
+          isOpen={!!forkingAgent}
+          agent={forkingAgent}
+          onClose={() => setForkingAgent(null)}
+          onSuccess={(tx) => {
+            setSuccessTx(tx);
+            setForkingAgent(null);
           }}
         />
       )}

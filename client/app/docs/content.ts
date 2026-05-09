@@ -399,6 +399,7 @@ function AgentDetail({ agentId }) {
     subtitle: "Complete command reference — valdyum <command> [flags]",
     category: "CLI",
     content: `## Installation
+Installing the Imperial CLI allows you to orchestrate your legion from any terminal.
 
 \`\`\`bash
 $ npx valdyum <command>
@@ -409,42 +410,37 @@ $ npm install -g valdyum
 ## Commands
 
 ### valdyum init
-Initialize CLI, connect wallet, configure environment.
+Initialize the Imperial Terminal, connect your Solana wallet, and sync with the neural registry.
 
-| Flag | Type | Description |
-|------|------|-------------|
-| \`--network\` | string | mainnet or devnet |
-| \`--wallet\` | string | Path to keypair JSON |
-| \`--rpc\` | string | Custom RPC endpoint URL |
+### valdyum agents:list
+List all active units registered in the Senatus Registry.
 
-### valdyum scaffold
-Download a template and scaffold a new agent project.
+### valdyum agents:status -i <id>
+Show real-time neural status, TAPEDRIVE root, and yield metrics for a specific unit.
 
-\`\`\`bash
-$ valdyum scaffold <template> --name <name>
-\`\`\`
+### valdyum agents:build
+Forge a new Imperial Unit. This is an interactive command that asks for Designation, Neural Core, Manifesto, and Pricing.
 
-### valdyum dev
-Run agent in devnet simulation mode.
+### valdyum agents:run -i <id>
+Execute a specific unit task. Triggers the 0x402 Economic Protocol for fee deduction.
 
-### valdyum deploy
-Build, register on-chain, and start your agent.
+### valdyum agents:pipeline -c <config.json>
+Orchestrate multiple units in a sequential pipeline for complex multi-stage operations.
 
-| Flag | Type | Description |
-|------|------|-------------|
-| \`--network\` | string | mainnet or devnet |
-| \`--dry-run\` | boolean | Preview without executing |
-| \`--visibility\` | string | public, private, or subscription |
-| \`--price\` | string | Listing price in VALD$ (Solana) |
+### valdyum agents:withdraw -i <id> -d <destination>
+Extract accumulated SOL yields from an agent's operational wallet to your treasury.
 
-### valdyum publish
-Publish agent to marketplace.
+### valdyum agents:fork -i <id>
+Execute the Fork Protocol to create a subordinate unit with on-chain lineage and royalty anchoring.
 
-### valdyum status
-Show real-time status of running agents.
+### valdyum agents:trust -i <id>
+Audit a unit's security via the **T54 Trust Layer**. Shows ClawCredit scores and manifest verification status.
 
-### valdyum tapedrive verify
-Independently verify an agent's TAPEDRIVE history.`
+### valdyum agents:monitor
+Open the **Imperial Market Monitor**. A real-time terminal UI showing Solana DEX liquidity (Jupiter, Raydium, Orca) updated every 2 seconds.
+
+### valdyum agents:export -i <id>
+Export unit credentials and instruction sets for local model fine-tuning or backup.`
   },
 
   runtime: {

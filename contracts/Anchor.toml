@@ -3,9 +3,10 @@ cluster = "testnet"
 wallet = "~/.config/solana/id.json"
 
 [programs.testnet]
-agent_registry = "11111111111111111111111111111112"
-agent_validator = "11111111111111111111111111111113"
-af_token = "11111111111111111111111111111114"
+agent_registry = "6tpsQxcZaHaj8zJsRv5tHWCpeQ2HT7bBrxC3y4MCaRCi"
+agent_validator = "4SKv6QGeWdHz8mQCmZB344epAvpoMG4R7EPeRM84sdmU"
+af_token = "CCyamHAF4TJHRrax6aMgk4s2Df9oCjomXLSLKUTk7nuE"
 
 [scripts]
 test = "echo 'Add Anchor tests in tests/*.ts'"
+initialize = "pnpm ts-node contracts/initialize.ts"

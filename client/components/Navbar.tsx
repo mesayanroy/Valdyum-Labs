@@ -242,15 +242,17 @@ export default function Navbar() {
 
             {/* Right Actions */}
             <div className="flex-1 flex justify-end items-center gap-3 shrink-0">
-              <Link href="/build" aria-label="Start Building">
-                <HoverBorderGradient
-                  as="span"
-                  containerClassName="cursor-pointer"
-                  className={`whitespace-nowrap transition-colors duration-300 ${isDarkHeroContext ? 'bg-white text-black' : 'bg-[#111111] text-white'}`}
-                >
-                  Start Building
-                </HoverBorderGradient>
-              </Link>
+              {!(pathname === '/' && isScrolled) && (
+                <Link href="/build" aria-label="Start Building">
+                  <HoverBorderGradient
+                    as="span"
+                    containerClassName="cursor-pointer"
+                    className={`whitespace-nowrap transition-colors duration-300 ${isDarkHeroContext ? 'bg-white text-black' : 'bg-[#111111] text-white'}`}
+                  >
+                    Start Building
+                  </HoverBorderGradient>
+                </Link>
+              )}
               <WalletConnect />
             </div>
           </div>

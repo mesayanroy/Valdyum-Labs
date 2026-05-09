@@ -4,10 +4,10 @@ export async function buildValidationTransaction(
   deployer_wallet: string,
   agent_id: string,
   metadata_hash: string,
-  price_stroops: number
+  price_lamports: number
 ) {
   // Construct a minimal placeholder "validation transaction" payload that the client
-  // can sign. We keep the same response shape as the previous Stellar implementation
+  // can sign. We keep the same response shape as the previous Solana implementation
   // so server routes don't need to change.
   const fakeTx = Buffer.from(`validate:${deployer_wallet}:${agent_id}:${metadata_hash}`).toString('base64');
   const validationFee = 0; // represent in smallest unit for compatibility
@@ -48,7 +48,7 @@ export async function persistDeploymentToDatabase(...args: any[]) {
     deployer_wallet: args[0],
     agent_id: args[1],
     metadata_hash: args[2],
-    price_xlm: args[3],
+    price_sol: args[3],
     fee: args[4],
   };
   console.log('[persistDeploymentToDatabase]', payload);

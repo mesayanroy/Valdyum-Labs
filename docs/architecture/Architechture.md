@@ -2,11 +2,11 @@
 
 ## Executive Summary
 
-Valdyum is a protocol-driven AI commerce stack built on Stellar. It turns AI execution into verifiable economic activity by binding each paid interaction to a wallet signature and on-chain payment evidence.
+Valdyum is a protocol-driven AI commerce stack built on Solana. It turns AI execution into verifiable economic activity by binding each paid interaction to a wallet signature and on-chain payment evidence.
 
 The platform solves three hard problems at once:
 - Agent monetization without centralized billing trust assumptions
-- Programmable deployment policy using Soroban contracts
+- Programmable deployment policy using Anchor contracts
 - Realtime operational visibility for builders and consumers
 
 ## Problem Statement
@@ -15,20 +15,20 @@ Modern AI agent platforms usually rely on API keys, opaque usage logs, and delay
 
 Valdyum addresses this with a payment-first execution model:
 - A request that requires payment returns a structured challenge
-- The caller signs and submits a Stellar transaction
+- The caller signs and submits a Solana transaction
 - The backend verifies payment proof before execution
 - Runtime output and billing metadata are persisted and streamed
 
-## Why Stellar Was The Best Fit
+## Why Solana Was The Best Fit
 
-Stellar provides practical advantages for autonomous-agent commerce:
+Solana provides practical advantages for autonomous-agent commerce:
 - Very low fee profile for frequent micro-payments
 - Fast and predictable settlement suitable for interactive UX
 - Native memo support, ideal for request/fork/deploy correlation IDs
 - Mature wallet ecosystem for explicit user-controlled signatures
-- Public verifiability through Horizon and Explorer
+- Public verifiability through RPC and Explorer
 
-Soroban extends this with deterministic contract policy:
+Anchor extends this with deterministic contract policy:
 - Deployment can be validated before registration
 - Registry writes can be gated through validator logic
 - Inter-contract calls let governance evolve without breaking API contracts
@@ -37,13 +37,13 @@ Soroban extends this with deterministic contract policy:
 
 ### 1) Experience Layer
 - Next.js App Router frontend
-- Wallet connect and signing UX (Freighter-first)
+- Wallet connect and signing UX (Phantom-first)
 - Marketplace, Builder, Trading, Workflow, Dashboard surfaces
 
 ### 2) API and Orchestration Layer
 - Route handlers for deploy, run, payment verify, analytics
 - 402 challenge/response implementation for paid runs
-- Stellar Horizon integration for transaction verification
+- Solana RPC integration for transaction verification
 - AI provider routing (OpenAI and Anthropic)
 
 ### 3) On-Chain Policy Layer
@@ -67,7 +67,7 @@ Soroban extends this with deterministic contract policy:
 1. User configures agent metadata in builder.
 2. API creates unsigned validation transaction payload.
 3. Wallet signs deploy validation transaction.
-4. API submits to Horizon and prepares confirmation transaction.
+4. API submits to RPC and prepares confirmation transaction.
 5. Wallet signs confirmation transaction.
 6. AgentValidator confirms and invokes AgentRegistry registration.
 7. Backend persists resulting agent record and metadata indexes.
@@ -75,7 +75,7 @@ Soroban extends this with deterministic contract policy:
 ## Phase C: Marketplace Discovery and Forking
 1. Public agents are listed with pricing and owner metadata.
 2. User starts fork flow and customizes prompt/system settings.
-3. Fork payment is signed and submitted on Stellar.
+3. Fork payment is signed and submitted on Solana.
 4. Explorer tx hash is shown in-app for transparent proof.
 5. Forked agent is available for run flow.
 
@@ -120,7 +120,7 @@ sequenceDiagram
   participant FE as Frontend
   participant API as Run API
   participant W as Wallet
-  participant H as Horizon
+  participant H as RPC
   participant AI as Model Provider
   participant DB as Supabase
 
@@ -139,7 +139,7 @@ sequenceDiagram
 
 ## Trust and Security Model
 
-- Payment verification is externalized to Stellar/Horizon truth.
+- Payment verification is externalized to Solana/RPC truth.
 - Sensitive credentials remain server-side and are never client-exposed.
 - Local env secret files are excluded from git history and CI pushes.
 - Wallet signatures provide explicit user consent for value movement.

@@ -4,7 +4,7 @@ import { useMemo, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { Agent } from '@/types';
-import { truncateAddress } from '@/lib/stellar';
+import { truncateAddress } from '@/lib/solana';
 import { tokenConfig, tokenMetadataLabel } from '@/lib/token';
 
 interface AgentCardProps {
@@ -28,7 +28,7 @@ export default function AgentCard({ agent, onFork }: AgentCardProps) {
 
   const safeOwner = agent.owner_wallet || 'Unknown';
   const totalRequests = Number(agent.total_requests ?? 0);
-  const priceXlm = Number(agent.price_xlm ?? 0);
+  const priceSol = Number(agent.price_sol ?? 0);
   const apiEndpoint = agent.api_endpoint || `/api/agents/${agent.id}/run`;
 
   const runtimeJson = useMemo(() => JSON.stringify({
@@ -37,7 +37,7 @@ export default function AgentCard({ agent, onFork }: AgentCardProps) {
     description: agent.description || '',
     apiEndpoint,
     pricing: {
-      amount: priceXlm,
+      amount: priceSol,
       token: tokenConfig.symbol,
       network: `solana:${tokenConfig.network}`,
     },
@@ -59,7 +59,7 @@ export default function AgentCard({ agent, onFork }: AgentCardProps) {
         step: 'Add to Valdyum pipeline manager as a task node.',
       },
     },
-  }, null, 2), [agent.id, agent.name, agent.description, apiEndpoint, priceXlm, safeOwner]);
+  }, null, 2), [agent.id, agent.name, agent.description, apiEndpoint, priceSol, safeOwner]);
 
   useEffect(() => {
     const blob = new Blob([runtimeJson], { type: 'application/json' });
@@ -68,7 +68,7 @@ export default function AgentCard({ agent, onFork }: AgentCardProps) {
     return () => URL.revokeObjectURL(url);
   }, [runtimeJson]);
 
-  const cliSnippet = `valdyum agents:run --id ${agent.id} --prompt \"run my task\" --secret $SOLANA_AGENT_SECRET`;
+  const cliSnippet = `valdyum agents:run --id ${agent.id} --prompt "run my task" --secret $SOLANA_AGENT_SECRET`;
 
   return (
     <>
@@ -117,7 +117,7 @@ export default function AgentCard({ agent, onFork }: AgentCardProps) {
         </div>
         <div className="flex items-center gap-3">
           <span>{totalRequests.toLocaleString()} reqs</span>
-          <span className="text-[#d4af37]">{priceXlm} {tokenConfig.symbol}/req</span>
+          <span className="text-[#d4af37]">{priceSol} {tokenConfig.symbol}/req</span>
         </div>
       </div>
 
@@ -135,7 +135,7 @@ export default function AgentCard({ agent, onFork }: AgentCardProps) {
           Run
         </Link>
         <button
-          onClick={() => onFork?.(agent)}
+          onClick={(e) => { e.stopPropagation(); onFork?.(agent); }}
           className="py-1.5 text-xs font-mono border border-[rgba(255,255,255,0.15)] text-[#b8a38a] rounded hover:border-[#d4af37] hover:text-[#d4af37] transition-all"
         >
           Fork

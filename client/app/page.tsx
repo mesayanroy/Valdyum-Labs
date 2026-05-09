@@ -207,7 +207,7 @@ export default function HomePage() {
     };
   }, []);
 
-  // Initialize GSAP Horizontal Scroll & Global Snapping
+  // Initialize GSAP RPCtal Scroll & Global Snapping
   useGSAP(() => {
     const track = trackRef.current;
     const container = containerRef.current;
@@ -217,7 +217,7 @@ export default function HomePage() {
     // eslint-disable-next-line prefer-const
     let sdkAnim: gsap.core.Tween | null = null;
 
-    // Master Timeline: Horizontal Scroll + Curtain Sweep + SDK Section Slide Up
+    // Master Timeline: RPCtal Scroll + Curtain Sweep + SDK Section Slide Up
     const masterTl = gsap.timeline({
       scrollTrigger: {
         trigger: container,
@@ -274,7 +274,7 @@ export default function HomePage() {
         },
         snap: {
           snapTo: (progress) => {
-            // Only snap the horizontal slides (0, 0.3, 0.6).
+            // Only snap the rpctal slides (0, 0.3, 0.6).
             // Leave the curtain wipe and SDK slide-up free from snapping.
             if (progress <= 0.65) {
               const points = [0, 0.3, 0.6];
@@ -291,7 +291,7 @@ export default function HomePage() {
       }
     });
 
-    // Phase 1: Horizontal Scroll (60% of timeline -> 3000px)
+    // Phase 1: RPCtal Scroll (60% of timeline -> 3000px)
     masterTl.to(track, {
       x: () => -(window.innerWidth * 2),
       ease: "none",
@@ -373,7 +373,7 @@ export default function HomePage() {
         return startPos / maxScroll;
       });
 
-      // Map out the horizontal + transition section boundaries to prevent vertical snapping inside it
+      // Map out the rpctal + transition section boundaries to prevent vertical snapping inside it
       const horizSt = ScrollTrigger.create({ trigger: container, start: 'top top' });
       horizStart = horizSt.start / maxScroll;
       horizEnd = (horizSt.start + 5000) / maxScroll;
@@ -390,7 +390,7 @@ export default function HomePage() {
         snapTo: (progress) => {
           if (snapPoints.length === 0) return progress;
 
-          // Disable global vertical snap when inside the horizontal/transition area
+          // Disable global vertical snap when inside the rpctal/transition area
           if (progress > horizStart + 0.005 && progress < horizEnd - 0.005) {
             return progress;
           }
