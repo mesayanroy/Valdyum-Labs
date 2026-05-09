@@ -379,6 +379,51 @@
       "is_active": true,
       "created_at": "2026-05-08T23:55:32.934Z",
       "updated_at": "2026-05-08T23:55:32.934Z"
+    },
+    {
+      "id": "31488f7e-58ef-4e8d-811a-b685a5a53e40",
+      "owner_wallet": "H4FaZamBiyA2kfki8s1nE1hVQhSFwxdEGjkcsezQNgPo",
+      "name": "satish",
+      "description": "runing test",
+      "tags": [
+        "cli-forged",
+        "gpt4o"
+      ],
+      "model": "openai-gpt4o-mini",
+      "system_prompt": "dont run",
+      "tools": [],
+      "price_sol": 0.05,
+      "visibility": "public",
+      "api_endpoint": "http://localhost:3000/api/agents/31488f7e-58ef-4e8d-811a-b685a5a53e40/run",
+      "api_key": "af_yqw8OIFFHi0wvit5qvpNl7mNJtkzKFdfZf46I9uV",
+      "total_requests": 1,
+      "total_earned_sol": 0.05,
+      "is_active": true,
+      "created_at": "2026-05-09T17:17:00.990Z",
+      "updated_at": "2026-05-09T17:25:45.475Z"
+    },
+    {
+      "id": "6ff5dc62-4002-43b4-9dd6-251801515fc8",
+      "owner_wallet": "CdmsPwGwn57nLQVG5gXDw6h9yX5XmomT6icwKim4EgQy",
+      "name": "satish (Fork)",
+      "description": "runing test",
+      "tags": [
+        "cli-forged",
+        "gpt4o"
+      ],
+      "model": "openai-gpt4o-mini",
+      "system_prompt": "dont run",
+      "tools": [],
+      "price_sol": 0.05,
+      "visibility": "forked",
+      "forked_from": "31488f7e-58ef-4e8d-811a-b685a5a53e40",
+      "api_endpoint": "http://localhost:3000/api/agents/31488f7e-58ef-4e8d-811a-b685a5a53e40/run",
+      "api_key": "af_yqw8OIFFHi0wvit5qvpNl7mNJtkzKFdfZf46I9uV",
+      "total_requests": 0,
+      "total_earned_sol": 0,
+      "is_active": true,
+      "created_at": "2026-05-09T17:27:12.645Z",
+      "updated_at": "2026-05-09T17:27:12.645Z"
     }
   ]
 }

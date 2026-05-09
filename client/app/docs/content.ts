@@ -439,6 +439,9 @@ Audit a unit's security via the **T54 Trust Layer**. Shows ClawCredit scores and
 ### valdyum agents:monitor
 Open the **Imperial Market Monitor**. A real-time terminal UI showing Solana DEX liquidity (Jupiter, Raydium, Orca) updated every 2 seconds.
 
+### valdyum agents:compute [mode]
+Tune the neural scheduler and optimize the compute layer. Choose between **Ollama (local)**, **Metal (macOS GPU)**, **ROCm (AMD GPU)**, or **API mode**.
+
 ### valdyum agents:export -i <id>
 Export unit credentials and instruction sets for local model fine-tuning or backup.`
   },
