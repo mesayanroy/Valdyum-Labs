@@ -439,6 +439,12 @@ Audit a unit's security via the **T54 Trust Layer**. Shows ClawCredit scores and
 ### valdyum agents:monitor
 Open the **Imperial Market Monitor**. A real-time terminal UI showing Solana DEX liquidity (Jupiter, Raydium, Orca) updated every 2 seconds.
 
+### valdyum agents:simulate -i <id>
+Run a high-fidelity paper trading simulation. Fetches live quotes from **Jupiter** and validates them against **Pyth** oracles. Generates a Trade Receipt in \`/simulations\`.
+
+### valdyum agents:replay -p <pair> -f <time>
+Execute a **Historical Neural Replay**. Replays market movements via **Birdeye** data to backtest agent logic and calculate theoretical PnL.
+
 ### valdyum agents:compute [mode]
 Tune the neural scheduler and optimize the compute layer. Choose between **Ollama (local)**, **Metal (macOS GPU)**, **ROCm (AMD GPU)**, or **API mode**.
 

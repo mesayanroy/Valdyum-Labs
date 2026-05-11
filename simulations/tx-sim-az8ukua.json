@@ -1,0 +1,33 @@
+{
+  "agent_id": "aa3f93ec",
+  "trade_id": "tx-sim-az8ukua",
+  "pair": "SOL/USDC",
+  "neural_proof": "0xed536cae566593960cf6721efd140bf0",
+  "grid_config": {
+    "levels": 5,
+    "order_size_usd": 10,
+    "spacing": "0.50%",
+    "total_resting_orders": 10,
+    "position_kill": 2000
+  },
+  "market_state": {
+    "mid_price": "96.4032",
+    "oracle_price": "96.5416",
+    "deviation": "0.1433%",
+    "volatility": "LOW",
+    "prediction": "BULLISH",
+    "liquidations_24h": "$432.62",
+    "volume_24h": "$1.24B",
+    "price_change_24h": "+2.42%"
+  },
+  "execution": {
+    "buy_orders": 5,
+    "sell_orders": 5,
+    "open_positions": 1,
+    "slippage": "0.02%",
+    "fee_0x402": "0.2 SOL",
+    "timestamp": 1778439334,
+    "type": "neural-fallback"
+  },
+  "status": "verified-simulation"
+}

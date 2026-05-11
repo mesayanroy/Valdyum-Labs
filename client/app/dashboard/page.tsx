@@ -57,7 +57,7 @@ export default function DashboardPage() {
 
   const terminalRef = useRef<HTMLDivElement>(null);
   const { events: liveEvents, isConnected: feedConnected } = useMarketplaceFeed({ maxEvents: 50 });
-  
+
   const fetchAll = useCallback(async (owner: string) => {
     setLoading(true);
     try {
@@ -124,7 +124,7 @@ export default function DashboardPage() {
 
   const ownedAgents = myAgents.filter(a => a.visibility !== 'forked');
   const forkedAgents = myAgents.filter(a => a.visibility === 'forked');
-  
+
   const totalEarned = analytics?.totals?.totalEarnedSol ?? 0;
   const statCards = [
     { label: 'Senatus Registry', value: 'ACTIVE', color: 'text-[#d4af37]', sub: (process.env.NEXT_PUBLIC_SOLANA_CONTRACT_ID || '6tps...').slice(0, 8) },
@@ -135,7 +135,7 @@ export default function DashboardPage() {
     { label: 'P&L Score', value: (totalEarned * 1000).toFixed(0), unit: 'XP', color: 'text-purple-400' },
   ];
 
-  const yieldData = (analytics?.earnings && analytics.earnings.length > 1) 
+  const yieldData = (analytics?.earnings && analytics.earnings.length > 1)
     ? analytics.earnings.map(d => ({ name: d.date.split('T')[1].slice(0, 5), amount: d.amount }))
     : [{ name: '08:00', amount: 0.05 }, { name: '12:00', amount: 0.15 }, { name: '16:00', amount: 0.22 }, { name: '20:00', amount: 0.35 }];
 
@@ -150,7 +150,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0c] text-[#f7f0e3] relative overflow-hidden font-serif">
       <div className="pointer-events-none absolute inset-0 bg-[url('/background/slide33.png')] bg-cover bg-center opacity-10" />
-      
+
       <div className="p-4 md:p-8 relative z-10 max-w-[1800px] mx-auto">
         <div className="mb-8 flex items-end justify-between">
           <div>
@@ -177,7 +177,7 @@ export default function DashboardPage() {
             <div className="h-[200px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={yieldData}>
-                  <defs><linearGradient id="colorYield" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#d4af37" stopOpacity={0.3}/><stop offset="95%" stopColor="#d4af37" stopOpacity={0}/></linearGradient></defs>
+                  <defs><linearGradient id="colorYield" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#d4af37" stopOpacity={0.3} /><stop offset="95%" stopColor="#d4af37" stopOpacity={0} /></linearGradient></defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.02)" vertical={false} />
                   <XAxis dataKey="name" stroke="rgba(255,255,255,0.2)" fontSize={9} tickLine={false} axisLine={false} fontFamily="JetBrains Mono" />
                   <YAxis stroke="rgba(255,255,255,0.2)" fontSize={9} tickLine={false} axisLine={false} fontFamily="JetBrains Mono" />
@@ -192,7 +192,7 @@ export default function DashboardPage() {
             <div className="h-[200px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={volumeData}>
-                  <defs><linearGradient id="colorVolume" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#4ade80" stopOpacity={0.3}/><stop offset="95%" stopColor="#4ade80" stopOpacity={0}/></linearGradient></defs>
+                  <defs><linearGradient id="colorVolume" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#4ade80" stopOpacity={0.3} /><stop offset="95%" stopColor="#4ade80" stopOpacity={0} /></linearGradient></defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.02)" vertical={false} />
                   <XAxis dataKey="name" stroke="rgba(255,255,255,0.2)" fontSize={9} tickLine={false} axisLine={false} fontFamily="JetBrains Mono" />
                   <YAxis stroke="rgba(255,255,255,0.2)" fontSize={9} tickLine={false} axisLine={false} fontFamily="JetBrains Mono" />
@@ -230,8 +230,8 @@ export default function DashboardPage() {
             <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
               {ownedAgents.map(a => (
                 <div key={a.id} className="p-3 rounded-xl border border-white/[0.05] bg-black/40 flex justify-between items-center">
-                   <div className="truncate"><div className="text-xs font-cinzel font-bold text-white truncate">{a.name}</div><div className="text-[8px] font-mono text-gray-600 uppercase">{a.model}</div></div>
-                   <Link href={`/agents/${a.id}`} className="text-[9px] font-mono text-[#d4af37] hover:underline">Cmd</Link>
+                  <div className="truncate"><div className="text-xs font-cinzel font-bold text-white truncate">{a.name}</div><div className="text-[8px] font-mono text-gray-600 uppercase">{a.model}</div></div>
+                  <Link href={`/agents/${a.id}`} className="text-[9px] font-mono text-[#d4af37] hover:underline">Cmd</Link>
                 </div>
               ))}
             </div>
@@ -244,8 +244,8 @@ export default function DashboardPage() {
             <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
               {forkedAgents.map(a => (
                 <div key={a.id} className="p-3 rounded-xl border border-white/[0.05] bg-black/40 flex justify-between items-center">
-                   <div className="truncate"><div className="text-xs font-cinzel font-bold text-white truncate">{a.name}</div><div className="text-[8px] font-mono text-gray-600 uppercase">Subordinate</div></div>
-                   <Link href={`/agents/${a.id}`} className="text-[9px] font-mono text-purple-400 hover:underline">Acc</Link>
+                  <div className="truncate"><div className="text-xs font-cinzel font-bold text-white truncate">{a.name}</div><div className="text-[8px] font-mono text-gray-600 uppercase">Subordinate</div></div>
+                  <Link href={`/agents/${a.id}`} className="text-[9px] font-mono text-purple-400 hover:underline">Acc</Link>
                 </div>
               ))}
             </div>
@@ -261,114 +261,114 @@ export default function DashboardPage() {
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
-            <div className="xl:col-span-2 p-6 rounded-[2rem] border border-white/10 bg-black/20">
-               <h3 className="font-cinzel text-xl font-bold text-white mb-6 uppercase">Imperial Ledger</h3>
-               <div className="overflow-x-auto max-h-[300px] custom-scrollbar">
-                 <table className="w-full text-left">
-                   <thead className="sticky top-0 bg-[#0a0a0c] z-10"><tr className="border-b border-white/10">{['ID', 'Agent', 'Yield', 'Sig', 'Time'].map(h => (<th key={h} className="pb-3 pr-4 font-mono text-[9px] text-gray-500 uppercase tracking-widest">{h}</th>))}</tr></thead>
-                   <tbody className="divide-y divide-white/[0.04]">
-                     {/* Combine Invoices and CLI Events for a complete ledger */}
-                     {[
-                       ...(analytics?.invoices || []).map(row => ({
-                         id: row.invoiceId,
-                         agent: row.agentName,
-                         yield: row.amountSol,
-                         sig: row.txHash,
-                         time: row.createdAt,
-                         url: row.txExplorerUrl
-                       })),
-                       ...liveEvents.filter(ev => String(ev.eventType).startsWith('agents:')).map((ev, i) => ({
-                         id: `CLI-${i}`,
-                         agent: ev.agentName || 'CLI Unit',
-                         yield: ev.priceSol || 0,
-                         sig: ev.signature || 'N/A',
-                         time: ev.timestamp,
-                         url: ev.signature !== 'N/A' ? `https://explorer.solana.com/tx/${ev.signature}?cluster=testnet` : '#'
-                       }))
-                     ].sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()).map((row, i) => (
-                       <tr key={i} className="hover:bg-white/5">
-                         <td className="py-3 pr-4 font-mono text-[10px] text-white/60">{row.id.slice(0, 8)}</td>
-                         <td className="py-3 pr-4 font-mono text-[10px] text-white">{row.agent}</td>
-                         <td className="py-3 pr-4 font-mono text-[10px] text-[#4ade80]">{Number(row.yield).toFixed(4)}</td>
-                         <td className="py-3 pr-4 font-mono text-[10px]">
-                           {row.sig !== 'N/A' ? (
-                             <a href={row.url} target="_blank" className="text-[#d4af37] underline">{row.sig.slice(0, 10)}...</a>
-                           ) : (
-                             <span className="text-gray-700">SYSTEM</span>
-                           )}
-                         </td>
-                         <td className="py-3 pr-4 font-mono text-[10px] text-gray-600">{new Date(row.time).toLocaleTimeString([], { hour12: false })}</td>
-                       </tr>
-                     ))}
-                   </tbody>
-                 </table>
-               </div>
+          <div className="xl:col-span-2 p-6 rounded-[2rem] border border-white/10 bg-black/20">
+            <h3 className="font-cinzel text-xl font-bold text-white mb-6 uppercase">Imperial Ledger</h3>
+            <div className="overflow-x-auto max-h-[300px] custom-scrollbar">
+              <table className="w-full text-left">
+                <thead className="sticky top-0 bg-[#0a0a0c] z-10"><tr className="border-b border-white/10">{['ID', 'Agent', 'Yield', 'Sig', 'Time'].map(h => (<th key={h} className="pb-3 pr-4 font-mono text-[9px] text-gray-500 uppercase tracking-widest">{h}</th>))}</tr></thead>
+                <tbody className="divide-y divide-white/[0.04]">
+                  {/* Combine Invoices and CLI Events for a complete ledger */}
+                  {[
+                    ...(analytics?.invoices || []).map(row => ({
+                      id: row.invoiceId,
+                      agent: row.agentName,
+                      yield: row.amountSol,
+                      sig: row.txHash,
+                      time: row.createdAt,
+                      url: row.txExplorerUrl
+                    })),
+                    ...liveEvents.filter(ev => String(ev.eventType).startsWith('agents:')).map((ev, i) => ({
+                      id: `CLI-${i}`,
+                      agent: ev.agentName || 'CLI Unit',
+                      yield: ev.priceSol || 0,
+                      sig: ev.signature || 'N/A',
+                      time: ev.timestamp,
+                      url: ev.signature !== 'N/A' ? `https://explorer.solana.com/tx/${ev.signature}?cluster=testnet` : '#'
+                    }))
+                  ].sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()).map((row, i) => (
+                    <tr key={i} className="hover:bg-white/5">
+                      <td className="py-3 pr-4 font-mono text-[10px] text-white/60">{row.id.slice(0, 8)}</td>
+                      <td className="py-3 pr-4 font-mono text-[10px] text-white">{row.agent}</td>
+                      <td className="py-3 pr-4 font-mono text-[10px] text-[#4ade80]">{Number(row.yield).toFixed(4)}</td>
+                      <td className="py-3 pr-4 font-mono text-[10px]">
+                        {row.sig !== 'N/A' ? (
+                          <a href={row.url} target="_blank" className="text-[#d4af37] underline">{row.sig.slice(0, 10)}...</a>
+                        ) : (
+                          <span className="text-gray-700">SYSTEM</span>
+                        )}
+                      </td>
+                      <td className="py-3 pr-4 font-mono text-[10px] text-gray-600">{new Date(row.time).toLocaleTimeString([], { hour12: false })}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-           
-           <div className="xl:col-span-1 p-6 rounded-[2rem] border border-[rgba(212,175,55,0.2)] bg-[rgba(27,18,12,0.9)]">
-              <h3 className="font-cinzel text-lg font-bold text-[#d4af37] mb-6 uppercase flex justify-between items-center">
-                <span>Live Decrees</span>
-                <div className={`w-2 h-2 rounded-full ${feedConnected ? 'bg-[#4ade80] animate-pulse' : 'bg-red-600'}`} />
-              </h3>
-              <div className="space-y-4 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-                 {liveEvents.map((ev, i) => (
-                   <div key={i} className="p-3 rounded-lg border border-white/5 bg-white/[0.02] flex items-center gap-3">
-                     <div className="text-xl">📜</div>
-                     <div className="min-w-0"><div className="text-xs font-cinzel text-white truncate">{ev.agentName}</div><div className="text-[8px] font-mono text-gray-600 uppercase tracking-tighter truncate">{shortWallet(ev.callerWallet)} · {ev.eventType}</div></div>
-                   </div>
-                 ))}
-              </div>
-           </div>
+          </div>
+
+          <div className="xl:col-span-1 p-6 rounded-[2rem] border border-[rgba(212,175,55,0.2)] bg-[rgba(27,18,12,0.9)]">
+            <h3 className="font-cinzel text-lg font-bold text-[#d4af37] mb-6 uppercase flex justify-between items-center">
+              <span>Live Decrees</span>
+              <div className={`w-2 h-2 rounded-full ${feedConnected ? 'bg-[#4ade80] animate-pulse' : 'bg-red-600'}`} />
+            </h3>
+            <div className="space-y-4 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+              {liveEvents.map((ev, i) => (
+                <div key={i} className="p-3 rounded-lg border border-white/5 bg-white/[0.02] flex items-center gap-3">
+                  <div className="text-xl">📜</div>
+                  <div className="min-w-0"><div className="text-xs font-cinzel text-white truncate">{ev.agentName}</div><div className="text-[8px] font-mono text-gray-600 uppercase tracking-tighter truncate">{shortWallet(ev.callerWallet)} · {ev.eventType}</div></div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
         <div className="p-8 rounded-[2.5rem] border border-[rgba(212,175,55,0.3)] bg-black shadow-3xl">
-           <div className="flex items-center justify-between mb-6">
-             <h2 className="font-cinzel text-2xl font-bold text-[#d4af37] tracking-[0.3em] uppercase flex items-center gap-4">Imperial Command Console <span className="text-[10px] font-mono text-gray-600 uppercase tracking-widest border border-white/10 px-2 py-0.5 rounded">v1.2.0-praetorian</span></h2>
-             <div className="flex gap-4">
-               <div className="flex items-center gap-2 text-[9px] font-mono text-[#4ade80] uppercase tracking-widest"><span className="w-1.5 h-1.5 rounded-full bg-[#4ade80] animate-pulse" /> Ably Stream Active</div>
-               <div className="flex items-center gap-2 text-[9px] font-mono text-gray-600 uppercase tracking-widest border-l border-white/10 pl-4">CLI SYNC: ENABLED</div>
-             </div>
-           </div>
-           
-           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-             <div className="lg:col-span-3 bg-[#050507] rounded-2xl border border-white/10 p-5 font-mono text-[11px] h-[350px] flex flex-col">
-               <div className="flex items-center justify-between mb-4 text-[9px] text-gray-600 uppercase tracking-widest border-b border-white/5 pb-2"><span>Legion Activity Log</span><span>root@imperium:~$ tail -f /var/log/action_stream</span></div>
-               <div ref={terminalRef} className="flex-1 overflow-y-auto space-y-1.5 custom-scrollbar pr-4 text-white/80">
-                  {liveEvents.map((ev, i) => {
-                    const type = String(ev.eventType || '');
-                    const isCli = type.startsWith('agents:');
-                    const isSandbox = type.includes('sandbox');
-                    return (
-                      <div key={i} className="flex gap-3">
-                        <span className="text-gray-600 shrink-0">[{new Date(ev.timestamp).toLocaleTimeString([], { hour12: false })}]</span>
-                        <span className={`${isCli ? 'text-blue-400' : 'text-[#4ade80]'} shrink-0 font-bold`}>{isCli ? 'CLI' : 'EXEC'}</span>
-                        <span className="leading-relaxed">
-                          {isSandbox ? (
-                            <>Sandbox simulation for <span className="text-[#d4af37]">{ev.agentName}</span>: <span className="text-blue-200">Neural proof verified.</span></>
-                          ) : isCli ? (
-                            <>CLI Command <span className="text-[#d4af37]">{type}</span> initiated by <span className="text-purple-400">{shortWallet(ev.callerWallet)}</span>.</>
-                          ) : (
-                            <>Agent <span className="text-[#d4af37]">{ev.agentName}</span> activated. Caller: <span className="text-purple-400">{shortWallet(ev.callerWallet)}</span>. {ev.priceSol > 0 ? `Tribute: ${ev.priceSol} SOL` : ''}</>
-                          )}
-                        </span>
-                      </div>
-                    );
-                  })}
-                  {liveEvents.length === 0 && <div className="text-gray-500 italic opacity-50 font-mono text-[9px] uppercase tracking-widest text-center mt-20">Imperial Grid Standing By...</div>}
-               </div>
-             </div>
-             <div className="bg-[#0c0c10] rounded-2xl border border-[rgba(212,175,55,0.1)] p-5 font-mono text-[11px] h-[350px] flex flex-col">
-                <div className="text-[#d4af37] font-cinzel text-xs mb-4 border-b border-white/5 pb-2 uppercase tracking-widest text-center">Sandbox Diagnostics</div>
-                <div className="flex-1 space-y-4 overflow-y-auto custom-scrollbar">
-                   <div className="space-y-1 text-[10px]"><div className="text-blue-400"># SYSTEM STATUS</div><div className="text-gray-500">Neural Sync: STABLE</div><div className="text-gray-500">Solana RPC: CONNECTED</div><div className="text-gray-500">0x402 Protocol: ENFORCING</div></div>
-                   <div className="p-3 rounded-lg bg-white/[0.02] border border-white/5">
-                      <div className="text-[9px] text-[#d4af37] mb-2 uppercase">Runtime Profile</div>
-                      <div className="space-y-1 text-[8px] text-gray-500"><div className="flex justify-between"><span>TOTAL DECREES:</span> <span>{analytics?.totals?.requests || 0}</span></div><div className="flex justify-between"><span>SUCCESS RATE:</span> <span>99.8%</span></div><div className="flex justify-between"><span>AVG LATENCY:</span> <span>{analytics?.totals?.avgLatencyMs || 0}ms</span></div></div>
-                   </div>
-                   <div className="text-[10px] text-[#4ade80] animate-pulse uppercase tracking-widest text-center mt-auto pb-2">Ready for Deployment</div>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="font-cinzel text-2xl font-bold text-[#d4af37] tracking-[0.3em] uppercase flex items-center gap-4">Imperial Command Console <span className="text-[10px] font-mono text-gray-600 uppercase tracking-widest border border-white/10 px-2 py-0.5 rounded">v1.2.0-praetorian</span></h2>
+            <div className="flex gap-4">
+              <div className="flex items-center gap-2 text-[9px] font-mono text-[#4ade80] uppercase tracking-widest"><span className="w-1.5 h-1.5 rounded-full bg-[#4ade80] animate-pulse" /> Ably Stream Active</div>
+              <div className="flex items-center gap-2 text-[9px] font-mono text-gray-600 uppercase tracking-widest border-l border-white/10 pl-4">CLI SYNC: ENABLED</div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <div className="lg:col-span-3 bg-[#050507] rounded-2xl border border-white/10 p-5 font-mono text-[11px] h-[350px] flex flex-col">
+              <div className="flex items-center justify-between mb-4 text-[9px] text-gray-600 uppercase tracking-widest border-b border-white/5 pb-2"><span>Legion Activity Log</span><span>root@imperium:~$ tail -f /var/log/action_stream</span></div>
+              <div ref={terminalRef} className="flex-1 overflow-y-auto space-y-1.5 custom-scrollbar pr-4 text-white/80">
+                {liveEvents.map((ev, i) => {
+                  const type = String(ev.eventType || '');
+                  const isCli = type.startsWith('agents:');
+                  const isSandbox = type.includes('sandbox');
+                  return (
+                    <div key={i} className="flex gap-3">
+                      <span className="text-gray-600 shrink-0">[{new Date(ev.timestamp).toLocaleTimeString([], { hour12: false })}]</span>
+                      <span className={`${isCli ? 'text-blue-400' : 'text-[#4ade80]'} shrink-0 font-bold`}>{isCli ? 'CLI' : 'EXEC'}</span>
+                      <span className="leading-relaxed">
+                        {isSandbox ? (
+                          <>Sandbox simulation for <span className="text-[#d4af37]">{ev.agentName}</span>: <span className="text-blue-200">Neural proof verified.</span></>
+                        ) : isCli ? (
+                          <>CLI Command <span className="text-[#d4af37]">{type}</span> initiated by <span className="text-purple-400">{shortWallet(ev.callerWallet)}</span>.</>
+                        ) : (
+                          <>Agent <span className="text-[#d4af37]">{ev.agentName}</span> activated. Caller: <span className="text-purple-400">{shortWallet(ev.callerWallet)}</span>. {ev.priceSol > 0 ? `Tribute: ${ev.priceSol} SOL` : ''}</>
+                        )}
+                      </span>
+                    </div>
+                  );
+                })}
+                {liveEvents.length === 0 && <div className="text-gray-500 italic opacity-50 font-mono text-[9px] uppercase tracking-widest text-center mt-20">Imperial Grid Standing By...</div>}
+              </div>
+            </div>
+            <div className="bg-[#0c0c10] rounded-2xl border border-[rgba(212,175,55,0.1)] p-5 font-mono text-[11px] h-[350px] flex flex-col">
+              <div className="text-[#d4af37] font-cinzel text-xs mb-4 border-b border-white/5 pb-2 uppercase tracking-widest text-center">Sandbox Diagnostics</div>
+              <div className="flex-1 space-y-4 overflow-y-auto custom-scrollbar">
+                <div className="space-y-1 text-[10px]"><div className="text-blue-400"># SYSTEM STATUS</div><div className="text-gray-500">Neural Sync: STABLE</div><div className="text-gray-500">Solana RPC: CONNECTED</div><div className="text-gray-500">0x402 Protocol: ENFORCING</div></div>
+                <div className="p-3 rounded-lg bg-white/[0.02] border border-white/5">
+                  <div className="text-[9px] text-[#d4af37] mb-2 uppercase">Runtime Profile</div>
+                  <div className="space-y-1 text-[8px] text-gray-500"><div className="flex justify-between"><span>TOTAL DECREES:</span> <span>{analytics?.totals?.requests || 0}</span></div><div className="flex justify-between"><span>SUCCESS RATE:</span> <span>99.8%</span></div><div className="flex justify-between"><span>AVG LATENCY:</span> <span>{analytics?.totals?.avgLatencyMs || 0}ms</span></div></div>
                 </div>
-             </div>
-           </div>
+                <div className="text-[10px] text-[#4ade80] animate-pulse uppercase tracking-widest text-center mt-auto pb-2">Ready for Deployment</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <style jsx global>{`

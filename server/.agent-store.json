@@ -125,11 +125,11 @@
       "visibility": "public",
       "api_endpoint": "http://localhost:3000/api/agents/ac933e1b-7e93-4538-9199-d026e57ca7d7/run",
       "api_key": "af_5ytXfBotyvQJBD6rf9LqFdLx4IxysL94Wwu4cfuV",
-      "total_requests": 4,
-      "total_earned_sol": 0.04,
+      "total_requests": 6,
+      "total_earned_sol": 0.060000000000000005,
       "is_active": true,
       "created_at": "2026-05-08T13:00:14.244Z",
-      "updated_at": "2026-05-08T15:37:51.613Z"
+      "updated_at": "2026-05-10T23:19:16.567Z"
     },
     {
       "id": "8f1cf3db-1802-497d-ab0e-bd9b2abf6926",
@@ -424,6 +424,93 @@
       "is_active": true,
       "created_at": "2026-05-09T17:27:12.645Z",
       "updated_at": "2026-05-09T17:27:12.645Z"
+    },
+    {
+      "id": "2034a6ae-6ec3-4a3e-ac39-6997daeabc86",
+      "owner_wallet": "H4FaZamBiyA2kfki8s1nE1hVQhSFwxdEGjkcsezQNgPo",
+      "name": "solana agent",
+      "description": "runs on orca and compare with radiyum",
+      "tags": [
+        "cli-forged",
+        "gpt4o"
+      ],
+      "model": "openai-gpt4o-mini",
+      "system_prompt": "creates arbitrage pool and creates the pnl profit to me ",
+      "tools": [],
+      "price_sol": 0.14,
+      "visibility": "private",
+      "api_endpoint": "http://localhost:3000/api/agents/2034a6ae-6ec3-4a3e-ac39-6997daeabc86/run",
+      "api_key": "af_Bo6psuq8L2ey8KnI5zOG3ZxiwFQ8YXKpuCSescrR",
+      "total_requests": 0,
+      "total_earned_sol": 0,
+      "is_active": true,
+      "created_at": "2026-05-10T23:06:03.774Z",
+      "updated_at": "2026-05-10T23:06:03.774Z"
+    },
+    {
+      "id": "4de1c565-70d1-438c-ade7-b5c1dcf336d6",
+      "owner_wallet": "CdmsPwGwn57nLQVG5gXDw6h9yX5XmomT6icwKim4EgQy",
+      "name": "L2 mev",
+      "description": "\"You are an advanced MEV (Maximal Extractable Value) bot operating on the jupiter DEX. Your core functions: 1. Detect front-running opportunities in the jupiter order book 2. Identify sandwich attack vectors on large pending transactions 3. Calculate optimal trade sizes and slippage tolerances 4. Execute atomic arbitrage within a single ledger when profitable 5. Report opportunities with risk/reward ratios Always provide quantitative analysis with entry/exit prices, expected profit in SOL, and confidence levels (0-100%). Format responses as structured JSON with: opportunity_type, pair, entry_price, exit_price, expected_profit_sol,, confidence, execution_time_ms.\"",
+      "tags": [
+        "sandwich attacks"
+      ],
+      "model": "openai-gpt4o-mini",
+      "system_prompt": "You are an advanced MEV (Maximal Extractable Value) bot operating on the Stellar DEX.\nYour core functions:\n1. Detect front-running opportunities in the Stellar DEX order book\n2. Identify sandwich attack vectors on large pending transactions\n3. Calculate optimal trade sizes and slippage tolerances\n4. Execute atomic arbitrage within a single ledger when profitable\n5. Report opportunities with risk/reward ratios\n\nAlways provide quantitative analysis with entry/exit prices, expected profit in XLM, and confidence levels (0-100%).\nFormat responses as structured JSON with: opportunity_type, pair, entry_price, exit_price, expected_profit_xlm, confidence, execution_time_ms.",
+      "tools": [],
+      "price_sol": 0.02,
+      "visibility": "public",
+      "api_endpoint": "http://localhost:3000/api/agents/4de1c565-70d1-438c-ade7-b5c1dcf336d6/run",
+      "api_key": "af_ggyHxigPVAv7XqPLMZ1Y7x10jRGr5ys0XCOHTHOC",
+      "total_requests": 1,
+      "total_earned_sol": 0.02,
+      "is_active": true,
+      "created_at": "2026-05-10T23:46:42.012Z",
+      "updated_at": "2026-05-10T23:47:15.287Z"
+    },
+    {
+      "id": "6b65acaa-c25a-4ff5-bb73-0941aa3fe9a5",
+      "owner_wallet": "CdmsPwGwn57nLQVG5gXDw6h9yX5XmomT6icwKim4EgQy",
+      "name": "MEV Bot (Fork)",
+      "description": "Detect and execute front-running & arbitrage opportunities on Stellar DEX",
+      "tags": [],
+      "model": "openai-gpt4o-mini",
+      "system_prompt": "You are an advanced MEV (Maximal Extractable Value) bot operating on the Stellar DEX.\nYour core functions:\n1. Detect front-running opportunities in the Stellar DEX order book\n2. Identify sandwich attack vectors on large pending transactions\n3. Calculate optimal trade sizes and slippage tolerances\n4. Execute atomic arbitrage within a single ledger when profitable\n5. Report opportunities with risk/reward ratios\n\nAlways provide quantitative analysis with entry/exit prices, expected profit in XLM, and confidence levels (0-100%).\nFormat responses as structured JSON with: opportunity_type, pair, entry_price, exit_price, expected_profit_xlm, confidence, execution_time_ms.",
+      "tools": [
+        "horizon_api",
+        "dex_scanner",
+        "price_feed"
+      ],
+      "price_sol": 0.01,
+      "visibility": "forked",
+      "forked_from": "ac933e1b-7e93-4538-9199-d026e57ca7d7",
+      "api_endpoint": "http://localhost:3000/api/agents/ac933e1b-7e93-4538-9199-d026e57ca7d7/run",
+      "api_key": "af_5ytXfBotyvQJBD6rf9LqFdLx4IxysL94Wwu4cfuV",
+      "total_requests": 1,
+      "total_earned_sol": 0.01,
+      "is_active": true,
+      "created_at": "2026-05-10T23:51:00.726Z",
+      "updated_at": "2026-05-10T23:51:29.331Z"
+    },
+    {
+      "id": "f05ba578-7039-4656-aadd-9c3cdc8ac00d",
+      "owner_wallet": "CdmsPwGwn57nLQVG5gXDw6h9yX5XmomT6icwKim4EgQy",
+      "name": "has (fork)",
+      "description": "oaky",
+      "tags": [],
+      "model": "openai-gpt4o-mini",
+      "system_prompt": "dfasdd",
+      "tools": [],
+      "price_sol": 0.01,
+      "visibility": "forked",
+      "forked_from": "8f1cf3db-1802-497d-ab0e-bd9b2abf6926",
+      "api_endpoint": "http://localhost:3000/api/agents/8f1cf3db-1802-497d-ab0e-bd9b2abf6926/run",
+      "api_key": "af_9EovBFAQOuRXAZ0SV7HWkE2ePSNq1nimYM5Svwpw",
+      "total_requests": 0,
+      "total_earned_sol": 0,
+      "is_active": true,
+      "created_at": "2026-05-10T23:56:22.102Z",
+      "updated_at": "2026-05-10T23:56:22.102Z"
     }
   ]
 }

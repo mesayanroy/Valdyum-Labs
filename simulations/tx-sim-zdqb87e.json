@@ -1,0 +1,22 @@
+{
+  "agent_id": "aa3f93ec",
+  "trade_id": "tx-sim-zdqb87e",
+  "pair": "SOL/USDC",
+  "neural_proof": "0x997209eee0c80d1791c18958e9b5be0d",
+  "market_state": {
+    "jupiter_quote": 96.06465483152186,
+    "pyth_oracle": 96.14503005,
+    "deviation": "0.0836%",
+    "price_impact": "0.02%"
+  },
+  "execution": {
+    "position_size": "1",
+    "route": [
+      "Orca (Neural)",
+      "Raydium (CLMM)"
+    ],
+    "timestamp": 1778440223,
+    "type": "neural-fallback"
+  },
+  "status": "verified-simulation"
+}
